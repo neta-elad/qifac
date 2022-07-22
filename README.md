@@ -1,2 +1,2 @@
-# qifac
-Quantifier Instantiations Finder and Cleaner
+# qifac: Quantifier Instantiations Finder and Cleaner
+
