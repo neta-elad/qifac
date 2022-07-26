@@ -1,4 +1,3 @@
-(set-option :smt.qi.profile true)
 (set-info :smt-lib-version 2.6)
 (set-option :auto_config false)
 (set-option :type_check true)
@@ -13,21 +12,29 @@
 (set-option :pp.bv_literals false)
 (set-info :category "industrial")
 
-(declare-const c1 Int)
-(declare-const c2 Int)
 
-(declare-fun P (Int Int) Bool)
+(declare-const c Int)
+(declare-const d Int)
+(declare-fun P (Int) Bool)
+(declare-fun R (Int Int) Bool)
 
-; forall-1 :: { (P X Y) } with terms:
-;; (P c1 c2)
-; produced
-;(assert (or (P c1 c2) (P c2 c1)))
-; forall-1 :: { (P X Y) } with terms:
-;; (P c1 c1)
-; produced
-(assert (or (P c1 c1) (P c1 c1)))
+(assert
+    (forall ((X Int)) (!
+        (or
+            (P X)
+            (forall ((Y Int)) (!
+                (R X Y)
+                :qid |inner|
+                :pattern ((R X Y))
+            ))
+        )
+        :qid |outer|
+        :pattern ((P X))
+    ))
+)
 
-(assert (not (P c1 c2)))
-(assert (! (not (P c1 c1)) :named |forall-1 :: (P c1 c1)|))
+(assert (not (P d)))
+(assert (not (P c)))
+(assert (not (R c c)))
 
 (check-sat)

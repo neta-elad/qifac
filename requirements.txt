@@ -3,3 +3,4 @@ mypy==0.971
 z3-solver==4.8.17.0
 pytest==7.1.2
 cvc5==1.0.1
+pysmt==0.9.5

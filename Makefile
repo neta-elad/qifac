@@ -11,6 +11,10 @@ format: check-env
 type: check-env
 	mypy --strict .
 
+.PHONY: install
+install: check-env
+	pip install -r requirements.txt
+
 .PHONY: check-env
 check-env:
 ifndef VIRTUAL_ENV
