@@ -9,7 +9,7 @@ format: check-env
 
 .PHONY: type
 type: check-env
-	mypy --strict .
+	mypy src
 
 .PHONY: install
 install: check-env
