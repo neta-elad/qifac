@@ -8,35 +8,10 @@ from pathlib import Path
 
 from pysmt.smtlib.parser import SmtLibParser
 
+from .helpers import stdio
 
-def add_proof() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "input",
-        nargs="?",
-        type=argparse.FileType("r"),
-        default=sys.stdin,
-        help="Input SMTLIB file, defaults to stdin",
-    )
 
-    parser.add_argument(
-        "output",
-        nargs="?",
-        type=argparse.FileType("w"),
-        default=sys.stdout,
-        help="Output SMTLIB file, defaults to stdout",
-    )
-
-    parser.add_argument(
-        "-e", "--executable", required=True, help="Z3 executable to use"
-    )
-
-    parser.add_argument(
-        "-t", "--tracer", required=True, help="Z3Tracer executable to use"
-    )
-
-    args = parser.parse_args()
-
+def add_proof(args: argparse.Namespace) -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
         dir_path = Path(tmpdir)
         input_path = dir_path / "input.smt2"
@@ -75,5 +50,21 @@ def add_proof() -> None:
         script.serialize(args.output, daggify=False)
 
 
+def build_parser(
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(),
+) -> argparse.ArgumentParser:
+    stdio(parser)
+
+    parser.add_argument(
+        "-e", "--executable", required=True, help="Z3 executable to use"
+    )
+
+    parser.add_argument(
+        "-t", "--tracer", required=True, help="Z3Tracer executable to use"
+    )
+
+    return parser
+
+
 if __name__ == "__main__":
-    add_proof()
+    add_proof(build_parser().parse_args())

@@ -4,12 +4,12 @@ lint: format type
 
 .PHONY: format
 format: check-env
-	black .
+	black qifac
 
 
 .PHONY: type
 type: check-env
-	mypy src
+	mypy qifac
 
 .PHONY: install
 install: check-env

@@ -1,51 +1,22 @@
 from typing import TextIO, List
+import argparse
+import tempfile
+import subprocess
+from pathlib import Path
+
 import z3
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.script import SmtLibCommand
 
-import argparse
-import tempfile
-import subprocess
-import io
-import sys
-from pathlib import Path
+from .helpers import stdio
 
 
-def find_unsat_core() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "input",
-        nargs="?",
-        type=argparse.FileType("r"),
-        default=sys.stdin,
-        help="Input SMTLIB file, defaults to stdin",
-    )
-
-    parser.add_argument(
-        "output",
-        nargs="?",
-        type=argparse.FileType("w"),
-        default=sys.stdout,
-        help="Output SMTLIB file, defaults to stdout",
-    )
-
-    z3_interface = parser.add_mutually_exclusive_group(required=True)
-    z3_interface.add_argument(
-        "-p",
-        "--programmatic",
-        help="find unsat-core using Z3 programmatic API",
-        action="store_true",
-    )
-    z3_interface.add_argument("-e", "--executable", help="Z3 executable to use")
-
-    args = parser.parse_args()
-
+def find_unsat_core(args: argparse.Namespace) -> None:
     if args.programmatic:
         result = find_unsat_core_programmatic(args.input.read())
+        args.output.write(result)
     else:
-        result = find_unsat_core_executable(args.input, args.executable)
-
-    args.output.write(result)
+        find_unsat_core_executable(args.input, args.executable, args.output)
 
 
 def find_unsat_core_programmatic(smt_file: str) -> str:
@@ -70,7 +41,9 @@ def find_unsat_core_programmatic(smt_file: str) -> str:
     return solver.to_smt2()
 
 
-def find_unsat_core_executable(smt_file: TextIO, executable: str) -> str:
+def find_unsat_core_executable(
+    smt_file: TextIO, executable: str, output: TextIO
+) -> None:
     parser = SmtLibParser()
     script = parser.get_script(smt_file)
 
@@ -101,12 +74,25 @@ def find_unsat_core_executable(smt_file: TextIO, executable: str) -> str:
         minimize_commands(asserts)
         minimize_commands(declares)
 
-    buffer = io.StringIO()
+    script.serialize(output, daggify=False)
 
-    script.serialize(buffer, daggify=False)
 
-    return buffer.getvalue()
+def build_parser(
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(),
+) -> argparse.ArgumentParser:
+    stdio(parser)
+
+    z3_interface = parser.add_mutually_exclusive_group(required=True)
+    z3_interface.add_argument(
+        "-p",
+        "--programmatic",
+        help="find unsat-core using Z3 programmatic API",
+        action="store_true",
+    )
+    z3_interface.add_argument("-e", "--executable", help="Z3 executable to use")
+
+    return parser
 
 
 if __name__ == "__main__":
-    find_unsat_core()
+    find_unsat_core(build_parser().parse_args())

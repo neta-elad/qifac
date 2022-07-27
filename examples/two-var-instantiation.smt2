@@ -13,8 +13,8 @@
 (set-option :pp.bv_literals false)
 (set-info :category "industrial")
 
-(declare-const c1 Int)
-(declare-const c2 Int)
+(declare-fun c1 () Int)
+(declare-fun c2 () Int)
 
 (declare-fun P (Int Int) Bool)
 
@@ -35,4 +35,3 @@
 (assert (not (P c1 c1)))
 
 (check-sat)
-(get-proof)

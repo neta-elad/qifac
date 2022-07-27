@@ -1,5 +1,6 @@
-from typing import Optional, TextIO, List, Set, Any, Mapping, cast
-import z3
+from typing import TextIO, List, Set, Any, Mapping, cast
+import argparse
+
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.script import SmtLibCommand
 from pysmt.smtlib.printers import SmtPrinter
@@ -7,12 +8,11 @@ from pysmt.walkers import TreeWalker, handles
 from pysmt.utils import quote
 from pysmt.operators import ALL_TYPES, FORALL
 
+from .helpers import stdio
+
 all_types_but_forall = list(ALL_TYPES)
 all_types_but_forall.remove(FORALL)
 
-import argparse
-import io
-import sys
 
 Annotations = Mapping[Any, Mapping[str, List[str]]]
 
@@ -68,26 +68,7 @@ class BooleanizeQuantifiersPrinter(SmtPrinter):
             self.write(boolean)
 
 
-def booleanize_quantifiers() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "input",
-        nargs="?",
-        type=argparse.FileType("r"),
-        default=sys.stdin,
-        help="Input SMTLIB file, defaults to stdin",
-    )
-
-    parser.add_argument(
-        "output",
-        nargs="?",
-        type=argparse.FileType("w"),
-        default=sys.stdout,
-        help="Output SMTLIB file, defaults to stdout",
-    )
-
-    args = parser.parse_args()
-
+def booleanize_quantifiers(args: argparse.Namespace) -> None:
     smt_file = args.input
 
     smt_parser = SmtLibParser()
@@ -107,5 +88,11 @@ def booleanize_quantifiers() -> None:
         args.output.write("\n")
 
 
+def build_parser(
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(),
+) -> argparse.ArgumentParser:
+    return stdio(parser)
+
+
 if __name__ == "__main__":
-    booleanize_quantifiers()
+    booleanize_quantifiers(build_parser().parse_args())
