@@ -4,7 +4,7 @@ from . import tools
 
 
 def parent() -> None:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog="qifac")
     sub_parsers = parser.add_subparsers()
 
     unsat_core = sub_parsers.add_parser("unsat-core")
