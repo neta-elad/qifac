@@ -2,7 +2,6 @@ from typing import TextIO, List, Set, Any, Mapping, cast
 import argparse
 
 from pysmt.smtlib.parser import SmtLibParser
-from pysmt.smtlib.script import SmtLibCommand
 from pysmt.smtlib.printers import SmtPrinter
 from pysmt.walkers import TreeWalker, handles
 from pysmt.utils import quote
