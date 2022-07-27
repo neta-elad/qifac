@@ -73,7 +73,7 @@ def build_parser(
         type=argparse.FileType("w"),
         default=None,
         const=sys.stderr,
-        help="Log for all intremediate states",
+        help="Turn on logging of intremediate states, defaults to stderr",
     )
 
     return parser
