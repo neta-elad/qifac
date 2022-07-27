@@ -21,7 +21,7 @@ def parent() -> None:
     tools.add_proof.build_parser(add_proof)
     add_proof.set_defaults(fun=tools.add_proof.add_proof)
 
-    find_proof = sub_parsers.add_parser('find-proof')
+    find_proof = sub_parsers.add_parser("find-proof")
     tools.find_proof.build_parser(find_proof)
     find_proof.set_defaults(fun=tools.find_proof.find_proof)
 
