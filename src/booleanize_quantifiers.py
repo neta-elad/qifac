@@ -18,21 +18,25 @@ Annotations = Mapping[Any, Mapping[str, List[str]]]
 
 booleans = {}
 boolean_id = 0
+
+
 def booleanize_quantifier(formula: Any, annotations: Annotations) -> str:
     if formula not in booleans:
         global boolean_id
         boolean_id += 1
-        
+
         booleans[formula] = quote(f"b{boolean_id}[{get_qid(formula, annotations)}]")
 
     return booleans[formula]
-    
+
+
 def get_qid(formula: Any, annotations: Annotations) -> str:
     formula_annotations = annotations[formula.arg(0)]
     if formula_annotations is not None and "qid" in formula_annotations:
         return cast(str, quote("-".join(formula_annotations["qid"])))
     else:
-        return ''
+        return ""
+
 
 class BooleanizeQuantifiersGetter(TreeWalker):
     booleans: Set[str]
