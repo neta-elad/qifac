@@ -4,3 +4,8 @@
 ```bash
 python -m 'src.unsat_core'
 ```
+
+## Booleanize Quantifiers
+```bash
+python -m 'src.booleanize_quantifiers'
+```
