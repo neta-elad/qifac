@@ -16,14 +16,21 @@ import sys
 
 Annotations = Mapping[Any, Mapping[str, List[str]]]
 
+booleans = {}
+boolean_id = 0
+def booleanize_quantifier(formula: Any) -> str:
+    if formula not in booleans:
+        global boolean_id
+        boolean_id += 1
+        booleans[formula] = str(f"b{boolean_id}")
 
-def booleanize_quantifier(formula: Any, annotations: Annotations) -> Optional[str]:
-    formula_annotations = annotations[formula.arg(0)]
+    return booleans[formula]
+    # formula_annotations = annotations[formula.arg(0)]
 
-    if formula_annotations is not None and "qid" in formula_annotations:
-        return cast(str, quote("-".join(formula_annotations["qid"])))
-    else:
-        return None
+    # if formula_annotations is not None and "qid" in formula_annotations:
+    #     return cast(str, quote("-".join(formula_annotations["qid"])))
+    # else:
+    #     return None
 
 
 class BooleanizeQuantifiersGetter(TreeWalker):
@@ -39,7 +46,7 @@ class BooleanizeQuantifiersGetter(TreeWalker):
         return self.walk_skip(formula)
 
     def walk_forall(self, formula: Any) -> Any:
-        boolean = booleanize_quantifier(formula, self.annotations)
+        boolean = booleanize_quantifier(formula)
         if boolean is not None:
             self.booleans.add(boolean)
 
@@ -49,7 +56,7 @@ class BooleanizeQuantifiersPrinter(SmtPrinter):
         SmtPrinter.__init__(self, stream, annotations)
 
     def walk_forall(self, formula: Any) -> Any:
-        boolean = booleanize_quantifier(formula, self.annotations)
+        boolean = booleanize_quantifier(formula)
         if boolean is None:
             SmtPrinter.walk_forall(self, formula)
         else:

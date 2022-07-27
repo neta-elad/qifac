@@ -13,23 +13,32 @@
 (set-info :category "industrial")
 
 
-(declare-const c Int)
-(declare-const d Int)
+(declare-fun c () Int)
+(declare-fun d () Int)
 (declare-fun P (Int) Bool)
 (declare-fun R (Int Int) Bool)
 
-(declare-const |Q-outer| Bool)
-(declare-const |Q-inner1| Bool)
-(declare-const |Q-inner2| Bool)
-
-(assert |Q-outer|)
-
-;(assert (! (or (not |Q-outer|) (or (P d) |Q-inner1|)) :named |outer, (P d)|))
-(assert (! (or (not |Q-outer|) (or (P c) |Q-inner2|)) :named |outer, (P c)|))
-(assert (! (or (not |Q-inner2|) (R c c)) :named |inner, (R c c), c == c|))
+(assert
+    (forall ((X Int)) (!
+        (or
+            (P X)
+            (forall ((Y Int)) (!
+                (R X Y)
+                :qid |inner|
+                :pattern ((R X Y))
+            ))
+        )
+        :qid |outer|
+        :pattern ((P X))
+    ))
+)
 
 (assert (not (P d)))
 (assert (not (P c)))
 (assert (not (R c c)))
+
+(assert (! (or (not (forall ((X Int)) (! (or (P X) (forall ((Y Int)) (! (R X Y) :qid inner :pattern ((R X Y))))) :qid outer :pattern ((P X))))) (or (P d) (forall ((Y Int)) (! (R d Y) :qid inner :pattern ((R d Y)))))) :named |outer, (P d)|))
+(assert (! (or (not (forall ((X Int)) (! (or (P X) (forall ((Y Int)) (! (R X Y) :qid inner :pattern ((R X Y))))) :qid outer :pattern ((P X))))) (or (P c) (forall ((Y Int)) (! (R c Y) :qid inner :pattern ((R c Y)))))) :named |outer, (P c)|))
+(assert (! (or (not (forall ((Y Int)) (! (R c Y) :qid inner :pattern ((R c Y))))) (R c c)) :named |inner, (R c c), c == c|))
 
 (check-sat)

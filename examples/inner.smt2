@@ -13,8 +13,8 @@
 (set-info :category "industrial")
 
 
-(declare-const c Int)
-(declare-const d Int)
+(declare-fun c () Int)
+(declare-fun d () Int)
 (declare-fun P (Int) Bool)
 (declare-fun R (Int Int) Bool)
 
