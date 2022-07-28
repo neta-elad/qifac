@@ -8,7 +8,7 @@ from pathlib import Path
 
 from pysmt.smtlib.parser import SmtLibParser
 
-from .helpers import stdio
+from .helpers import stdio_args
 
 
 def add_proof(args: argparse.Namespace) -> None:
@@ -53,7 +53,7 @@ def add_proof(args: argparse.Namespace) -> None:
 def build_parser(
     parser: argparse.ArgumentParser = argparse.ArgumentParser(),
 ) -> argparse.ArgumentParser:
-    stdio(parser)
+    stdio_args(parser)
 
     parser.add_argument(
         "-e", "--executable", required=True, help="Z3 executable to use"

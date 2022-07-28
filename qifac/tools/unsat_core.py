@@ -1,14 +1,19 @@
-from typing import TextIO, List
+from typing import TextIO, List, Optional
 import argparse
 import tempfile
 import subprocess
+import io
+import shutil
 from pathlib import Path
 
 import z3
 from pysmt.smtlib.parser import SmtLibParser
-from pysmt.smtlib.script import SmtLibCommand
+from pysmt.smtlib.script import SmtLibCommand, SmtLibScript
+from pysmt.smtlib.printers import SmtPrinter
 
-from .helpers import stdio
+from .helpers import stdio_args, log_args, log_output
+from .name import name
+from .filter_named import filter_named
 
 
 def find_unsat_core(args: argparse.Namespace) -> None:
@@ -44,43 +49,39 @@ def find_unsat_core_programmatic(smt_file: str) -> str:
 def find_unsat_core_executable(
     smt_file: TextIO, executable: str, output: TextIO
 ) -> None:
-    parser = SmtLibParser()
-    script = parser.get_script(smt_file)
-
-    command_to_index = {id(command): i for i, command in enumerate(script.commands)}
-
-    asserts = list(script.filter_by_command_name("assert"))
-    declares = list(script.filter_by_command_name("declare-fun"))
-
     with tempfile.TemporaryDirectory() as tmpdir:
+        dir_path = Path(tmpdir)
 
-        def minimize_commands(commands: List[SmtLibCommand]) -> None:
-            delta = 0
-            for command in commands:
-                script.commands.remove(command)
-                path = Path(tmpdir) / "file.smt2"
-                script.to_file(path, daggify=False)
-                result = subprocess.run(
-                    [executable, path], capture_output=True, text=True
-                )
+        input_path = dir_path / "input.smt2"
+        with open(input_path, "w") as file:
+            shutil.copyfileobj(smt_file, file)
 
-                if "unsat" not in result.stdout:
-                    script.commands.insert(
-                        command_to_index[id(command)] - delta, command
-                    )
-                else:
-                    delta += 1
+        named_path = dir_path / "named.smt2"
+        with open(input_path, "r") as input_smt, open(named_path, "w") as output_smt:
+            namespace = argparse.Namespace()
+            namespace.input = input_smt
+            namespace.output = output_smt
+            name(namespace)
 
-        minimize_commands(asserts)
-        minimize_commands(declares)
+        result = subprocess.run(
+            [executable, named_path], capture_output=True, text=True
+        ).stdout
 
-    script.serialize(output, daggify=False)
+        keep = result.splitlines()[-1][1:-1].split(" ")
+
+        with open(named_path, "r") as input_smt:
+            namespace = argparse.Namespace()
+            namespace.input = input_smt
+            namespace.output = output
+            namespace.names = keep
+            filter_named(namespace)
 
 
 def build_parser(
     parser: argparse.ArgumentParser = argparse.ArgumentParser(),
 ) -> argparse.ArgumentParser:
-    stdio(parser)
+    stdio_args(parser)
+    log_args(parser)
 
     z3_interface = parser.add_mutually_exclusive_group(required=True)
     z3_interface.add_argument(

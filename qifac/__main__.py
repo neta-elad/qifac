@@ -25,6 +25,14 @@ def parent() -> None:
     tools.find_proof.build_parser(find_proof)
     find_proof.set_defaults(fun=tools.find_proof.find_proof)
 
+    name = sub_parsers.add_parser("name")
+    tools.name.build_parser(name)
+    name.set_defaults(fun=tools.name.name)
+
+    filter = sub_parsers.add_parser("filter")
+    tools.filter_named.build_parser(filter)
+    filter.set_defaults(fun=tools.filter_named.filter_named)
+
     args = parser.parse_args()
     args.fun(args)
 
