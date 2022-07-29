@@ -12,6 +12,10 @@ def filter_named(args: Namespace) -> None:
 
     asserts = list(script.filter_by_command_name("assert"))
 
+    (get_unsat_core,) = script.filter_by_command_name("get-unsat-core")
+
+    script.commands.remove(get_unsat_core)
+
     for command in asserts:
         formula = command.args[0]
         if formula not in annotations or "named" not in annotations[formula]:

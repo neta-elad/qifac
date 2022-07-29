@@ -4,6 +4,7 @@ from .helpers import stdio_args, log_args, chain_stdio
 from .add_proof import add_proof
 from .booleanize_quantifiers import booleanize_quantifiers
 from .unsat_core import find_unsat_core
+from .skolemize import skolemize
 
 
 def find_proof(args: argparse.Namespace) -> None:
@@ -11,10 +12,15 @@ def find_proof(args: argparse.Namespace) -> None:
 
     if args.pre_unsat_core:
         chain_stdio(
-            args, find_unsat_core, add_proof, booleanize_quantifiers, find_unsat_core
+            args,
+            skolemize,
+            find_unsat_core,
+            add_proof,
+            booleanize_quantifiers,
+            find_unsat_core,
         )
     else:
-        chain_stdio(args, add_proof, booleanize_quantifiers, find_unsat_core)
+        chain_stdio(args, skolemize, add_proof, booleanize_quantifiers, find_unsat_core)
 
 
 def build_parser(

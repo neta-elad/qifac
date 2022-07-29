@@ -33,6 +33,10 @@ def parent() -> None:
     tools.filter_named.build_parser(filter)
     filter.set_defaults(fun=tools.filter_named.filter_named)
 
+    skolemize = sub_parsers.add_parser("skolemize")
+    tools.skolemize.build_parser(skolemize)
+    skolemize.set_defaults(fun=tools.skolemize.skolemize)
+
     args = parser.parse_args()
     args.fun(args)
 

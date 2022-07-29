@@ -10,6 +10,7 @@ import z3
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.script import SmtLibCommand, SmtLibScript
 from pysmt.smtlib.printers import SmtPrinter
+from pysmt.smtlib.parser import Tokenizer
 
 from .helpers import stdio_args, log_args, log_output
 from .name import name
@@ -67,7 +68,8 @@ def find_unsat_core_executable(
             [executable, named_path], capture_output=True, text=True
         ).stdout
 
-        keep = result.splitlines()[-1][1:-1].split(" ")
+        buffer = io.StringIO(result.splitlines()[-1])
+        keep = list(Tokenizer(buffer).generator)[1:-1]
 
         with open(named_path, "r") as input_smt:
             namespace = argparse.Namespace()

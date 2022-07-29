@@ -1,4 +1,5 @@
 from argparse import ArgumentParser, Namespace
+import io
 
 from pysmt.smtlib.parser import SmtLibParser
 
@@ -16,7 +17,10 @@ def name(args: Namespace) -> None:
             annotations.add(formula, "named", f"N{i}")
 
     args.output.write("(set-option :produce-unsat-cores true)\n")
-    script.serialize(args.output, daggify=False)
+    args.output.write("(set-option :smt.core.minimize true)\n")
+    buffer = io.StringIO()
+    script.serialize(buffer, daggify=False)
+    args.output.write(buffer.getvalue())
     args.output.write("(get-unsat-core)\n")
 
 

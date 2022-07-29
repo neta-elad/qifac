@@ -30,20 +30,20 @@ def add_proof(args: argparse.Namespace) -> None:
             ],
             capture_output=True,
             text=True,
-        )
+        ).stdout
 
-        assert "unsat" in result.stdout
+        assert "unsat" in result
 
         result = subprocess.run(
             [args.tracer, "--annotated-proof", str(log_path)],
             capture_output=True,
             text=True,
-        )
+        ).stdout
 
         smt_parser = SmtLibParser()
         script = smt_parser.get_script_fname(str(input_path))
 
-        for cmd in smt_parser.get_command_generator(io.StringIO(result.stdout)):
+        for cmd in smt_parser.get_command_generator(io.StringIO(result)):
             script.commands.insert(-1, cmd)
         script.annotations = smt_parser.cache.annotations
 
