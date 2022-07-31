@@ -45,6 +45,10 @@ def parent() -> None:
     tools.instantiate.build_parser(instantiate)
     instantiate.set_defaults(fun=tools.instantiate.instantiate)
 
+    terms = sub_parsers.add_parser("terms")
+    tools.terms.build_parser(terms)
+    terms.set_defaults(fun=tools.terms.terms)
+
     args = parser.parse_args()
     args.fun(args)
 

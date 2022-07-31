@@ -3,7 +3,7 @@ from argparse import ArgumentParser, Namespace, FileType
 
 from pysmt.smtlib.parser import SmtLibParser, SmtLibScript
 from pysmt.smtlib.annotations import Annotations
-from pysmt.shortcuts import Solver, get_free_variables, Implies
+from pysmt.shortcuts import get_free_variables, Implies
 
 from pysmt.walkers import TreeWalker, handles
 from pysmt.operators import ALL_TYPES, FORALL

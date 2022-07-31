@@ -1,8 +1,10 @@
-from typing import TextIO, Optional, Callable
-from argparse import ArgumentParser, FileType, Namespace
+from typing import TextIO, Optional, Callable, Iterable
+from argparse import ArgumentParser, FileType, Namespace, ArgumentTypeError
 import sys
 import io
 import copy
+import re
+from dataclasses import dataclass, field
 
 
 def stdio_args(
@@ -74,3 +76,27 @@ def log_output(message: str, log: Optional[TextIO], output: io.StringIO) -> None
     log.write(output.getvalue())
     log.write("-" * len(message))
     log.write("\n")
+
+
+@dataclass(eq=True, frozen=True)
+class RangeType:
+    default_start: Optional[int] = field(default=None)
+
+    RANGE_PATTERN = re.compile(r"^(?P<start>\d+)?(?:-(?P<end>\d+))?$")
+
+    def __call__(self, string: str) -> Iterable[int]:
+        match = RangeType.RANGE_PATTERN.match(string)
+
+        if not match:
+            raise ArgumentTypeError(f"Argument '{string}' is not a range of numbers.")
+
+        start = match.group("start") or self.default_start
+
+        end = match.group("end") or start
+
+        if start is None:
+            raise ArgumentTypeError(f"Semi-open ranges are not supported.")
+
+        result = range(int(str(start), 10), int(str(end), 10) + 1)
+
+        return result
