@@ -40,4 +40,4 @@ def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:
 
 
 if __name__ == "__main__":
-    skolemize(build_parser().parse_args())
+    prettify(build_parser().parse_args())

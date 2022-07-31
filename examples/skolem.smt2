@@ -16,6 +16,9 @@
 (declare-fun f (Int) Int)
 ;(declare-const c Int)
 (declare-fun P (Int Int) Bool)
+(declare-fun c () Int)
+
+(assert (P c c))
 
 (assert (forall ((X Int)) 
     (! 

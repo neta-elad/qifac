@@ -10,37 +10,40 @@
 (set-option :model.compact false)
 (set-option :model.v2 true)
 (set-option :pp.bv_literals false)
+;(set-option :produce-proofs true)
 (set-info :category "industrial")
 
-(declare-fun f (Int) Int)
 (declare-fun c () Int)
-(declare-fun d () Int)
 (declare-fun P (Int Int) Bool)
+;(declare-fun Z!0 (Int) Int)
 
-(assert (forall ((X Int)) 
-    (! 
-		(P (f X) X) 
-		:qid |forall-1| 
-		;:pattern ((f (f X)))
-		:pattern ((f X))
-    )
-))
+;(assert (< (Z!0 c) c))
 
-(assert (forall ((X Int))
-	(!
-		(P X X)
-		:qid |forall-2|
-		:pattern ((P X X))
-	)
-))
+(assert (forall ((X Int) (Y Int)) (!
+    (P X Y)
+    :qid q1
+    :pattern ((P X Y))
+)))
 
-(assert (P (f c) (f c)))
-(assert (P (f (f c)) (f c)))
-(assert (P (f (f (f c))) (f (f c))))
+(assert (forall ((W Int)) (!
+    (not (forall ((Z Int)) (!
+        (not (P W Z))
+        :qid q3
+    )))
+    :qid q2
+    :pattern ((P W W))
+)))
 
-(assert
-	(not (P (f c) c))
-)
+(assert (forall ((W Int)) (!
+    (exists ((Z Int)) (!
+        (not (P W Z))
+        :qid q5
+    ))
+    :qid q4
+    :pattern ((P W W))
+)))
 
+(assert (P 0 0))
 
 (check-sat)
+;(get-proof)
