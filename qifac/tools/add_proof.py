@@ -1,4 +1,4 @@
-import argparse
+from argparse import ArgumentParser, Namespace
 import sys
 import subprocess
 import tempfile
@@ -9,9 +9,10 @@ from pathlib import Path
 from pysmt.smtlib.parser import SmtLibParser
 
 from .helpers import stdio_args
+from .instantiate import instantiate
 
 
-def add_proof(args: argparse.Namespace) -> None:
+def add_proof(args: Namespace) -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
         dir_path = Path(tmpdir)
         input_path = dir_path / "input.smt2"
@@ -34,25 +35,25 @@ def add_proof(args: argparse.Namespace) -> None:
 
         assert "unsat" in result
 
-        result = subprocess.run(
-            [args.tracer, "--annotated-proof", str(log_path)],
+        instances_path = dir_path / "instances.txt"
+
+        subprocess.run(
+            [args.tracer, "--instantiation-tree", str(instances_path), str(log_path)],
             capture_output=True,
             text=True,
-        ).stdout
+        )
 
-        smt_parser = SmtLibParser()
-        script = smt_parser.get_script_fname(str(input_path))
-
-        for cmd in smt_parser.get_command_generator(io.StringIO(result)):
-            script.commands.insert(-1, cmd)
-        script.annotations = smt_parser.cache.annotations
-
-        script.serialize(args.output, daggify=False)
+        with open(input_path) as input_file, open(instances_path, "r") as instances:
+            instantiate_namespace = Namespace()
+            instantiate_namespace.input = input_file
+            instantiate_namespace.instances = instances
+            instantiate_namespace.output = args.output
+            instantiate(instantiate_namespace)
 
 
 def build_parser(
-    parser: argparse.ArgumentParser = argparse.ArgumentParser(),
-) -> argparse.ArgumentParser:
+    parser: ArgumentParser = ArgumentParser(),
+) -> ArgumentParser:
     stdio_args(parser)
 
     parser.add_argument(
