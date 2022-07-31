@@ -13,6 +13,7 @@
 (set-info :category "industrial")
 
 (declare-fun c () Int)
+(declare-fun f (Int) Int)
 (declare-fun P (Int Int Int) Bool)
 
 (assert (forall ((X Int) (Y Int) (Z Int)) (!
@@ -38,45 +39,46 @@
 )))
 
 (assert (P c c c))
+(assert (P (f c) (f c) (f c)))
 
 ; ***
 
-(assert (! 
-    (or 
-        (not (forall ((W Int)) (! 
-            (not (or 
-                (not (forall ((T Int)) (! 
-                    (not (P W (|a#1#0#0@@8!0| W) T)) 
-                    :qid q4 
-                    :pattern ((P W (|a#1#0#0@@8!0| W) T))
-                ))) 
-                (not (= W (|a#1#0#0@@8!0| W)))
-            )) 
-            :qid q2 
-            :pattern ((P W W W)))
-        )) 
-        (not (or 
-            (not (forall ((T Int)) (! 
-                (not (P c (|a#1#0#0@@8!0| c) T)) 
-                :qid q4 
-                :pattern ((P c (|a#1#0#0@@8!0| c) T))
-            ))) 
-            (not (= c (|a#1#0#0@@8!0| c)))
-        ))
-    ) 
-    :named |NN0q2, (P c c c), c == c, c == c, c == c, c == c|
-))
+;(assert (! 
+;    (or 
+;        (not (forall ((W Int)) (! 
+;            (not (or 
+;                (not (forall ((T Int)) (! 
+;                    (not (P W (|a#1#0#0@@8!0| W) T)) 
+;                    :qid q4 
+;                    :pattern ((P W (|a#1#0#0@@8!0| W) T))
+;                ))) 
+;                (not (= W (|a#1#0#0@@8!0| W)))
+;            )) 
+;            :qid q2 
+;            :pattern ((P W W W)))
+;        )) 
+;        (not (or 
+;            (not (forall ((T Int)) (! 
+;                (not (P c (|a#1#0#0@@8!0| c) T)) 
+;                :qid q4 
+;                :pattern ((P c (|a#1#0#0@@8!0| c) T))
+;            ))) 
+;            (not (= c (|a#1#0#0@@8!0| c)))
+;        ))
+;    ) 
+;    :named |NN0q2, (P c c c), c == c, c == c, c == c, c == c|
+;))
 
-(assert (! 
-    (or 
-        (not (forall ((T Int)) (! 
-            (not (P c (|a#1#0#0@@8!0| c) T)) 
-            :qid q4 
-            :pattern ((P c (|a#1#0#0@@8!0| c) T)))
-        )) 
-        (not (P c (|a#1#0#0@@8!0| c) (|a#1#0#0@@8!0| c)))
-    ) 
-    :named |NN1q4, (P c c c), c == c, c == (a#1#0#0@@8!0 c)|
-))
+;(assert (! 
+;    (or 
+;        (not (forall ((T Int)) (! 
+;            (not (P c (|a#1#0#0@@8!0| c) T)) 
+;            :qid q4 
+;            :pattern ((P c (|a#1#0#0@@8!0| c) T)))
+;        )) 
+;        (not (P c (|a#1#0#0@@8!0| c) (|a#1#0#0@@8!0| c)))
+;    ) 
+;    :named |NN1q4, (P c c c), c == c, c == (a#1#0#0@@8!0 c)|
+;))
 
 (check-sat)

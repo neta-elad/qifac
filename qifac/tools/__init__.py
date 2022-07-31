@@ -6,3 +6,4 @@ from . import name
 from . import filter_named
 from . import skolemize
 from . import prettify
+from . import instantiate

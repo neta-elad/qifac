@@ -1,0 +1,6 @@
+0x7fcc598cd1c0 q1 [Z=c,Y=c,X=c]
+0x7fcc598cd200 q2 [W=c]
+0x7fcc598cd230 q1 [Z=(f c),Y=(f c),X=(f c)]
+0x7fcc598cd270 q2 [W=(f c)]
+0x7fcc598cd800 q4 [T=c] 0x7fcc598cd200
+0x7fcc598cd830 q4 [T=(f c)] 0x7fcc598cd270

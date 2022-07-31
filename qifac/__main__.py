@@ -41,6 +41,10 @@ def parent() -> None:
     tools.prettify.build_parser(prettify)
     prettify.set_defaults(fun=tools.prettify.prettify)
 
+    instantiate = sub_parsers.add_parser("instantiate")
+    tools.instantiate.build_parser(instantiate)
+    instantiate.set_defaults(fun=tools.instantiate.instantiate)
+
     args = parser.parse_args()
     args.fun(args)
 
