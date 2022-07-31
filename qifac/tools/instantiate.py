@@ -19,7 +19,7 @@ Term = Any
 Declare = Any
 
 
-class QuantifierrCollector(TreeWalker):
+class QuantifierCollector(TreeWalker):
     quantifiers: Dict[str, Any]
 
     def __init__(self, annotations: Annotations):
@@ -47,7 +47,7 @@ def instantiate(args: Namespace) -> None:
     (check_sat,) = script.filter_by_command_name("check-sat")
     script.commands.remove(check_sat)
 
-    collector = QuantifierrCollector(script.annotations)
+    collector = QuantifierCollector(script.annotations)
 
     for cmd in script.filter_by_command_name("assert"):
         collector.walk(cmd.args[0])
