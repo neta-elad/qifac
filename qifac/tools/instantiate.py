@@ -1,18 +1,12 @@
-from typing import Set, Dict, Any, TypeVar, Mapping, List, Union
+from typing import Set, Dict, Any, TypeVar, Mapping
 from argparse import ArgumentParser, Namespace, FileType
-import shutil
-import tempfile
-import io
-from pathlib import Path
 
 from pysmt.smtlib.parser import SmtLibParser, SmtLibScript
 from pysmt.smtlib.annotations import Annotations
-from pysmt.smtlib.printers import SmtPrinter
 from pysmt.shortcuts import Solver, get_free_variables, Implies
 
 from pysmt.walkers import TreeWalker, handles
 from pysmt.operators import ALL_TYPES, FORALL
-import z3
 
 from .helpers import stdio_args
 from ..instantiation_tree import Forest, Node
@@ -106,7 +100,7 @@ def _instantiate(
         f"{var}={term}" for var, term in all_substitutes.items()
     )
 
-    script.annotations.add(result, "named", f"{node.qid}:{substitutes_string}")
+    script.annotations.add(result, "named", f"{node.qid}[{substitutes_string}]")
 
     return result
 
