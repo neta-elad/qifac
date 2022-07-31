@@ -1,7 +1,18 @@
 from typing import Dict, Mapping, Optional, Set, List
 from dataclasses import dataclass, field
 
-from pyparsing import Word, Suppress, Combine, OneOrMore, Opt, delimited_list, printables, hexnums, string, delimited_list
+from pyparsing import (
+    Word,
+    Suppress,
+    Combine,
+    OneOrMore,
+    Opt,
+    delimited_list,
+    printables,
+    hexnums,
+    string,
+    delimited_list,
+)
 
 
 IDENT_PARSER = Word(printables)("id")
@@ -14,7 +25,7 @@ NODE_PARSER = (
     IDENT_PARSER
     + QID_PARSER
     + Suppress("[")
-    + delimited_list(VALUE_PARSER, delim=',')
+    + delimited_list(VALUE_PARSER, delim=",")
     + Suppress("]")
     + Opt(IDENT_PARSER("parent"))
 )
@@ -73,5 +84,3 @@ class Forest:
             forest.nodes[node.id] = node
 
         return forest
-
-
