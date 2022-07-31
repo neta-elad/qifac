@@ -18,7 +18,11 @@ def filter_named(args: Namespace) -> None:
 
     for command in asserts:
         formula = command.args[0]
-        if formula not in annotations or "named" not in annotations[formula]:
+        if (
+            formula not in annotations
+            or "named" not in annotations[formula]
+            or len(annotations[formula]["named"]) == 0
+        ):
             continue
 
         (name,) = annotations[formula]["named"]

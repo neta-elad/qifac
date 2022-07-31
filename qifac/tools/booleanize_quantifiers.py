@@ -82,7 +82,7 @@ def _booleanize_quantifier(formula: Any, annotations: Annotations) -> str:
 def _get_qid(formula: Any, annotations: Annotations) -> str:
     formula_annotations = annotations[formula.arg(0)]
     if formula_annotations is not None and "qid" in formula_annotations:
-        return cast(str, quote("-".join(formula_annotations["qid"])))
+        return cast(str, "-".join(formula_annotations["qid"]))
     else:
         return ""
 

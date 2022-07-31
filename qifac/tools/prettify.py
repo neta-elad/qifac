@@ -11,7 +11,7 @@ import z3
 from .helpers import stdio_args
 
 
-def skolemize(args: Namespace) -> None:
+def prettify(args: Namespace) -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
         dir_path = Path(tmpdir)
 
@@ -27,10 +27,8 @@ def skolemize(args: Namespace) -> None:
 
         script.serialize(args.output, daggify=False)
 
-        solver = z3.Tactic("snf").solver()
-
+        solver = z3.Solver()
         solver.from_file(input_path)
-        solver.check()
         args.output.write(solver.sexpr())
 
     args.output.write("(check-sat)\n")

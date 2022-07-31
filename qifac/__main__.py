@@ -37,6 +37,10 @@ def parent() -> None:
     tools.skolemize.build_parser(skolemize)
     skolemize.set_defaults(fun=tools.skolemize.skolemize)
 
+    prettify = sub_parsers.add_parser("prettify")
+    tools.prettify.build_parser(prettify)
+    prettify.set_defaults(fun=tools.prettify.prettify)
+
     args = parser.parse_args()
     args.fun(args)
 
