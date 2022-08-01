@@ -28,6 +28,7 @@ def skolemize(args: Namespace) -> None:
         script.serialize(args.output, daggify=False)
 
         solver = z3.Tactic("snf").solver()
+        solver.set(unsat_core=True)
 
         solver.from_file(input_path)
         solver.check()
