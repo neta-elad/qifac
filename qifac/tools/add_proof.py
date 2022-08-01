@@ -1,12 +1,8 @@
 from argparse import ArgumentParser, Namespace
-import sys
 import subprocess
 import tempfile
 import shutil
-import io
 from pathlib import Path
-
-from pysmt.smtlib.parser import SmtLibParser
 
 from .helpers import stdio_args
 from .instantiate import instantiate
