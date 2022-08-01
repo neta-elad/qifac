@@ -15,10 +15,11 @@ from .helpers import stdio_args, RangeType
 
 cache = {}
 
+
 @dataclass(frozen=True, eq=True)
 class Ast:
     fun: z3.FuncDeclRef
-    args: Tuple['Ast'] = field(default=())
+    args: Tuple["Ast", ...] = field(default=())
 
     def apply(self) -> z3.ExprRef:
         if self not in cache:
@@ -34,6 +35,7 @@ def terms(args: Namespace) -> None:
         count_terms(declarations, args.depth, args.output)
     else:
         show_terms(declarations, args.depth, args.output)
+
 
 def count_terms(declarations: Set[z3.FuncDeclRef], depth: int, output: TextIO) -> None:
     terms: Dict[z3.SortRef, int] = {}
@@ -51,7 +53,7 @@ def count_terms(declarations: Set[z3.FuncDeclRef], depth: int, output: TextIO) -
             sort = fun.range()
             if sort not in new_terms:
                 new_terms[sort] = 0
-            
+
             inputs = 1
             for i in range(fun.arity()):
                 domain = terms.get(fun.domain(i), 0)
@@ -64,11 +66,9 @@ def count_terms(declarations: Set[z3.FuncDeclRef], depth: int, output: TextIO) -
     for sort, amount in terms.items():
         output.write(f"{sort}: {amount}\n")
 
-    # output.write(str(sum(amount for amount in terms.values())))
-    # output.write('\n')
 
 def show_terms(declarations: Set[z3.FuncDeclRef], depth: int, output: TextIO) -> None:
-    terms: Dict[z3.SortRef, Set[z3.ExprRef]] = {}
+    terms: Dict[z3.SortRef, Set[Ast]] = {}
     for fun in declarations:
         if fun.arity() == 0:
             sort = fun.range()
@@ -76,7 +76,7 @@ def show_terms(declarations: Set[z3.FuncDeclRef], depth: int, output: TextIO) ->
             sort_terms.add(Ast(fun))
 
     for _depth in range(1, depth + 1):
-        new_terms = {}
+        new_terms: Dict[z3.SortRef, Set[Ast]] = {}
         for fun in declarations:
             sort = fun.range()
             sort_terms = new_terms.setdefault(sort, set())
