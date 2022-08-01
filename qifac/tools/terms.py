@@ -66,6 +66,9 @@ def count_terms(declarations: Set[z3.FuncDeclRef], depth: int, output: TextIO) -
     for sort, amount in terms.items():
         output.write(f"{sort}: {amount}\n")
 
+    for fun in sorted(declarations, key=lambda fun: fun.arity()):
+        print(f"{fun} {fun.arity()}")
+
 
 def show_terms(declarations: Set[z3.FuncDeclRef], depth: int, output: TextIO) -> None:
     terms: Dict[z3.SortRef, Set[Ast]] = {}

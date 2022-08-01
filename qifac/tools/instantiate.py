@@ -1,5 +1,6 @@
 from typing import Set, Dict, Any, TypeVar, Mapping
 from argparse import ArgumentParser, Namespace, FileType
+import io
 
 from pysmt.smtlib.parser import SmtLibParser, SmtLibScript
 from pysmt.smtlib.annotations import Annotations
@@ -53,12 +54,11 @@ def instantiate(args: Namespace) -> None:
         collector.walk(cmd.args[0])
 
     quantifiers = collector.quantifiers
-    declares = _str_dict(script.get_declared_symbols())
 
     forest = Forest.parse(args.instances.readlines())
 
     for node in forest.nodes.values():
-        script.add("assert", [_instantiate(quantifiers, declares, script, node)])
+        script.add("assert", [_instantiate(smt_parser, quantifiers, script, node)])
 
     script.add_command(check_sat)
 
@@ -66,33 +66,40 @@ def instantiate(args: Namespace) -> None:
 
 
 def _instantiate(
+    parser: SmtLibParser,
     quantifiers: Mapping[str, Term],
-    declares: Mapping[str, Declare],
     script: SmtLibScript,
     node: Node,
 ) -> Term:
-    quantifier = quantifiers[node.qid]
+    quantifier = quantifiers[_normalize(node.qid)]
 
     free_variables = _str_dict(get_free_variables(quantifier.args()[0]))
 
     parent_substitutes = node.parent_substitutes()
     all_substitutes = node.all_substitutes()
 
-    substitutions = {
-        free_variables[var]: _build_term(declares, term)
-        for var, term in all_substitutes.items()
-    }
+    try:
+        substitutions = {
+            free_variables[_normalize(var)]: _build_term(parser, term)
+            for var, term in all_substitutes.items()
+        }
+    except KeyError as e:
+        print(free_variables)
+        print(all_substitutes)
+        print(e)
+        # print(node)
+        exit(-1)
 
     parent_substitutions = {
-        free_variables[var]: _build_term(declares, term)
+        free_variables[_normalize(var)]: _build_term(parser, term)
         for var, term in parent_substitutes.items()
     }
 
     instance = quantifier.args()[0].substitute(substitutions)
     parent = quantifier.substitute(parent_substitutions)
 
-    # Copy annotations
-    # script.annotations._annotations[instance] = dict(script.annotations[quantifier.args()[0]])
+    # if quantifier != parent:
+    #     copy_qid(script.annotations, quantifier, parent)
 
     result = Implies(parent, instance)
 
@@ -104,38 +111,33 @@ def _instantiate(
 
     return result
 
+def _copy_qid(annotations: Annotations, source: Term, target: Term) -> None:
+    source_annotations = annotations[source.args()[0]]
+    if source_annotations is not None and 'qid' in source_annotations:
+        qids = source_annotations['qid']
 
-from pyparsing import Forward, Group, OneOrMore, Suppress, Word, printables
-
-SYMBOL_PARSER = Word(printables, exclude_chars="()")
-LPAR, RPAR = map(Suppress, "()")
-TERM_PARSER = Forward()
-TERM_PARSER << (
-    SYMBOL_PARSER ^ Group(LPAR + SYMBOL_PARSER + OneOrMore(TERM_PARSER) + RPAR)
-)
+        for qid in qids:
+            annotations.add(target.args()[0], 'qid', qid)
 
 
-def _build_term(declares: Mapping[str, Declare], term: str) -> Term:
-    parsed = TERM_PARSER.parse_string(term, parse_all=True).as_list().pop()
+def _build_term(parser: SmtLibParser, term: str) -> Term:
+    buffer = io.StringIO(f"(assert (= {term} {term}))")
 
-    return _build_parsed_term(declares, parsed)
+    for cmd in parser.get_command_generator(buffer):
+        return cmd.args[0].args()[0]
 
 
-def _build_parsed_term(declares: Mapping[str, Declare], term: Any) -> Term:
-    if len(term) == 1:
-        const = term[0]
-        return declares[const]
-
-    fun, *args = term
-
-    return declares[fun](*(_build_parsed_term(declares, arg) for arg in args))
+def _normalize(symbol: str) -> str:
+    if (symbol.startswith('|') and symbol.endswith('|')) or (symbol.startswith("'") and symbol.endswith("'")):
+        return symbol[1:-1]
+    return symbol
 
 
 T = TypeVar("T")
 
 
 def _str_dict(a_set: Set[T]) -> Mapping[str, T]:
-    return {str(value): value for value in a_set}
+    return {_normalize(str(value)): value for value in a_set}
 
 
 def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:

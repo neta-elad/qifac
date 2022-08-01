@@ -28,6 +28,7 @@ def prettify(args: Namespace) -> None:
         script.serialize(args.output, daggify=False)
 
         solver = z3.Solver()
+        solver.set(unsat_core=True)
         solver.from_file(input_path)
         args.output.write(solver.sexpr())
 
