@@ -30,7 +30,6 @@ def filter_named(args: Namespace) -> None:
         if name not in args.names:
             script.commands.remove(command)
 
-
     for command in asserts:
         formula = command.args[0]
         annotations.remove_annotation(formula, "named")
