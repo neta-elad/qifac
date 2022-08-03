@@ -5,6 +5,7 @@ from .add_proof import add_proof
 from .booleanize_quantifiers import booleanize_quantifiers
 from .unsat_core import find_unsat_core
 from .skolemize import skolemize
+from .unique_qids import unique_qids
 
 
 def find_proof(args: argparse.Namespace) -> None:
@@ -13,6 +14,7 @@ def find_proof(args: argparse.Namespace) -> None:
     if args.pre_unsat_core:
         chain_stdio(
             args,
+            unique_qids,
             skolemize,
             find_unsat_core,
             add_proof,
@@ -20,7 +22,14 @@ def find_proof(args: argparse.Namespace) -> None:
             find_unsat_core,
         )
     else:
-        chain_stdio(args, skolemize, add_proof, booleanize_quantifiers, find_unsat_core)
+        chain_stdio(
+            args,
+            unique_qids,
+            skolemize,
+            add_proof,
+            booleanize_quantifiers,
+            find_unsat_core,
+        )
 
 
 def build_parser(

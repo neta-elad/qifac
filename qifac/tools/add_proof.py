@@ -34,10 +34,19 @@ def add_proof(args: Namespace) -> None:
         instances_path = dir_path / "instances.txt"
 
         subprocess.run(
-            [args.tracer, "--instantiation-tree", str(instances_path), str(log_path)],
+            [
+                args.tracer,
+                "--skip-z3-version-check",
+                "--instantiation-tree",
+                str(instances_path),
+                str(log_path),
+            ],
             capture_output=True,
             text=True,
         )
+
+        shutil.copyfile(log_path, "/tmp/z3.log")
+        shutil.copyfile(instances_path, "/tmp/instances.txt")
 
         with open(input_path) as input_file, open(instances_path, "r") as instances:
             instantiate_namespace = Namespace()

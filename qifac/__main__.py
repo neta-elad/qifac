@@ -49,6 +49,10 @@ def parent() -> None:
     tools.terms.build_parser(terms)
     terms.set_defaults(fun=tools.terms.terms)
 
+    unique_qids = sub_parsers.add_parser("uniq-qids")
+    tools.unique_qids.build_parser(unique_qids)
+    unique_qids.set_defaults(fun=tools.unique_qids.unique_qids)
+
     args = parser.parse_args()
     args.fun(args)
 

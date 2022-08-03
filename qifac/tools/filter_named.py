@@ -23,12 +23,13 @@ def filter_named(args: Namespace) -> None:
             or "named" not in annotations[formula]
             or len(annotations[formula]["named"]) == 0
         ):
-            continue
+            raise RuntimeError(f"Unnamed assert {command}")
 
         (name,) = annotations[formula]["named"]
 
         if name not in args.names:
             script.commands.remove(command)
+
 
     for command in asserts:
         formula = command.args[0]

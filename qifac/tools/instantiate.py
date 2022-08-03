@@ -1,5 +1,7 @@
+import tempfile
 from typing import Set, Dict, Any, TypeVar, Mapping
 from argparse import ArgumentParser, Namespace, FileType
+from pathlib import Path
 import io
 
 from pysmt.smtlib.parser import SmtLibParser, SmtLibScript
@@ -18,6 +20,7 @@ all_types_but_forall.remove(FORALL)
 
 Term = Any
 Declare = Any
+Var = Any
 
 
 class QuantifierCollector(TreeWalker):
@@ -57,10 +60,18 @@ def instantiate(args: Namespace) -> None:
 
     forest = Forest.parse(args.instances.readlines())
 
+    formulas = set()
+
     for node in forest.nodes.values():
-        script.add("assert", [_instantiate(smt_parser, quantifiers, script, node)])
+        formulas.add(_instantiate(smt_parser, quantifiers, script, node))
+
+    for formula in formulas:
+        script.add("assert", [formula])
 
     script.add_command(check_sat)
+
+    for formula in script.annotations.all_annotated_formulae("pattern"):
+        script.annotations.remove_annotation(formula, "pattern")
 
     script.serialize(args.output, daggify=False)
 
@@ -75,25 +86,19 @@ def _instantiate(
 
     free_variables = _str_dict(get_free_variables(quantifier.args()[0]))
 
-    parent_substitutes = node.parent_substitutes()
     all_substitutes = node.all_substitutes()
+    parent_substitutes = node.parent_substitutes()
 
-    try:
-        substitutions = {
-            free_variables[_normalize(var)]: _build_term(parser, term)
-            for var, term in all_substitutes.items()
-        }
-    except KeyError as e:
-        print(free_variables)
-        print(all_substitutes)
-        print(e)
-        # print(node)
-        exit(-1)
+    if node.parent is not None:
+        parent_qid = node.forest.nodes[node.parent].qid
+        parent_quantifier = quantifiers[_normalize(parent_qid)]
+        free_variables |= _str_dict(get_free_variables(parent_quantifier.args()[0]))
 
-    parent_substitutions = {
-        free_variables[_normalize(var)]: _build_term(parser, term)
-        for var, term in parent_substitutes.items()
-    }
+    substitutions = _build_substitutions(parser, free_variables, all_substitutes)
+
+    parent_substitutions = _build_substitutions(
+        parser, free_variables, parent_substitutes
+    )
 
     instance = quantifier.args()[0].substitute(substitutions)
     parent = quantifier.substitute(parent_substitutions)
@@ -107,17 +112,31 @@ def _instantiate(
         f"{var}={term}" for var, term in all_substitutes.items()
     )
 
-    script.annotations.add(result, "named", f"{node.qid}[{substitutes_string}]")
+    script.annotations.add(
+        result, "named", _normalize(f"{node.qid}[{substitutes_string}]")
+    )
 
     return result
 
+
+def _build_substitutions(
+    parser: SmtLibParser,
+    free_variables: Mapping[str, Var],
+    substitutes: Mapping[str, str],
+) -> Mapping[Var, Term]:
+    return {
+        free_variables[_normalize(var)]: _build_term(parser, term)
+        for var, term in substitutes.items()
+    }
+
+
 def _copy_qid(annotations: Annotations, source: Term, target: Term) -> None:
     source_annotations = annotations[source.args()[0]]
-    if source_annotations is not None and 'qid' in source_annotations:
-        qids = source_annotations['qid']
+    if source_annotations is not None and "qid" in source_annotations:
+        qids = source_annotations["qid"]
 
         for qid in qids:
-            annotations.add(target.args()[0], 'qid', qid)
+            annotations.add(target.args()[0], "qid", qid)
 
 
 def _build_term(parser: SmtLibParser, term: str) -> Term:
@@ -128,7 +147,10 @@ def _build_term(parser: SmtLibParser, term: str) -> Term:
 
 
 def _normalize(symbol: str) -> str:
-    if (symbol.startswith('|') and symbol.endswith('|')) or (symbol.startswith("'") and symbol.endswith("'")):
+    return symbol.replace("|", "").replace("'", "")
+    if (symbol.startswith("|") and symbol.endswith("|")) or (
+        symbol.startswith("'") and symbol.endswith("'")
+    ):
         return symbol[1:-1]
     return symbol
 
@@ -136,7 +158,7 @@ def _normalize(symbol: str) -> str:
 T = TypeVar("T")
 
 
-def _str_dict(a_set: Set[T]) -> Mapping[str, T]:
+def _str_dict(a_set: Set[T]) -> Dict[str, T]:
     return {_normalize(str(value)): value for value in a_set}
 
 
