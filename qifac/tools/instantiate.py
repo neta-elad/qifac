@@ -1,5 +1,5 @@
 import tempfile
-from typing import Set, Dict, Any, TypeVar, Mapping
+from typing import Set, Dict, Any, TypeVar, Mapping, Optional, TextIO
 from argparse import ArgumentParser, Namespace, FileType
 from pathlib import Path
 import io
@@ -63,7 +63,7 @@ def instantiate(args: Namespace) -> None:
     formulas = set()
 
     for node in forest.nodes.values():
-        formulas.add(_instantiate(smt_parser, quantifiers, script, node))
+        formulas.add(_instantiate(smt_parser, quantifiers, script, node, args.full))
 
     for formula in formulas:
         script.add("assert", [formula])
@@ -81,8 +81,10 @@ def _instantiate(
     quantifiers: Mapping[str, Term],
     script: SmtLibScript,
     node: Node,
+    full: Optional[TextIO],
 ) -> Term:
-    quantifier = quantifiers[_normalize(node.qid)]
+    qid = _normalize(node.qid)
+    quantifier = quantifiers[qid]
 
     free_variables = _str_dict(get_free_variables(quantifier.args()[0]))
 
@@ -112,9 +114,22 @@ def _instantiate(
         f"{var}={term}" for var, term in all_substitutes.items()
     )
 
-    script.annotations.add(
-        result, "named", _normalize(f"{node.qid}[{substitutes_string}]")
-    )
+    name = _normalize(f"{node.qid}[{substitutes_string}]")
+
+    script.annotations.add(result, "named", name)
+
+    if full is not None:
+        full.write(name)
+        full.write("\n")
+        full.write(qid)
+        full.write("\n")
+        for var, term in all_substitutes.items():
+            full.write(var)
+            full.write("\n")
+            full.write(term)
+            full.write("\n")
+        full.write("###")
+        full.write("\n")
 
     return result
 
@@ -171,6 +186,10 @@ def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:
         required=True,
         type=FileType("r"),
         help="Instantiations file",
+    )
+
+    parser.add_argument(
+        "-f", "--full", type=FileType("w"), help="write the full instances"
     )
 
     return parser

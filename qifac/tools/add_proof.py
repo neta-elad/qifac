@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser, Namespace, FileType
 import subprocess
 import tempfile
 import shutil
@@ -52,6 +52,7 @@ def add_proof(args: Namespace) -> None:
             instantiate_namespace = Namespace()
             instantiate_namespace.input = input_file
             instantiate_namespace.instances = instances
+            instantiate_namespace.full = args.full
             instantiate_namespace.output = args.output
             instantiate(instantiate_namespace)
 
@@ -67,6 +68,10 @@ def build_parser(
 
     parser.add_argument(
         "-t", "--tracer", required=True, help="Z3Tracer executable to use"
+    )
+
+    parser.add_argument(
+        "-f", "--full", type=FileType("w"), help="write the full instances"
     )
 
     return parser

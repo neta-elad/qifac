@@ -1,5 +1,5 @@
 from typing import TextIO, List, Optional
-import argparse
+from argparse import Namespace, ArgumentParser, FileType
 import tempfile
 import subprocess
 import io
@@ -7,9 +7,6 @@ import shutil
 from pathlib import Path
 
 import z3
-from pysmt.smtlib.parser import SmtLibParser
-from pysmt.smtlib.script import SmtLibCommand, SmtLibScript
-from pysmt.smtlib.printers import SmtPrinter
 from pysmt.smtlib.parser import Tokenizer
 
 from .helpers import stdio_args, log_args, log_output
@@ -17,12 +14,12 @@ from .name import name
 from .filter_named import filter_named
 
 
-def find_unsat_core(args: argparse.Namespace) -> None:
+def find_unsat_core(args: Namespace) -> None:
     if args.programmatic:
         result = find_unsat_core_programmatic(args.input.read())
         args.output.write(result)
     else:
-        find_unsat_core_executable(args.input, args.executable, args.output)
+        find_unsat_core_executable(args.input, args.executable, args.output, args.save)
 
 
 def find_unsat_core_programmatic(smt_file: str) -> str:
@@ -48,7 +45,7 @@ def find_unsat_core_programmatic(smt_file: str) -> str:
 
 
 def find_unsat_core_executable(
-    smt_file: TextIO, executable: str, output: TextIO
+    smt_file: TextIO, executable: str, output: TextIO, save: Optional[TextIO]
 ) -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
         dir_path = Path(tmpdir)
@@ -59,7 +56,7 @@ def find_unsat_core_executable(
 
         named_path = dir_path / "named.smt2"
         with open(input_path, "r") as input_smt, open(named_path, "w") as output_smt:
-            namespace = argparse.Namespace()
+            namespace = Namespace()
             namespace.input = input_smt
             namespace.output = output_smt
             name(namespace)
@@ -71,8 +68,13 @@ def find_unsat_core_executable(
         buffer = io.StringIO(result.splitlines()[-1])
         keep = list(Tokenizer(buffer).generator)[1:-1]
 
+        if save is not None:
+            for kept_name in keep:
+                save.write(str(kept_name))
+                save.write("\n")
+
         with open(named_path, "r") as input_smt:
-            namespace = argparse.Namespace()
+            namespace = Namespace()
             namespace.input = input_smt
             namespace.output = output
             namespace.names = keep
@@ -80,8 +82,8 @@ def find_unsat_core_executable(
 
 
 def build_parser(
-    parser: argparse.ArgumentParser = argparse.ArgumentParser(),
-) -> argparse.ArgumentParser:
+    parser: ArgumentParser = ArgumentParser(),
+) -> ArgumentParser:
     stdio_args(parser)
     log_args(parser)
 
@@ -93,6 +95,13 @@ def build_parser(
         action="store_true",
     )
     z3_interface.add_argument("-e", "--executable", help="Z3 executable to use")
+
+    parser.add_argument(
+        "-s",
+        "--save",
+        type=FileType("w"),
+        help="where to save the names of unsat-core assertions",
+    )
 
     return parser
 
