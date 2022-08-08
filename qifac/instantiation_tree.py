@@ -45,10 +45,13 @@ class Node:
     @classmethod
     def parse(cls, forest: "Forest", source: str) -> "Node":
         result = NODE_PARSER.parse_string(source, parse_all=True).as_dict()
+
+        parent = result.get("parent")
+        if parent is not None and parent == result["id"]:
+            parent = None
+
         substitues = dict(zip(result["var"], result["term"]))
-        return cls(
-            result["id"], result["qid"], substitues, result.get("parent"), forest
-        )
+        return cls(result["id"], result["qid"], substitues, parent, forest)
 
     def all_substitutes(self) -> Mapping[str, str]:
         current = dict(self.substitues)
@@ -64,6 +67,16 @@ class Node:
         else:
             return {}
 
+    def has_cycles(self, seen: Set[Ident]) -> bool:
+        if self.id in seen:
+            return True
+
+        if self.parent is None:
+            return False
+
+        seen.add(self.id)
+        return self.forest.nodes[self.parent].has_cycles(seen)
+
     def __hash__(self) -> int:
         return hash(self.id)
 
@@ -75,7 +88,7 @@ class Forest:
 
     @classmethod
     def parse(cls, lines: List[str]) -> "Forest":
-        forest = Forest()
+        forest = cls()
         for line in lines:
             node = Node.parse(forest, line)
             if node.parent is None:

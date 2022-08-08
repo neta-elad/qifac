@@ -23,7 +23,8 @@ def filter_named(args: Namespace) -> None:
             or "named" not in annotations[formula]
             or len(annotations[formula]["named"]) == 0
         ):
-            raise RuntimeError(f"Unnamed assert {command}")
+            continue
+            # raise RuntimeError(f"Unnamed assert {command}")
 
         (name,) = annotations[formula]["named"]
 

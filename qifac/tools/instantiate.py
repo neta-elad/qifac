@@ -4,15 +4,15 @@ from argparse import ArgumentParser, Namespace, FileType
 from pathlib import Path
 import io
 
-from pysmt.smtlib.parser import SmtLibParser, SmtLibScript
-from pysmt.smtlib.annotations import Annotations
+from pysmt.smtlib.parser import SmtLibParser, SmtLibScript, Annotations
 from pysmt.shortcuts import get_free_variables, Implies
 
 from pysmt.walkers import TreeWalker, handles
 from pysmt.operators import ALL_TYPES, FORALL
 
-from .helpers import stdio_args
+from ..pysmt_helpers import AbstractForallWalker, parse_term
 from ..instantiation_tree import Forest, Node
+from .helpers import stdio_args
 
 
 all_types_but_forall = list(ALL_TYPES)
@@ -23,7 +23,8 @@ Declare = Any
 Var = Any
 
 
-class QuantifierCollector(TreeWalker):
+class QuantifierCollector(AbstractForallWalker):
+    annotations: Annotations
     quantifiers: Dict[str, Any]
 
     def __init__(self, annotations: Annotations):
@@ -31,15 +32,11 @@ class QuantifierCollector(TreeWalker):
         self.annotations = annotations
         self.quantifiers = {}
 
-    @handles(all_types_but_forall)
-    def walk_error(self, formula: Any, **kwargs: Any) -> Any:
-        return self.walk_skip(formula)
-
     def walk_forall(self, formula: Any) -> Any:
         body = formula.args()[0]
         if body in self.annotations and "qid" in self.annotations[body]:
             for qid in self.annotations[body]["qid"]:
-                self.quantifiers[qid] = formula
+                self.quantifiers[_normalize(qid)] = formula
 
         yield body
 
@@ -83,7 +80,12 @@ def _instantiate(
     node: Node,
     full: Optional[TextIO],
 ) -> Term:
+    if node.has_cycles(set()):
+        print(f"{node.qid} has cycles!")
+        exit(-1)
+
     qid = _normalize(node.qid)
+
     quantifier = quantifiers[qid]
 
     free_variables = _str_dict(get_free_variables(quantifier.args()[0]))
@@ -96,11 +98,15 @@ def _instantiate(
         parent_quantifier = quantifiers[_normalize(parent_qid)]
         free_variables |= _str_dict(get_free_variables(parent_quantifier.args()[0]))
 
-    substitutions = _build_substitutions(parser, free_variables, all_substitutes)
+    try:
+        substitutions = _build_substitutions(parser, free_variables, all_substitutes)
 
-    parent_substitutions = _build_substitutions(
-        parser, free_variables, parent_substitutes
-    )
+        parent_substitutions = _build_substitutions(
+            parser, free_variables, parent_substitutes
+        )
+    except KeyError as e:
+        print(free_variables)
+        raise RuntimeError(f"Could not build substitutions for {node.qid}: {e}")
 
     instance = quantifier.args()[0].substitute(substitutions)
     parent = quantifier.substitute(parent_substitutions)
@@ -140,8 +146,9 @@ def _build_substitutions(
     substitutes: Mapping[str, str],
 ) -> Mapping[Var, Term]:
     return {
-        free_variables[_normalize(var)]: _build_term(parser, term)
+        free_variables[_normalize(var)]: parse_term(parser, term)
         for var, term in substitutes.items()
+        if _normalize(var) in free_variables
     }
 
 
@@ -154,15 +161,8 @@ def _copy_qid(annotations: Annotations, source: Term, target: Term) -> None:
             annotations.add(target.args()[0], "qid", qid)
 
 
-def _build_term(parser: SmtLibParser, term: str) -> Term:
-    buffer = io.StringIO(f"(assert (= {term} {term}))")
-
-    for cmd in parser.get_command_generator(buffer):
-        return cmd.args[0].args()[0]
-
-
 def _normalize(symbol: str) -> str:
-    return symbol.replace("|", "").replace("'", "")
+    return symbol.replace("|", "").replace("'", "").replace("\\", "")
     if (symbol.startswith("|") and symbol.endswith("|")) or (
         symbol.startswith("'") and symbol.endswith("'")
     ):

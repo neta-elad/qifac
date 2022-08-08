@@ -8,6 +8,7 @@ from .booleanize_quantifiers import booleanize_quantifiers
 from .unsat_core import find_unsat_core
 from .skolemize import skolemize
 from .unique_qids import unique_qids
+from .remove_unwanted import remove_unwanted
 
 
 def find_proof(args: Namespace) -> None:
@@ -19,8 +20,9 @@ def find_proof(args: Namespace) -> None:
         chain_stdio(
             args,
             unique_qids,
-            skolemize,
+            remove_unwanted,
             find_unsat_core,
+            skolemize,
             add_proof,
             booleanize_quantifiers,
             find_unsat_core,
@@ -29,6 +31,7 @@ def find_proof(args: Namespace) -> None:
         chain_stdio(
             args,
             unique_qids,
+            remove_unwanted,
             skolemize,
             add_proof,
             booleanize_quantifiers,

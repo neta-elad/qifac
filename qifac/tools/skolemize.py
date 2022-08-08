@@ -5,7 +5,6 @@ import tempfile
 from pathlib import Path
 
 from pysmt.smtlib.parser import SmtLibParser
-from pysmt.shortcuts import Solver
 import z3
 
 from .helpers import stdio_args
@@ -26,6 +25,8 @@ def skolemize(args: Namespace) -> None:
         )
 
         script.serialize(args.output, daggify=False)
+
+        # print(z3.parse_smt2_file(input_path))
 
         solver = z3.Tactic("snf").solver()
         solver.set(unsat_core=True)

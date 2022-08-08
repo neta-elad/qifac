@@ -65,8 +65,9 @@ def booleanize_quantifiers(args: argparse.Namespace) -> None:
         args.output.write(f"(declare-fun {boolean} () Bool)\n")
 
     for cmd in script.commands:
-        cmd.serialize(printer=printer)
-        args.output.write("\n")
+        if id(cmd) not in script.special_commands:
+            cmd.serialize(printer=printer)
+            args.output.write("\n")
 
 
 def _booleanize_quantifier(formula: Any, annotations: Annotations) -> str:

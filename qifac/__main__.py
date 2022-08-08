@@ -1,10 +1,15 @@
-import argparse
+from argparse import ArgumentParser, Namespace
 
 from . import tools
 
 
-def parent() -> None:
-    parser = argparse.ArgumentParser(prog="qifac")
+def run(args: Namespace) -> None:
+    args.fun(args)
+
+
+def build_parser(
+    parser: ArgumentParser = ArgumentParser(prog="qifac"),
+) -> ArgumentParser:
     sub_parsers = parser.add_subparsers()
 
     unsat_core = sub_parsers.add_parser("unsat-core")
@@ -53,9 +58,16 @@ def parent() -> None:
     tools.unique_qids.build_parser(unique_qids)
     unique_qids.set_defaults(fun=tools.unique_qids.unique_qids)
 
-    args = parser.parse_args()
-    args.fun(args)
+    remove_unwanted = sub_parsers.add_parser("remove-unwanted")
+    tools.remove_unwanted.build_parser(remove_unwanted)
+    remove_unwanted.set_defaults(fun=tools.remove_unwanted.remove_unwanted)
+
+    analyze = sub_parsers.add_parser("analyze")
+    tools.analyze.build_parser(analyze)
+    analyze.set_defaults(fun=tools.analyze.run)
+
+    return parser
 
 
 if __name__ == "__main__":
-    parent()
+    run(build_parser().parse_args())
