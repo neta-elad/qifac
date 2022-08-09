@@ -22,6 +22,12 @@ class Instantiation:
         var = None
         while (line := source.readline()) != "":
             stripped = line.strip()
+
+            if not stripped.startswith(";;! "):
+                continue
+            else:
+                stripped = stripped[4:]
+
             if stripped == "###":
                 break
 

@@ -38,8 +38,7 @@ def find_proof(args: Namespace) -> None:
             find_unsat_core,
         )
 
-    if args.analytics is not None:
-        _write_analytics(args.analytics, args.save, args.full)
+    _write_analytics(args.output, args.save, args.full)
 
 
 def _write_analytics(analytics: TextIO, save: io.StringIO, full: io.StringIO) -> None:
@@ -52,13 +51,10 @@ def _write_analytics(analytics: TextIO, save: io.StringIO, full: io.StringIO) ->
     }
 
     for name, lines in kept_instantiations.items():
-        analytics.write(name)
-        analytics.write("\n")
+        analytics.write(f";;! {name}\n")
         for line in lines:
-            analytics.write(line)
-            analytics.write("\n")
-        analytics.write("###")
-        analytics.write("\n")
+            analytics.write(f";;! {line}\n")
+        analytics.write(";;! ###\n")
 
 
 def _parse_instantiations(lines: List[str]) -> Mapping[str, List[str]]:
@@ -105,8 +101,6 @@ def build_parser(
         help="Find unsat core of input before finding proof",
         action="store_true",
     )
-
-    parser.add_argument("-a", "--analytics", type=FileType("w"), help="Analytics file")
 
     return parser
 

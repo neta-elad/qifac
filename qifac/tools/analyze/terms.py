@@ -8,7 +8,9 @@ def run(args: Namespace) -> None:
     instantiations: InstantiationSet = args.instantiations
     depths = list(_depth(term) for term in instantiations.terms())
 
-    print(f"Max: {max(depths)}")
+    max_depth = max(depths)
+
+    print(f"Max: {max_depth}")
     print(f"Mean: {statistics.mean(depths)}")
     print(f"Variance: {statistics.variance(depths)}")
     print(f"Median: {statistics.median(depths)}")
@@ -21,6 +23,10 @@ def run(args: Namespace) -> None:
 
     for depth in sorted(results.keys()):
         print(f"{results[depth]} terms of depth {depth}")
+
+    for term in instantiations.terms():
+        if _depth(term) == max_depth:
+            print(term)
 
 
 

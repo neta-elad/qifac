@@ -1,35 +1,33 @@
 from argparse import ArgumentParser, Namespace, FileType
-import sys
+import tempfile
+import shutil
+from pathlib import Path
 
 from pysmt.smtlib.parser import SmtLibParser
 
 from ...instantiation_set import InstantiationSet
 from .. import analyze
+from ..helpers import stdio_args
 
 
 def run(args: Namespace) -> None:
-    args.parser = SmtLibParser()
-    args.script = args.parser.get_script(args.script)
-    args.instantiations = InstantiationSet.parse(args.input, args.parser)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        dir_path = Path(tmpdir)
+        input_path = str(dir_path / 'input.smt2')
+        with open(input_path, 'w') as input_file:
+            shutil.copyfileobj(args.input, input_file)
+
+        args.parser = SmtLibParser()
+        args.script = args.parser.get_script_fname(input_path)
+
+        with open(input_path, 'r') as input_file:
+            args.instantiations = InstantiationSet.parse(input_file, args.parser)
+
     args.analyzer(args)
 
 
 def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:
-    parser.add_argument(
-        "input",
-        nargs="?",
-        type=FileType("r"),
-        default=sys.stdin,
-        help="Input analytics file, defaults to stdin",
-    )
-
-    parser.add_argument(
-        "-s",
-        "--script",
-        required=True,
-        type=FileType("r"),
-        help="SMT Lib Script"
-    )
+    stdio_args(parser)
 
     sub_parsers = parser.add_subparsers()
 
