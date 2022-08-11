@@ -7,9 +7,18 @@ from .helpers import stdio_args
 
 
 def remove_unwanted(args: Namespace) -> None:
+    saw_checksat = False
     while line := args.input.readline():
-        if "(=> true true)" not in line and "(push" not in line and "(pop" not in line:
-            args.output.write(line)
+        if saw_checksat:
+            continue
+        if line.startswith("(push") or line.startswith("(pop"):
+            continue
+        if "(=> true true" in line:
+            continue
+        args.output.write(line)
+
+        if line.startswith("(check-sat"):
+            saw_checksat = True
 
 
 def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:

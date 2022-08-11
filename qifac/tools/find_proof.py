@@ -9,6 +9,7 @@ from .unsat_core import find_unsat_core
 from .skolemize import skolemize
 from .unique_qids import unique_qids
 from .remove_unwanted import remove_unwanted
+from .uglify import run as uglify
 
 
 def find_proof(args: Namespace) -> None:
@@ -19,8 +20,9 @@ def find_proof(args: Namespace) -> None:
     if args.pre_unsat_core:
         chain_stdio(
             args,
-            unique_qids,
+            uglify,
             remove_unwanted,
+            unique_qids,
             find_unsat_core,
             skolemize,
             add_proof,
@@ -30,8 +32,9 @@ def find_proof(args: Namespace) -> None:
     else:
         chain_stdio(
             args,
-            unique_qids,
+            uglify,
             remove_unwanted,
+            unique_qids,
             skolemize,
             add_proof,
             booleanize_quantifiers,

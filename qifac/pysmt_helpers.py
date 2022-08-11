@@ -24,6 +24,7 @@ class AbstractForallWalker(TreeWalker):
         for cmd in script.filter_by_command_name("assert"):
             self.walk(cmd.args[0])
 
+
 def parse_term(parser: SmtLibParser, term: str) -> Term:
     buffer = io.StringIO(f"(assert (= {term} {term}))")
 

@@ -10,4 +10,6 @@ from . import instantiate
 from . import terms
 from . import unique_qids
 from . import remove_unwanted
+from . import uglify
+
 from .analyze import __main__ as analyze
