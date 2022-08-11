@@ -13,17 +13,18 @@ from ..helpers import stdio_args
 def run(args: Namespace) -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
         dir_path = Path(tmpdir)
-        input_path = str(dir_path / 'input.smt2')
-        with open(input_path, 'w') as input_file:
+        input_path = str(dir_path / "input.smt2")
+        with open(input_path, "w") as input_file:
             shutil.copyfileobj(args.input, input_file)
 
         args.parser = SmtLibParser()
         args.script = args.parser.get_script_fname(input_path)
 
-        with open(input_path, 'r') as input_file:
+        with open(input_path, "r") as input_file:
             args.instantiations = InstantiationSet.parse(input_file, args.parser)
 
-    args.analyzer(args)
+    if len(args.instantiations.instantiations) > 0:
+        args.analyzer(args)
 
 
 def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:

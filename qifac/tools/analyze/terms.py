@@ -1,34 +1,43 @@
+from typing import Dict
 from argparse import ArgumentParser, Namespace
 import statistics
+import sys
 
 from ...instantiation_set import InstantiationSet, Instantiation, Term
 
 
 def run(args: Namespace) -> None:
     instantiations: InstantiationSet = args.instantiations
+
+    for instantiation in instantiations.instantiations:
+        qid = instantiation.qid
+        args.output.write(f"{qid}\n")
+        for term in instantiation.terms():
+            args.output.write(f"{_depth(term)}\n")
+        args.output.write("###\n")
+
+    args.output.write("@@@\n")
     depths = list(_depth(term) for term in instantiations.terms())
 
     max_depth = max(depths)
 
-    print(f"Max: {max_depth}")
-    print(f"Mean: {statistics.mean(depths)}")
-    print(f"Variance: {statistics.variance(depths)}")
-    print(f"Median: {statistics.median(depths)}")
-    
-    results = {}
+    args.output.write(f"Max: {max_depth}\n")
+    args.output.write(f"Mean: {statistics.mean(depths)}\n")
+    args.output.write(f"Variance: {statistics.variance(depths)}\n")
+    args.output.write(f"Median: {statistics.median(depths)}\n")
+
+    results: Dict[int, int] = {}
 
     for depth in depths:
         results.setdefault(depth, 0)
         results[depth] += 1
 
     for depth in sorted(results.keys()):
-        print(f"{results[depth]} terms of depth {depth}")
+        args.output.write(f"{results[depth]} terms of depth {depth}\n")
 
     for term in instantiations.terms():
         if _depth(term) == max_depth:
-            print(term)
-
-
+            args.output.write(f"{term}\n")
 
 
 def _depth(term: Term) -> int:
