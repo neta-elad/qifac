@@ -90,10 +90,8 @@
 (declare-fun |##_System._tuple#0._#Make0| () T@U)
 (declare-fun Tagclass._System.Tuple0 () T@U)
 (declare-fun class._System.Tuple0 () T@U)
-(declare-fun Tagclass.Test.byte () T@U)
-(declare-fun class.Test.byte () T@U)
-(declare-fun Tagclass.Test.Key () T@U)
 (declare-fun |##Test.ChildMap.ChildMap| () T@U)
+(declare-fun Tagclass.Common.Key () T@U)
 (declare-fun Tagclass.Test.BetreeNode () T@U)
 (declare-fun Tagclass.Test.ChildMap () T@U)
 (declare-fun class.Test.ChildMap () T@U)
@@ -108,6 +106,10 @@
 (declare-fun class.Test.QueryReceipt () T@U)
 (declare-fun class.Test.__default () T@U)
 (declare-fun Tagclass.Test.__default () T@U)
+(declare-fun Tagclass.Common.byte () T@U)
+(declare-fun class.Common.byte () T@U)
+(declare-fun class.Common.__default () T@U)
+(declare-fun Tagclass.Common.__default () T@U)
 (declare-fun tytagFamily$nat () T@U)
 (declare-fun tytagFamily$object () T@U)
 (declare-fun tytagFamily$array () T@U)
@@ -123,12 +125,12 @@
 (declare-fun |tytagFamily$_#TotalFunc2| () T@U)
 (declare-fun |tytagFamily$_tuple#2| () T@U)
 (declare-fun |tytagFamily$_tuple#0| () T@U)
-(declare-fun tytagFamily$byte () T@U)
 (declare-fun tytagFamily$Key () T@U)
 (declare-fun tytagFamily$BetreeNode () T@U)
 (declare-fun tytagFamily$ChildMap () T@U)
 (declare-fun tytagFamily$QueryReceiptLine () T@U)
 (declare-fun tytagFamily$QueryReceipt () T@U)
+(declare-fun tytagFamily$byte () T@U)
 (declare-fun TyType () T@T)
 (declare-fun TyTagType () T@T)
 (declare-fun ClassNameType () T@T)
@@ -389,10 +391,9 @@
 (declare-fun Tclass._System.Tuple0 () T@U)
 (declare-fun |$IsA#_System.Tuple0| (T@U) Bool)
 (declare-fun |_System.Tuple0#Equal| (T@U T@U) Bool)
-(declare-fun Tclass.Test.byte () T@U)
-(declare-fun Tclass.Test.Key () T@U)
 (declare-fun |#Test.ChildMap.ChildMap| (T@U) T@U)
 (declare-fun Test.ChildMap.ChildMap_q (T@U) Bool)
+(declare-fun Tclass.Common.Key () T@U)
 (declare-fun Tclass.Test.BetreeNode () T@U)
 (declare-fun Tclass.Test.ChildMap () T@U)
 (declare-fun Test.ChildMap.mapp (T@U) T@U)
@@ -404,10 +405,10 @@
 (declare-fun $FunctionContextHeight () Int)
 (declare-fun |Test.ChildMap.WF#canCall| (T@U) Bool)
 (declare-fun |Test.ChildMap.WF#requires| (T@U T@U) Bool)
-(declare-fun |Test.__default.Total#canCall| (T@U) Bool)
-(declare-fun Test.__default.Total (T@U) Bool)
-(declare-fun Test.__default.AnyKey (T@U) Bool)
-(declare-fun |Test.__default.AnyKey#canCall| (T@U) Bool)
+(declare-fun |Common.__default.TotalSet#canCall| (T@U) Bool)
+(declare-fun Common.__default.TotalSet (T@U) Bool)
+(declare-fun Common.__default.AnyKey (T@U) Bool)
+(declare-fun |Common.__default.AnyKey#canCall| (T@U) Bool)
 (declare-fun |Test.BetreeNode.WF#canCall| (T@U) Bool)
 (declare-fun Test.BetreeNode.WF (T@U T@U) Bool)
 (declare-fun |#Test.BetreeNode.Nil| () T@U)
@@ -445,8 +446,10 @@
 (declare-fun |Test.QueryReceipt.ChildAt#canCall| (T@U Int) Bool)
 (declare-fun |Test.QueryReceipt.ChildAt#requires| (T@U Int) Bool)
 (declare-fun Tclass.Test.__default () T@U)
-(declare-fun |Test.__default.AnyKey#requires| (T@U) Bool)
-(declare-fun |Test.__default.Total#requires| (T@U) Bool)
+(declare-fun Tclass.Common.byte () T@U)
+(declare-fun Tclass.Common.__default () T@U)
+(declare-fun |Common.__default.AnyKey#requires| (T@U) Bool)
+(declare-fun |Common.__default.TotalSet#requires| (T@U) Bool)
 (declare-fun MapType4Select (T@U T@U T@U) T@U)
 (declare-fun |lambda#0| (T@U T@U T@U Bool) T@U)
 (declare-fun MapType4Type (T@T T@T) T@T)
@@ -464,10 +467,6 @@
 (declare-fun |lambda#9| (T@U T@U T@U Bool) T@U)
 (declare-fun |lambda#10| (T@U T@U T@U Bool) T@U)
 (declare-fun |lambda#11| (T@U T@U T@U Bool) T@U)
-(declare-fun |lambda#12| (T@U T@U T@U Bool) T@U)
-(declare-fun |lambda#13| (T@U T@U T@U Bool) T@U)
-(declare-fun |lambda#14| (T@U T@U T@U Bool) T@U)
-(declare-fun |lambda#15| (T@U T@U T@U Bool) T@U)
 (assert  (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (= (Ctor intType) 0) (= (Ctor realType) 1)) (= (Ctor boolType) 2)) (= (Ctor rmodeType) 3)) (= (Ctor stringType) 4)) (= (Ctor regexType) 5)) (forall ((arg0 Int) ) (! (= (U_2_int (int_2_U arg0)) arg0)
  :qid |typeInv:U_2_int|
  :pattern ( (int_2_U arg0))
@@ -538,13 +537,13 @@
  :qid |bg:subtype-antisymm|
  :pattern ( (UOrdering2 x@@7 y@@0) (UOrdering2 y@@0 x@@7))
 )))
-(assert  (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (= (Ctor TyType) 6) (= (type TBool) TyType)) (= (type TChar) TyType)) (= (type TInt) TyType)) (= (type TReal) TyType)) (= (type TORDINAL) TyType)) (= (Ctor TyTagType) 7)) (= (type TagBool) TyTagType)) (= (type TagChar) TyTagType)) (= (type TagInt) TyTagType)) (= (type TagReal) TyTagType)) (= (type TagORDINAL) TyTagType)) (= (type TagSet) TyTagType)) (= (type TagISet) TyTagType)) (= (type TagMultiSet) TyTagType)) (= (type TagSeq) TyTagType)) (= (type TagMap) TyTagType)) (= (type TagIMap) TyTagType)) (= (type TagClass) TyTagType)) (= (Ctor ClassNameType) 8)) (= (type class._System.int) ClassNameType)) (= (type class._System.bool) ClassNameType)) (= (type class._System.set) ClassNameType)) (= (type class._System.seq) ClassNameType)) (= (type class._System.multiset) ClassNameType)) (forall ((arg0@@11 T@T) ) (! (= (Ctor (FieldType arg0@@11)) 9)
+(assert  (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (and (= (Ctor TyType) 6) (= (type TBool) TyType)) (= (type TChar) TyType)) (= (type TInt) TyType)) (= (type TReal) TyType)) (= (type TORDINAL) TyType)) (= (Ctor TyTagType) 7)) (= (type TagBool) TyTagType)) (= (type TagChar) TyTagType)) (= (type TagInt) TyTagType)) (= (type TagReal) TyTagType)) (= (type TagORDINAL) TyTagType)) (= (type TagSet) TyTagType)) (= (type TagISet) TyTagType)) (= (type TagMultiSet) TyTagType)) (= (type TagSeq) TyTagType)) (= (type TagMap) TyTagType)) (= (type TagIMap) TyTagType)) (= (type TagClass) TyTagType)) (= (Ctor ClassNameType) 8)) (= (type class._System.int) ClassNameType)) (= (type class._System.bool) ClassNameType)) (= (type class._System.set) ClassNameType)) (= (type class._System.seq) ClassNameType)) (= (type class._System.multiset) ClassNameType)) (forall ((arg0@@11 T@T) ) (! (= (Ctor (FieldType arg0@@11)) 9)
  :qid |ctor:FieldType|
 ))) (forall ((arg0@@12 T@T) ) (! (= (FieldTypeInv0 (FieldType arg0@@12)) arg0@@12)
  :qid |typeInv:FieldTypeInv0|
  :pattern ( (FieldType arg0@@12))
-))) (= (type alloc) (FieldType boolType))) (= (Ctor NameFamilyType) 10)) (= (type allocName) NameFamilyType)) (= (type Tagclass._System.nat) TyTagType)) (= (type class._System.object?) ClassNameType)) (= (type Tagclass._System.object?) TyTagType)) (= (type Tagclass._System.object) TyTagType)) (= (type class._System.array?) ClassNameType)) (= (type Tagclass._System.array?) TyTagType)) (= (type Tagclass._System.array) TyTagType)) (= (type Tagclass._System.___hFunc1) TyTagType)) (= (type Tagclass._System.___hPartialFunc1) TyTagType)) (= (type Tagclass._System.___hTotalFunc1) TyTagType)) (= (type Tagclass._System.___hFunc0) TyTagType)) (= (type Tagclass._System.___hPartialFunc0) TyTagType)) (= (type Tagclass._System.___hTotalFunc0) TyTagType)) (= (type class._System.__default) ClassNameType)) (= (type Tagclass._System.__default) TyTagType)) (= (type Tagclass._System.___hFunc2) TyTagType)) (= (type Tagclass._System.___hPartialFunc2) TyTagType)) (= (type Tagclass._System.___hTotalFunc2) TyTagType)) (= (Ctor DtCtorIdType) 11)) (= (type |##_System._tuple#2._#Make2|) DtCtorIdType)) (= (type Tagclass._System.Tuple2) TyTagType)) (= (type class._System.Tuple2) ClassNameType)) (= (type |##_System._tuple#0._#Make0|) DtCtorIdType)) (= (type Tagclass._System.Tuple0) TyTagType)) (= (type class._System.Tuple0) ClassNameType)) (= (type Tagclass.Test.byte) TyTagType)) (= (type class.Test.byte) ClassNameType)) (= (type Tagclass.Test.Key) TyTagType)) (= (type |##Test.ChildMap.ChildMap|) DtCtorIdType)) (= (type Tagclass.Test.BetreeNode) TyTagType)) (= (type Tagclass.Test.ChildMap) TyTagType)) (= (type class.Test.ChildMap) ClassNameType)) (= (type |##Test.BetreeNode.Nil|) DtCtorIdType)) (= (type |##Test.BetreeNode.BetreeNode|) DtCtorIdType)) (= (type class.Test.BetreeNode) ClassNameType)) (= (type |##Test.QueryReceiptLine.QueryReceiptLine|) DtCtorIdType)) (= (type Tagclass.Test.QueryReceiptLine) TyTagType)) (= (type class.Test.QueryReceiptLine) ClassNameType)) (= (type |##Test.QueryReceipt.QueryReceipt|) DtCtorIdType)) (= (type Tagclass.Test.QueryReceipt) TyTagType)) (= (type class.Test.QueryReceipt) ClassNameType)) (= (type class.Test.__default) ClassNameType)) (= (type Tagclass.Test.__default) TyTagType)) (= (Ctor TyTagFamilyType) 12)) (= (type tytagFamily$nat) TyTagFamilyType)) (= (type tytagFamily$object) TyTagFamilyType)) (= (type tytagFamily$array) TyTagFamilyType)) (= (type |tytagFamily$_#Func1|) TyTagFamilyType)) (= (type |tytagFamily$_#PartialFunc1|) TyTagFamilyType)) (= (type |tytagFamily$_#TotalFunc1|) TyTagFamilyType)) (= (type |tytagFamily$_#Func0|) TyTagFamilyType)) (= (type |tytagFamily$_#PartialFunc0|) TyTagFamilyType)) (= (type |tytagFamily$_#TotalFunc0|) TyTagFamilyType)) (= (type tytagFamily$_default) TyTagFamilyType)) (= (type |tytagFamily$_#Func2|) TyTagFamilyType)) (= (type |tytagFamily$_#PartialFunc2|) TyTagFamilyType)) (= (type |tytagFamily$_#TotalFunc2|) TyTagFamilyType)) (= (type |tytagFamily$_tuple#2|) TyTagFamilyType)) (= (type |tytagFamily$_tuple#0|) TyTagFamilyType)) (= (type tytagFamily$byte) TyTagFamilyType)) (= (type tytagFamily$Key) TyTagFamilyType)) (= (type tytagFamily$BetreeNode) TyTagFamilyType)) (= (type tytagFamily$ChildMap) TyTagFamilyType)) (= (type tytagFamily$QueryReceiptLine) TyTagFamilyType)) (= (type tytagFamily$QueryReceipt) TyTagFamilyType)))
-(assert (distinct TBool TChar TInt TReal TORDINAL TagBool TagChar TagInt TagReal TagORDINAL TagSet TagISet TagMultiSet TagSeq TagMap TagIMap TagClass class._System.int class._System.bool class._System.set class._System.seq class._System.multiset alloc allocName Tagclass._System.nat class._System.object? Tagclass._System.object? Tagclass._System.object class._System.array? Tagclass._System.array? Tagclass._System.array Tagclass._System.___hFunc1 Tagclass._System.___hPartialFunc1 Tagclass._System.___hTotalFunc1 Tagclass._System.___hFunc0 Tagclass._System.___hPartialFunc0 Tagclass._System.___hTotalFunc0 class._System.__default Tagclass._System.__default Tagclass._System.___hFunc2 Tagclass._System.___hPartialFunc2 Tagclass._System.___hTotalFunc2 |##_System._tuple#2._#Make2| Tagclass._System.Tuple2 class._System.Tuple2 |##_System._tuple#0._#Make0| Tagclass._System.Tuple0 class._System.Tuple0 Tagclass.Test.byte class.Test.byte Tagclass.Test.Key |##Test.ChildMap.ChildMap| Tagclass.Test.BetreeNode Tagclass.Test.ChildMap class.Test.ChildMap |##Test.BetreeNode.Nil| |##Test.BetreeNode.BetreeNode| class.Test.BetreeNode |##Test.QueryReceiptLine.QueryReceiptLine| Tagclass.Test.QueryReceiptLine class.Test.QueryReceiptLine |##Test.QueryReceipt.QueryReceipt| Tagclass.Test.QueryReceipt class.Test.QueryReceipt class.Test.__default Tagclass.Test.__default tytagFamily$nat tytagFamily$object tytagFamily$array |tytagFamily$_#Func1| |tytagFamily$_#PartialFunc1| |tytagFamily$_#TotalFunc1| |tytagFamily$_#Func0| |tytagFamily$_#PartialFunc0| |tytagFamily$_#TotalFunc0| tytagFamily$_default |tytagFamily$_#Func2| |tytagFamily$_#PartialFunc2| |tytagFamily$_#TotalFunc2| |tytagFamily$_tuple#2| |tytagFamily$_tuple#0| tytagFamily$byte tytagFamily$Key tytagFamily$BetreeNode tytagFamily$ChildMap tytagFamily$QueryReceiptLine tytagFamily$QueryReceipt)
+))) (= (type alloc) (FieldType boolType))) (= (Ctor NameFamilyType) 10)) (= (type allocName) NameFamilyType)) (= (type Tagclass._System.nat) TyTagType)) (= (type class._System.object?) ClassNameType)) (= (type Tagclass._System.object?) TyTagType)) (= (type Tagclass._System.object) TyTagType)) (= (type class._System.array?) ClassNameType)) (= (type Tagclass._System.array?) TyTagType)) (= (type Tagclass._System.array) TyTagType)) (= (type Tagclass._System.___hFunc1) TyTagType)) (= (type Tagclass._System.___hPartialFunc1) TyTagType)) (= (type Tagclass._System.___hTotalFunc1) TyTagType)) (= (type Tagclass._System.___hFunc0) TyTagType)) (= (type Tagclass._System.___hPartialFunc0) TyTagType)) (= (type Tagclass._System.___hTotalFunc0) TyTagType)) (= (type class._System.__default) ClassNameType)) (= (type Tagclass._System.__default) TyTagType)) (= (type Tagclass._System.___hFunc2) TyTagType)) (= (type Tagclass._System.___hPartialFunc2) TyTagType)) (= (type Tagclass._System.___hTotalFunc2) TyTagType)) (= (Ctor DtCtorIdType) 11)) (= (type |##_System._tuple#2._#Make2|) DtCtorIdType)) (= (type Tagclass._System.Tuple2) TyTagType)) (= (type class._System.Tuple2) ClassNameType)) (= (type |##_System._tuple#0._#Make0|) DtCtorIdType)) (= (type Tagclass._System.Tuple0) TyTagType)) (= (type class._System.Tuple0) ClassNameType)) (= (type |##Test.ChildMap.ChildMap|) DtCtorIdType)) (= (type Tagclass.Common.Key) TyTagType)) (= (type Tagclass.Test.BetreeNode) TyTagType)) (= (type Tagclass.Test.ChildMap) TyTagType)) (= (type class.Test.ChildMap) ClassNameType)) (= (type |##Test.BetreeNode.Nil|) DtCtorIdType)) (= (type |##Test.BetreeNode.BetreeNode|) DtCtorIdType)) (= (type class.Test.BetreeNode) ClassNameType)) (= (type |##Test.QueryReceiptLine.QueryReceiptLine|) DtCtorIdType)) (= (type Tagclass.Test.QueryReceiptLine) TyTagType)) (= (type class.Test.QueryReceiptLine) ClassNameType)) (= (type |##Test.QueryReceipt.QueryReceipt|) DtCtorIdType)) (= (type Tagclass.Test.QueryReceipt) TyTagType)) (= (type class.Test.QueryReceipt) ClassNameType)) (= (type class.Test.__default) ClassNameType)) (= (type Tagclass.Test.__default) TyTagType)) (= (type Tagclass.Common.byte) TyTagType)) (= (type class.Common.byte) ClassNameType)) (= (type class.Common.__default) ClassNameType)) (= (type Tagclass.Common.__default) TyTagType)) (= (Ctor TyTagFamilyType) 12)) (= (type tytagFamily$nat) TyTagFamilyType)) (= (type tytagFamily$object) TyTagFamilyType)) (= (type tytagFamily$array) TyTagFamilyType)) (= (type |tytagFamily$_#Func1|) TyTagFamilyType)) (= (type |tytagFamily$_#PartialFunc1|) TyTagFamilyType)) (= (type |tytagFamily$_#TotalFunc1|) TyTagFamilyType)) (= (type |tytagFamily$_#Func0|) TyTagFamilyType)) (= (type |tytagFamily$_#PartialFunc0|) TyTagFamilyType)) (= (type |tytagFamily$_#TotalFunc0|) TyTagFamilyType)) (= (type tytagFamily$_default) TyTagFamilyType)) (= (type |tytagFamily$_#Func2|) TyTagFamilyType)) (= (type |tytagFamily$_#PartialFunc2|) TyTagFamilyType)) (= (type |tytagFamily$_#TotalFunc2|) TyTagFamilyType)) (= (type |tytagFamily$_tuple#2|) TyTagFamilyType)) (= (type |tytagFamily$_tuple#0|) TyTagFamilyType)) (= (type tytagFamily$Key) TyTagFamilyType)) (= (type tytagFamily$BetreeNode) TyTagFamilyType)) (= (type tytagFamily$ChildMap) TyTagFamilyType)) (= (type tytagFamily$QueryReceiptLine) TyTagFamilyType)) (= (type tytagFamily$QueryReceipt) TyTagFamilyType)) (= (type tytagFamily$byte) TyTagFamilyType)))
+(assert (distinct TBool TChar TInt TReal TORDINAL TagBool TagChar TagInt TagReal TagORDINAL TagSet TagISet TagMultiSet TagSeq TagMap TagIMap TagClass class._System.int class._System.bool class._System.set class._System.seq class._System.multiset alloc allocName Tagclass._System.nat class._System.object? Tagclass._System.object? Tagclass._System.object class._System.array? Tagclass._System.array? Tagclass._System.array Tagclass._System.___hFunc1 Tagclass._System.___hPartialFunc1 Tagclass._System.___hTotalFunc1 Tagclass._System.___hFunc0 Tagclass._System.___hPartialFunc0 Tagclass._System.___hTotalFunc0 class._System.__default Tagclass._System.__default Tagclass._System.___hFunc2 Tagclass._System.___hPartialFunc2 Tagclass._System.___hTotalFunc2 |##_System._tuple#2._#Make2| Tagclass._System.Tuple2 class._System.Tuple2 |##_System._tuple#0._#Make0| Tagclass._System.Tuple0 class._System.Tuple0 |##Test.ChildMap.ChildMap| Tagclass.Common.Key Tagclass.Test.BetreeNode Tagclass.Test.ChildMap class.Test.ChildMap |##Test.BetreeNode.Nil| |##Test.BetreeNode.BetreeNode| class.Test.BetreeNode |##Test.QueryReceiptLine.QueryReceiptLine| Tagclass.Test.QueryReceiptLine class.Test.QueryReceiptLine |##Test.QueryReceipt.QueryReceipt| Tagclass.Test.QueryReceipt class.Test.QueryReceipt class.Test.__default Tagclass.Test.__default Tagclass.Common.byte class.Common.byte class.Common.__default Tagclass.Common.__default tytagFamily$nat tytagFamily$object tytagFamily$array |tytagFamily$_#Func1| |tytagFamily$_#PartialFunc1| |tytagFamily$_#TotalFunc1| |tytagFamily$_#Func0| |tytagFamily$_#PartialFunc0| |tytagFamily$_#TotalFunc0| tytagFamily$_default |tytagFamily$_#Func2| |tytagFamily$_#PartialFunc2| |tytagFamily$_#TotalFunc2| |tytagFamily$_tuple#2| |tytagFamily$_tuple#0| tytagFamily$Key tytagFamily$BetreeNode tytagFamily$ChildMap tytagFamily$QueryReceiptLine tytagFamily$QueryReceipt tytagFamily$byte)
 )
 (assert $$Language$Dafny)
 (assert (forall ((arg0@@13 Int) ) (! (= (type (TBitvector arg0@@13)) TyType)
@@ -4277,145 +4276,117 @@
  :skolemid |883|
  :pattern ( (|_System.Tuple0#Equal| a@@103 b@@64))
 )))
-(assert (= (type Tclass.Test.byte) TyType))
-(assert (= (Tag Tclass.Test.byte) Tagclass.Test.byte))
-(assert (= (TagFamily Tclass.Test.byte) tytagFamily$byte))
-(assert (forall ((bx@@52 T@U) ) (!  (=> (and (= (type bx@@52) BoxType) ($IsBox bx@@52 Tclass.Test.byte)) (and (= ($Box ($Unbox intType bx@@52)) bx@@52) ($Is ($Unbox intType bx@@52) Tclass.Test.byte)))
- :qid |unknown.0:0|
- :skolemid |884|
- :pattern ( ($IsBox bx@@52 Tclass.Test.byte))
-)))
-(assert (forall ((|i#0| T@U) ) (!  (=> (= (type |i#0|) intType) (= ($Is |i#0| Tclass.Test.byte)  (and (INTERNAL_le_boogie 0 (U_2_int |i#0|)) (INTERNAL_lt_boogie (U_2_int |i#0|) 256))))
- :qid |unknown.0:0|
- :skolemid |885|
- :pattern ( ($Is |i#0| Tclass.Test.byte))
-)))
-(assert (forall ((|i#0@@0| T@U) ($h@@18 T@U) ) (!  (=> (and (= (type |i#0@@0|) intType) (= (type $h@@18) (MapType0Type refType MapType1Type))) ($IsAlloc |i#0@@0| Tclass.Test.byte $h@@18))
- :qid |unknown.0:0|
- :skolemid |886|
- :pattern ( ($IsAlloc |i#0@@0| Tclass.Test.byte $h@@18))
-)))
-(assert (= (type Tclass.Test.Key) TyType))
-(assert (= (Tag Tclass.Test.Key) Tagclass.Test.Key))
-(assert (= (TagFamily Tclass.Test.Key) tytagFamily$Key))
-(assert (forall ((bx@@53 T@U) ) (!  (=> (and (= (type bx@@53) BoxType) ($IsBox bx@@53 Tclass.Test.Key)) (and (= ($Box ($Unbox (SeqType BoxType) bx@@53)) bx@@53) ($Is ($Unbox (SeqType BoxType) bx@@53) Tclass.Test.Key)))
- :qid |unknown.0:0|
- :skolemid |887|
- :pattern ( ($IsBox bx@@53 Tclass.Test.Key))
-)))
-(assert (forall ((|s#0| T@U) ) (!  (=> (= (type |s#0|) (SeqType BoxType)) (= ($Is |s#0| Tclass.Test.Key)  (and ($Is |s#0| (TSeq Tclass.Test.byte)) (INTERNAL_le_boogie (|Seq#Length| |s#0|) 1024))))
- :qid |unknown.0:0|
- :skolemid |888|
- :pattern ( ($Is |s#0| Tclass.Test.Key))
-)))
-(assert (forall ((|s#0@@0| T@U) ($h@@19 T@U) ) (!  (=> (and (= (type |s#0@@0|) (SeqType BoxType)) (= (type $h@@19) (MapType0Type refType MapType1Type))) (= ($IsAlloc |s#0@@0| Tclass.Test.Key $h@@19) ($IsAlloc |s#0@@0| (TSeq Tclass.Test.byte) $h@@19)))
- :qid |unknown.0:0|
- :skolemid |889|
- :pattern ( ($IsAlloc |s#0@@0| Tclass.Test.Key $h@@19))
-)))
 (assert (forall ((arg0@@170 T@U) ) (! (= (type (|#Test.ChildMap.ChildMap| arg0@@170)) DatatypeTypeType)
  :qid |funType:#Test.ChildMap.ChildMap|
  :pattern ( (|#Test.ChildMap.ChildMap| arg0@@170))
 )))
-(assert (forall ((|a#0#0#0@@0| T@U) ) (!  (=> (= (type |a#0#0#0@@0|) (IMapType BoxType BoxType)) (= (DatatypeCtorId (|#Test.ChildMap.ChildMap| |a#0#0#0@@0|)) |##Test.ChildMap.ChildMap|))
- :qid |Testidfy.14:30|
- :skolemid |890|
- :pattern ( (|#Test.ChildMap.ChildMap| |a#0#0#0@@0|))
+(assert (forall ((|a#14#0#0| T@U) ) (!  (=> (= (type |a#14#0#0|) (IMapType BoxType BoxType)) (= (DatatypeCtorId (|#Test.ChildMap.ChildMap| |a#14#0#0|)) |##Test.ChildMap.ChildMap|))
+ :qid |Testidfy.6:30|
+ :skolemid |884|
+ :pattern ( (|#Test.ChildMap.ChildMap| |a#14#0#0|))
 )))
 (assert (forall ((d@@10 T@U) ) (!  (=> (= (type d@@10) DatatypeTypeType) (= (Test.ChildMap.ChildMap_q d@@10) (= (DatatypeCtorId d@@10) |##Test.ChildMap.ChildMap|)))
  :qid |unknown.0:0|
- :skolemid |891|
+ :skolemid |885|
  :pattern ( (Test.ChildMap.ChildMap_q d@@10))
 )))
-(assert (forall ((d@@11 T@U) ) (!  (=> (and (= (type d@@11) DatatypeTypeType) (Test.ChildMap.ChildMap_q d@@11)) (exists ((|a#1#0#0@@0| T@U) ) (!  (and (= (type |a#1#0#0@@0|) (IMapType BoxType BoxType)) (= d@@11 (|#Test.ChildMap.ChildMap| |a#1#0#0@@0|)))
- :qid |Testidfy.14:30|
- :skolemid |892|
- :no-pattern (type |a#1#0#0@@0|)
- :no-pattern (U_2_int |a#1#0#0@@0|)
- :no-pattern (U_2_bool |a#1#0#0@@0|)
+(assert (forall ((d@@11 T@U) ) (!  (=> (and (= (type d@@11) DatatypeTypeType) (Test.ChildMap.ChildMap_q d@@11)) (exists ((|a#15#0#0| T@U) ) (!  (and (= (type |a#15#0#0|) (IMapType BoxType BoxType)) (= d@@11 (|#Test.ChildMap.ChildMap| |a#15#0#0|)))
+ :qid |Testidfy.6:30|
+ :skolemid |886|
+ :no-pattern (type |a#15#0#0|)
+ :no-pattern (U_2_int |a#15#0#0|)
+ :no-pattern (U_2_bool |a#15#0#0|)
 )))
  :qid |unknown.0:0|
- :skolemid |893|
+ :skolemid |887|
  :pattern ( (Test.ChildMap.ChildMap_q d@@11))
+)))
+(assert (= (type Tclass.Common.Key) TyType))
+(assert (= (Tag Tclass.Common.Key) Tagclass.Common.Key))
+(assert (= (TagFamily Tclass.Common.Key) tytagFamily$Key))
+(assert (forall ((bx@@52 T@U) ) (!  (=> (and (= (type bx@@52) BoxType) ($IsBox bx@@52 Tclass.Common.Key)) (and (= ($Box ($Unbox (SeqType BoxType) bx@@52)) bx@@52) ($Is ($Unbox (SeqType BoxType) bx@@52) Tclass.Common.Key)))
+ :qid |unknown.0:0|
+ :skolemid |888|
+ :pattern ( ($IsBox bx@@52 Tclass.Common.Key))
 )))
 (assert (= (type Tclass.Test.BetreeNode) TyType))
 (assert (= (Tag Tclass.Test.BetreeNode) Tagclass.Test.BetreeNode))
 (assert (= (TagFamily Tclass.Test.BetreeNode) tytagFamily$BetreeNode))
-(assert (forall ((bx@@54 T@U) ) (!  (=> (and (= (type bx@@54) BoxType) ($IsBox bx@@54 Tclass.Test.BetreeNode)) (and (= ($Box ($Unbox DatatypeTypeType bx@@54)) bx@@54) ($Is ($Unbox DatatypeTypeType bx@@54) Tclass.Test.BetreeNode)))
+(assert (forall ((bx@@53 T@U) ) (!  (=> (and (= (type bx@@53) BoxType) ($IsBox bx@@53 Tclass.Test.BetreeNode)) (and (= ($Box ($Unbox DatatypeTypeType bx@@53)) bx@@53) ($Is ($Unbox DatatypeTypeType bx@@53) Tclass.Test.BetreeNode)))
  :qid |unknown.0:0|
- :skolemid |894|
- :pattern ( ($IsBox bx@@54 Tclass.Test.BetreeNode))
+ :skolemid |889|
+ :pattern ( ($IsBox bx@@53 Tclass.Test.BetreeNode))
 )))
 (assert (= (type Tclass.Test.ChildMap) TyType))
 (assert (= (Tag Tclass.Test.ChildMap) Tagclass.Test.ChildMap))
 (assert (= (TagFamily Tclass.Test.ChildMap) tytagFamily$ChildMap))
-(assert (forall ((bx@@55 T@U) ) (!  (=> (and (= (type bx@@55) BoxType) ($IsBox bx@@55 Tclass.Test.ChildMap)) (and (= ($Box ($Unbox DatatypeTypeType bx@@55)) bx@@55) ($Is ($Unbox DatatypeTypeType bx@@55) Tclass.Test.ChildMap)))
+(assert (forall ((bx@@54 T@U) ) (!  (=> (and (= (type bx@@54) BoxType) ($IsBox bx@@54 Tclass.Test.ChildMap)) (and (= ($Box ($Unbox DatatypeTypeType bx@@54)) bx@@54) ($Is ($Unbox DatatypeTypeType bx@@54) Tclass.Test.ChildMap)))
  :qid |unknown.0:0|
- :skolemid |895|
- :pattern ( ($IsBox bx@@55 Tclass.Test.ChildMap))
+ :skolemid |890|
+ :pattern ( ($IsBox bx@@54 Tclass.Test.ChildMap))
 )))
-(assert (forall ((|a#2#0#0@@0| T@U) ) (!  (=> (= (type |a#2#0#0@@0|) (IMapType BoxType BoxType)) (= ($Is (|#Test.ChildMap.ChildMap| |a#2#0#0@@0|) Tclass.Test.ChildMap) ($Is |a#2#0#0@@0| (TIMap Tclass.Test.Key Tclass.Test.BetreeNode))))
- :qid |Testidfy.14:30|
- :skolemid |896|
- :pattern ( ($Is (|#Test.ChildMap.ChildMap| |a#2#0#0@@0|) Tclass.Test.ChildMap))
+(assert (forall ((|a#16#0#0| T@U) ) (!  (=> (= (type |a#16#0#0|) (IMapType BoxType BoxType)) (= ($Is (|#Test.ChildMap.ChildMap| |a#16#0#0|) Tclass.Test.ChildMap) ($Is |a#16#0#0| (TIMap Tclass.Common.Key Tclass.Test.BetreeNode))))
+ :qid |Testidfy.6:30|
+ :skolemid |891|
+ :pattern ( ($Is (|#Test.ChildMap.ChildMap| |a#16#0#0|) Tclass.Test.ChildMap))
 )))
-(assert (forall ((|a#3#0#0@@0| T@U) ($h@@20 T@U) ) (!  (=> (and (and (= (type |a#3#0#0@@0|) (IMapType BoxType BoxType)) (= (type $h@@20) (MapType0Type refType MapType1Type))) ($IsGoodHeap $h@@20)) (= ($IsAlloc (|#Test.ChildMap.ChildMap| |a#3#0#0@@0|) Tclass.Test.ChildMap $h@@20) ($IsAlloc |a#3#0#0@@0| (TIMap Tclass.Test.Key Tclass.Test.BetreeNode) $h@@20)))
- :qid |Testidfy.14:30|
- :skolemid |897|
- :pattern ( ($IsAlloc (|#Test.ChildMap.ChildMap| |a#3#0#0@@0|) Tclass.Test.ChildMap $h@@20))
+(assert (forall ((|a#17#0#0| T@U) ($h@@18 T@U) ) (!  (=> (and (and (= (type |a#17#0#0|) (IMapType BoxType BoxType)) (= (type $h@@18) (MapType0Type refType MapType1Type))) ($IsGoodHeap $h@@18)) (= ($IsAlloc (|#Test.ChildMap.ChildMap| |a#17#0#0|) Tclass.Test.ChildMap $h@@18) ($IsAlloc |a#17#0#0| (TIMap Tclass.Common.Key Tclass.Test.BetreeNode) $h@@18)))
+ :qid |Testidfy.6:30|
+ :skolemid |892|
+ :pattern ( ($IsAlloc (|#Test.ChildMap.ChildMap| |a#17#0#0|) Tclass.Test.ChildMap $h@@18))
 )))
 (assert (forall ((arg0@@171 T@U) ) (! (= (type (Test.ChildMap.mapp arg0@@171)) (IMapType BoxType BoxType))
  :qid |funType:Test.ChildMap.mapp|
  :pattern ( (Test.ChildMap.mapp arg0@@171))
 )))
-(assert (forall ((d@@12 T@U) ($h@@21 T@U) ) (!  (=> (and (and (= (type d@@12) DatatypeTypeType) (= (type $h@@21) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@21) (and (Test.ChildMap.ChildMap_q d@@12) ($IsAlloc d@@12 Tclass.Test.ChildMap $h@@21)))) ($IsAlloc (Test.ChildMap.mapp d@@12) (TIMap Tclass.Test.Key Tclass.Test.BetreeNode) $h@@21))
+(assert (forall ((d@@12 T@U) ($h@@19 T@U) ) (!  (=> (and (and (= (type d@@12) DatatypeTypeType) (= (type $h@@19) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@19) (and (Test.ChildMap.ChildMap_q d@@12) ($IsAlloc d@@12 Tclass.Test.ChildMap $h@@19)))) ($IsAlloc (Test.ChildMap.mapp d@@12) (TIMap Tclass.Common.Key Tclass.Test.BetreeNode) $h@@19))
  :qid |unknown.0:0|
- :skolemid |898|
- :pattern ( ($IsAlloc (Test.ChildMap.mapp d@@12) (TIMap Tclass.Test.Key Tclass.Test.BetreeNode) $h@@21))
+ :skolemid |893|
+ :pattern ( ($IsAlloc (Test.ChildMap.mapp d@@12) (TIMap Tclass.Common.Key Tclass.Test.BetreeNode) $h@@19))
 )))
-(assert (forall ((|a#4#0#0@@0| T@U) ) (!  (=> (= (type |a#4#0#0@@0|) (IMapType BoxType BoxType)) (= (|#Test.ChildMap.ChildMap| (Lit |a#4#0#0@@0|)) (Lit (|#Test.ChildMap.ChildMap| |a#4#0#0@@0|))))
- :qid |Testidfy.14:30|
- :skolemid |899|
- :pattern ( (|#Test.ChildMap.ChildMap| (Lit |a#4#0#0@@0|)))
+(assert (forall ((|a#18#0#0| T@U) ) (!  (=> (= (type |a#18#0#0|) (IMapType BoxType BoxType)) (= (|#Test.ChildMap.ChildMap| (Lit |a#18#0#0|)) (Lit (|#Test.ChildMap.ChildMap| |a#18#0#0|))))
+ :qid |Testidfy.6:30|
+ :skolemid |894|
+ :pattern ( (|#Test.ChildMap.ChildMap| (Lit |a#18#0#0|)))
 )))
-(assert (forall ((|a#5#0#0@@0| T@U) ) (!  (=> (= (type |a#5#0#0@@0|) (IMapType BoxType BoxType)) (= (Test.ChildMap.mapp (|#Test.ChildMap.ChildMap| |a#5#0#0@@0|)) |a#5#0#0@@0|))
- :qid |Testidfy.14:30|
- :skolemid |900|
- :pattern ( (|#Test.ChildMap.ChildMap| |a#5#0#0@@0|))
+(assert (forall ((|a#19#0#0| T@U) ) (!  (=> (= (type |a#19#0#0|) (IMapType BoxType BoxType)) (= (Test.ChildMap.mapp (|#Test.ChildMap.ChildMap| |a#19#0#0|)) |a#19#0#0|))
+ :qid |Testidfy.6:30|
+ :skolemid |895|
+ :pattern ( (|#Test.ChildMap.ChildMap| |a#19#0#0|))
 )))
-(assert (forall ((|a#6#0#0@@0| T@U) (d@@13 T@U) ) (!  (=> (and (and (= (type |a#6#0#0@@0|) (IMapType BoxType BoxType)) (= (type d@@13) DatatypeTypeType)) (U_2_bool (MapType0Select (|IMap#Domain| |a#6#0#0@@0|) ($Box d@@13)))) (< (DtRank d@@13) (DtRank (|#Test.ChildMap.ChildMap| |a#6#0#0@@0|))))
- :qid |Testidfy.14:30|
- :skolemid |901|
- :pattern ( (MapType0Select (|IMap#Domain| |a#6#0#0@@0|) ($Box d@@13)) (|#Test.ChildMap.ChildMap| |a#6#0#0@@0|))
+(assert (forall ((|a#20#0#0| T@U) (d@@13 T@U) ) (!  (=> (and (and (= (type |a#20#0#0|) (IMapType BoxType BoxType)) (= (type d@@13) DatatypeTypeType)) (U_2_bool (MapType0Select (|IMap#Domain| |a#20#0#0|) ($Box d@@13)))) (< (DtRank d@@13) (DtRank (|#Test.ChildMap.ChildMap| |a#20#0#0|))))
+ :qid |Testidfy.6:30|
+ :skolemid |896|
+ :pattern ( (MapType0Select (|IMap#Domain| |a#20#0#0|) ($Box d@@13)) (|#Test.ChildMap.ChildMap| |a#20#0#0|))
 )))
-(assert (forall ((|a#7#0#0@@0| T@U) (bx@@56 T@U) ) (!  (=> (and (and (= (type |a#7#0#0@@0|) (IMapType BoxType BoxType)) (= (type bx@@56) BoxType)) (U_2_bool (MapType0Select (|IMap#Domain| |a#7#0#0@@0|) bx@@56))) (< (DtRank ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| |a#7#0#0@@0|) bx@@56))) (DtRank (|#Test.ChildMap.ChildMap| |a#7#0#0@@0|))))
- :qid |Testidfy.14:30|
- :skolemid |902|
- :pattern ( (MapType0Select (|IMap#Domain| |a#7#0#0@@0|) bx@@56) (|#Test.ChildMap.ChildMap| |a#7#0#0@@0|))
+(assert (forall ((|a#21#0#0| T@U) (bx@@55 T@U) ) (!  (=> (and (and (= (type |a#21#0#0|) (IMapType BoxType BoxType)) (= (type bx@@55) BoxType)) (U_2_bool (MapType0Select (|IMap#Domain| |a#21#0#0|) bx@@55))) (< (DtRank ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| |a#21#0#0|) bx@@55))) (DtRank (|#Test.ChildMap.ChildMap| |a#21#0#0|))))
+ :qid |Testidfy.6:30|
+ :skolemid |897|
+ :pattern ( (MapType0Select (|IMap#Domain| |a#21#0#0|) bx@@55) (|#Test.ChildMap.ChildMap| |a#21#0#0|))
 )))
 (assert (forall ((d@@14 T@U) ) (!  (=> (and (= (type d@@14) DatatypeTypeType) (|$IsA#Test.ChildMap| d@@14)) (Test.ChildMap.ChildMap_q d@@14))
  :qid |unknown.0:0|
- :skolemid |903|
+ :skolemid |898|
  :pattern ( (|$IsA#Test.ChildMap| d@@14))
 )))
 (assert (forall ((d@@15 T@U) ) (!  (=> (and (= (type d@@15) DatatypeTypeType) ($Is d@@15 Tclass.Test.ChildMap)) (Test.ChildMap.ChildMap_q d@@15))
  :qid |unknown.0:0|
- :skolemid |904|
+ :skolemid |899|
  :pattern ( (Test.ChildMap.ChildMap_q d@@15) ($Is d@@15 Tclass.Test.ChildMap))
 )))
 (assert (forall ((a@@104 T@U) (b@@65 T@U) ) (!  (=> (and (and (= (type a@@104) DatatypeTypeType) (= (type b@@65) DatatypeTypeType)) true) (= (|Test.ChildMap#Equal| a@@104 b@@65) (|IMap#Equal| (Test.ChildMap.mapp a@@104) (Test.ChildMap.mapp b@@65))))
  :qid |unknown.0:0|
- :skolemid |905|
+ :skolemid |900|
  :pattern ( (|Test.ChildMap#Equal| a@@104 b@@65))
 )))
 (assert (forall ((a@@105 T@U) (b@@66 T@U) ) (!  (=> (and (= (type a@@105) DatatypeTypeType) (= (type b@@66) DatatypeTypeType)) (= (|Test.ChildMap#Equal| a@@105 b@@66) (= a@@105 b@@66)))
  :qid |unknown.0:0|
- :skolemid |906|
+ :skolemid |901|
  :pattern ( (|Test.ChildMap#Equal| a@@105 b@@66))
 )))
 (assert (forall (($ly T@U) (this T@U) ) (!  (=> (and (= (type $ly) LayerTypeType) (= (type this) DatatypeTypeType)) (= (Test.ChildMap.WF ($LS $ly) this) (Test.ChildMap.WF $ly this)))
- :qid |Testidfy.15:15|
- :skolemid |907|
+ :qid |Testidfy.7:15|
+ :skolemid |902|
  :pattern ( (Test.ChildMap.WF ($LS $ly) this))
 )))
 (assert  (and (forall ((arg0@@172 T@U) ) (! (= (type (AsFuelBottom arg0@@172)) LayerTypeType)
@@ -4423,605 +4394,651 @@
  :pattern ( (AsFuelBottom arg0@@172))
 )) (= (type $LZ) LayerTypeType)))
 (assert (forall (($ly@@0 T@U) (this@@0 T@U) ) (!  (=> (and (= (type $ly@@0) LayerTypeType) (= (type this@@0) DatatypeTypeType)) (= (Test.ChildMap.WF $ly@@0 this@@0) (Test.ChildMap.WF $LZ this@@0)))
- :qid |Testidfy.15:15|
- :skolemid |908|
+ :qid |Testidfy.7:15|
+ :skolemid |903|
  :pattern ( (Test.ChildMap.WF (AsFuelBottom $ly@@0) this@@0))
 )))
-(assert  (=> (<= 8 $FunctionContextHeight) (forall (($ly@@1 T@U) (this@@1 T@U) ) (!  (=> (and (and (= (type $ly@@1) LayerTypeType) (= (type this@@1) DatatypeTypeType)) (or (|Test.ChildMap.WF#canCall| this@@1) (and (not (= 8 $FunctionContextHeight)) ($Is this@@1 Tclass.Test.ChildMap)))) true)
- :qid |Testidfy.15:15|
- :skolemid |909|
+(assert  (=> (<= 5 $FunctionContextHeight) (forall (($ly@@1 T@U) (this@@1 T@U) ) (!  (=> (and (and (= (type $ly@@1) LayerTypeType) (= (type this@@1) DatatypeTypeType)) (or (|Test.ChildMap.WF#canCall| this@@1) (and (not (= 5 $FunctionContextHeight)) ($Is this@@1 Tclass.Test.ChildMap)))) true)
+ :qid |Testidfy.7:15|
+ :skolemid |904|
  :pattern ( (Test.ChildMap.WF $ly@@1 this@@1))
 ))))
 (assert (forall (($ly@@2 T@U) (this@@2 T@U) ) (!  (=> (and (and (= (type $ly@@2) LayerTypeType) (= (type this@@2) DatatypeTypeType)) ($Is this@@2 Tclass.Test.ChildMap)) (= (|Test.ChildMap.WF#requires| $ly@@2 this@@2) true))
- :qid |Testidfy.15:15|
- :skolemid |910|
+ :qid |Testidfy.7:15|
+ :skolemid |905|
  :pattern ( (|Test.ChildMap.WF#requires| $ly@@2 this@@2))
 )))
-(assert  (=> (<= 8 $FunctionContextHeight) (forall (($ly@@3 T@U) (this@@3 T@U) ) (!  (=> (and (and (= (type $ly@@3) LayerTypeType) (= (type this@@3) DatatypeTypeType)) (or (|Test.ChildMap.WF#canCall| this@@3) (and (not (= 8 $FunctionContextHeight)) ($Is this@@3 Tclass.Test.ChildMap)))) (and (and (and (Test.ChildMap.ChildMap_q this@@3) (|Test.__default.Total#canCall| (|IMap#Domain| (Test.ChildMap.mapp this@@3)))) (=> (Test.__default.Total (|IMap#Domain| (Test.ChildMap.mapp this@@3))) (forall ((|k#0| T@U) ) (!  (=> (and (= (type |k#0|) (SeqType BoxType)) ($Is |k#0| Tclass.Test.Key)) (and (|Test.__default.AnyKey#canCall| |k#0|) (=> (Test.__default.AnyKey |k#0|) (and (Test.ChildMap.ChildMap_q this@@3) (|Test.BetreeNode.WF#canCall| ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp this@@3)) ($Box |k#0|))))))))
- :qid |Testidfy.17:20|
- :skolemid |912|
+(assert  (=> (<= 5 $FunctionContextHeight) (forall (($ly@@3 T@U) (this@@3 T@U) ) (!  (=> (and (and (= (type $ly@@3) LayerTypeType) (= (type this@@3) DatatypeTypeType)) (or (|Test.ChildMap.WF#canCall| this@@3) (and (not (= 5 $FunctionContextHeight)) ($Is this@@3 Tclass.Test.ChildMap)))) (and (and (and (Test.ChildMap.ChildMap_q this@@3) (|Common.__default.TotalSet#canCall| (|IMap#Domain| (Test.ChildMap.mapp this@@3)))) (=> (Common.__default.TotalSet (|IMap#Domain| (Test.ChildMap.mapp this@@3))) (forall ((|k#0| T@U) ) (!  (=> (and (= (type |k#0|) (SeqType BoxType)) ($Is |k#0| Tclass.Common.Key)) (and (|Common.__default.AnyKey#canCall| |k#0|) (=> (Common.__default.AnyKey |k#0|) (and (Test.ChildMap.ChildMap_q this@@3) (|Test.BetreeNode.WF#canCall| ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp this@@3)) ($Box |k#0|))))))))
+ :qid |Testidfy.9:20|
+ :skolemid |907|
  :pattern ( ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp this@@3)) ($Box |k#0|))))
- :pattern ( (Test.__default.AnyKey |k#0|))
-)))) (= (Test.ChildMap.WF ($LS $ly@@3) this@@3)  (and (Test.__default.Total (|IMap#Domain| (Test.ChildMap.mapp this@@3))) (forall ((|k#0@@0| T@U) ) (!  (=> (= (type |k#0@@0|) (SeqType BoxType)) (=> (and ($Is |k#0@@0| Tclass.Test.Key) (Test.__default.AnyKey |k#0@@0|)) (Test.BetreeNode.WF $ly@@3 ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp this@@3)) ($Box |k#0@@0|))))))
- :qid |Testidfy.17:20|
- :skolemid |911|
+ :pattern ( (Common.__default.AnyKey |k#0|))
+)))) (= (Test.ChildMap.WF ($LS $ly@@3) this@@3)  (and (Common.__default.TotalSet (|IMap#Domain| (Test.ChildMap.mapp this@@3))) (forall ((|k#0@@0| T@U) ) (!  (=> (= (type |k#0@@0|) (SeqType BoxType)) (=> (and ($Is |k#0@@0| Tclass.Common.Key) (Common.__default.AnyKey |k#0@@0|)) (Test.BetreeNode.WF $ly@@3 ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp this@@3)) ($Box |k#0@@0|))))))
+ :qid |Testidfy.9:20|
+ :skolemid |906|
  :pattern ( ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp this@@3)) ($Box |k#0@@0|))))
- :pattern ( (Test.__default.AnyKey |k#0@@0|))
+ :pattern ( (Common.__default.AnyKey |k#0@@0|))
 ))))))
- :qid |Testidfy.15:15|
- :skolemid |913|
+ :qid |Testidfy.7:15|
+ :skolemid |908|
  :pattern ( (Test.ChildMap.WF ($LS $ly@@3) this@@3))
 ))))
-(assert  (=> (<= 8 $FunctionContextHeight) (forall (($ly@@4 T@U) (this@@4 T@U) ) (!  (=> (and (and (= (type $ly@@4) LayerTypeType) (= (type this@@4) DatatypeTypeType)) (or (|Test.ChildMap.WF#canCall| (Lit this@@4)) (and (not (= 8 $FunctionContextHeight)) ($Is this@@4 Tclass.Test.ChildMap)))) (and (and (and (Test.ChildMap.ChildMap_q (Lit this@@4)) (|Test.__default.Total#canCall| (Lit (|IMap#Domain| (Lit (Test.ChildMap.mapp (Lit this@@4))))))) (=> (U_2_bool (Lit (bool_2_U (Test.__default.Total (Lit (|IMap#Domain| (Lit (Test.ChildMap.mapp (Lit this@@4))))))))) (forall ((|k#1| T@U) ) (!  (=> (and (= (type |k#1|) (SeqType BoxType)) ($Is |k#1| Tclass.Test.Key)) (and (|Test.__default.AnyKey#canCall| |k#1|) (=> (Test.__default.AnyKey |k#1|) (and (Test.ChildMap.ChildMap_q (Lit this@@4)) (|Test.BetreeNode.WF#canCall| ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Lit (Test.ChildMap.mapp (Lit this@@4)))) ($Box |k#1|))))))))
- :qid |Testidfy.17:20|
- :skolemid |915|
+(assert  (=> (<= 5 $FunctionContextHeight) (forall (($ly@@4 T@U) (this@@4 T@U) ) (!  (=> (and (and (= (type $ly@@4) LayerTypeType) (= (type this@@4) DatatypeTypeType)) (or (|Test.ChildMap.WF#canCall| (Lit this@@4)) (and (not (= 5 $FunctionContextHeight)) ($Is this@@4 Tclass.Test.ChildMap)))) (and (and (and (Test.ChildMap.ChildMap_q (Lit this@@4)) (|Common.__default.TotalSet#canCall| (Lit (|IMap#Domain| (Lit (Test.ChildMap.mapp (Lit this@@4))))))) (=> (U_2_bool (Lit (bool_2_U (Common.__default.TotalSet (Lit (|IMap#Domain| (Lit (Test.ChildMap.mapp (Lit this@@4))))))))) (forall ((|k#1| T@U) ) (!  (=> (and (= (type |k#1|) (SeqType BoxType)) ($Is |k#1| Tclass.Common.Key)) (and (|Common.__default.AnyKey#canCall| |k#1|) (=> (Common.__default.AnyKey |k#1|) (and (Test.ChildMap.ChildMap_q (Lit this@@4)) (|Test.BetreeNode.WF#canCall| ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Lit (Test.ChildMap.mapp (Lit this@@4)))) ($Box |k#1|))))))))
+ :qid |Testidfy.9:20|
+ :skolemid |910|
  :pattern ( ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp this@@4)) ($Box |k#1|))))
- :pattern ( (Test.__default.AnyKey |k#1|))
-)))) (= (Test.ChildMap.WF ($LS $ly@@4) (Lit this@@4))  (and (Test.__default.Total (Lit (|IMap#Domain| (Lit (Test.ChildMap.mapp (Lit this@@4)))))) (forall ((|k#1@@0| T@U) ) (!  (=> (= (type |k#1@@0|) (SeqType BoxType)) (=> (and ($Is |k#1@@0| Tclass.Test.Key) (Test.__default.AnyKey |k#1@@0|)) (Test.BetreeNode.WF ($LS $ly@@4) ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Lit (Test.ChildMap.mapp (Lit this@@4)))) ($Box |k#1@@0|))))))
- :qid |Testidfy.17:20|
- :skolemid |914|
+ :pattern ( (Common.__default.AnyKey |k#1|))
+)))) (= (Test.ChildMap.WF ($LS $ly@@4) (Lit this@@4))  (and (Common.__default.TotalSet (Lit (|IMap#Domain| (Lit (Test.ChildMap.mapp (Lit this@@4)))))) (forall ((|k#1@@0| T@U) ) (!  (=> (= (type |k#1@@0|) (SeqType BoxType)) (=> (and ($Is |k#1@@0| Tclass.Common.Key) (Common.__default.AnyKey |k#1@@0|)) (Test.BetreeNode.WF ($LS $ly@@4) ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Lit (Test.ChildMap.mapp (Lit this@@4)))) ($Box |k#1@@0|))))))
+ :qid |Testidfy.9:20|
+ :skolemid |909|
  :pattern ( ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp this@@4)) ($Box |k#1@@0|))))
- :pattern ( (Test.__default.AnyKey |k#1@@0|))
+ :pattern ( (Common.__default.AnyKey |k#1@@0|))
 ))))))
- :qid |Testidfy.15:15|
+ :qid |Testidfy.7:15|
  :weight 3
- :skolemid |916|
+ :skolemid |911|
  :pattern ( (Test.ChildMap.WF ($LS $ly@@4) (Lit this@@4)))
 ))))
 (assert (= (type |#Test.BetreeNode.Nil|) DatatypeTypeType))
 (assert (= (DatatypeCtorId |#Test.BetreeNode.Nil|) |##Test.BetreeNode.Nil|))
 (assert (forall ((d@@16 T@U) ) (!  (=> (= (type d@@16) DatatypeTypeType) (= (Test.BetreeNode.Nil_q d@@16) (= (DatatypeCtorId d@@16) |##Test.BetreeNode.Nil|)))
  :qid |unknown.0:0|
- :skolemid |922|
+ :skolemid |917|
  :pattern ( (Test.BetreeNode.Nil_q d@@16))
 )))
 (assert (forall ((d@@17 T@U) ) (!  (=> (and (= (type d@@17) DatatypeTypeType) (Test.BetreeNode.Nil_q d@@17)) (= d@@17 |#Test.BetreeNode.Nil|))
  :qid |unknown.0:0|
- :skolemid |923|
+ :skolemid |918|
  :pattern ( (Test.BetreeNode.Nil_q d@@17))
 )))
 (assert ($Is |#Test.BetreeNode.Nil| Tclass.Test.BetreeNode))
-(assert (forall (($h@@22 T@U) ) (!  (=> (and (= (type $h@@22) (MapType0Type refType MapType1Type)) ($IsGoodHeap $h@@22)) ($IsAlloc |#Test.BetreeNode.Nil| Tclass.Test.BetreeNode $h@@22))
+(assert (forall (($h@@20 T@U) ) (!  (=> (and (= (type $h@@20) (MapType0Type refType MapType1Type)) ($IsGoodHeap $h@@20)) ($IsAlloc |#Test.BetreeNode.Nil| Tclass.Test.BetreeNode $h@@20))
  :qid |DafnyPreludebpl.545:12|
- :skolemid |924|
- :pattern ( ($IsAlloc |#Test.BetreeNode.Nil| Tclass.Test.BetreeNode $h@@22))
+ :skolemid |919|
+ :pattern ( ($IsAlloc |#Test.BetreeNode.Nil| Tclass.Test.BetreeNode $h@@20))
 )))
 (assert (= |#Test.BetreeNode.Nil| (Lit |#Test.BetreeNode.Nil|)))
 (assert (forall ((arg0@@173 T@U) ) (! (= (type (|#Test.BetreeNode.BetreeNode| arg0@@173)) DatatypeTypeType)
  :qid |funType:#Test.BetreeNode.BetreeNode|
  :pattern ( (|#Test.BetreeNode.BetreeNode| arg0@@173))
 )))
-(assert (forall ((|a#5#0#0@@1| T@U) ) (!  (=> (= (type |a#5#0#0@@1|) DatatypeTypeType) (= (DatatypeCtorId (|#Test.BetreeNode.BetreeNode| |a#5#0#0@@1|)) |##Test.BetreeNode.BetreeNode|))
- :qid |Testidfy.21:40|
- :skolemid |925|
- :pattern ( (|#Test.BetreeNode.BetreeNode| |a#5#0#0@@1|))
+(assert (forall ((|a#5#0#0@@0| T@U) ) (!  (=> (= (type |a#5#0#0@@0|) DatatypeTypeType) (= (DatatypeCtorId (|#Test.BetreeNode.BetreeNode| |a#5#0#0@@0|)) |##Test.BetreeNode.BetreeNode|))
+ :qid |Testidfy.13:40|
+ :skolemid |920|
+ :pattern ( (|#Test.BetreeNode.BetreeNode| |a#5#0#0@@0|))
 )))
 (assert (forall ((d@@18 T@U) ) (!  (=> (= (type d@@18) DatatypeTypeType) (= (Test.BetreeNode.BetreeNode_q d@@18) (= (DatatypeCtorId d@@18) |##Test.BetreeNode.BetreeNode|)))
  :qid |unknown.0:0|
- :skolemid |926|
+ :skolemid |921|
  :pattern ( (Test.BetreeNode.BetreeNode_q d@@18))
 )))
-(assert (forall ((d@@19 T@U) ) (!  (=> (and (= (type d@@19) DatatypeTypeType) (Test.BetreeNode.BetreeNode_q d@@19)) (exists ((|a#6#0#0@@1| T@U) ) (!  (and (= (type |a#6#0#0@@1|) DatatypeTypeType) (= d@@19 (|#Test.BetreeNode.BetreeNode| |a#6#0#0@@1|)))
- :qid |Testidfy.21:40|
- :skolemid |927|
- :no-pattern (type |a#6#0#0@@1|)
- :no-pattern (U_2_int |a#6#0#0@@1|)
- :no-pattern (U_2_bool |a#6#0#0@@1|)
+(assert (forall ((d@@19 T@U) ) (!  (=> (and (= (type d@@19) DatatypeTypeType) (Test.BetreeNode.BetreeNode_q d@@19)) (exists ((|a#6#0#0@@0| T@U) ) (!  (and (= (type |a#6#0#0@@0|) DatatypeTypeType) (= d@@19 (|#Test.BetreeNode.BetreeNode| |a#6#0#0@@0|)))
+ :qid |Testidfy.13:40|
+ :skolemid |922|
+ :no-pattern (type |a#6#0#0@@0|)
+ :no-pattern (U_2_int |a#6#0#0@@0|)
+ :no-pattern (U_2_bool |a#6#0#0@@0|)
 )))
  :qid |unknown.0:0|
- :skolemid |928|
+ :skolemid |923|
  :pattern ( (Test.BetreeNode.BetreeNode_q d@@19))
 )))
-(assert (forall ((|a#7#0#0@@1| T@U) ) (!  (=> (= (type |a#7#0#0@@1|) DatatypeTypeType) (= ($Is (|#Test.BetreeNode.BetreeNode| |a#7#0#0@@1|) Tclass.Test.BetreeNode) ($Is |a#7#0#0@@1| Tclass.Test.ChildMap)))
- :qid |Testidfy.21:40|
- :skolemid |929|
- :pattern ( ($Is (|#Test.BetreeNode.BetreeNode| |a#7#0#0@@1|) Tclass.Test.BetreeNode))
+(assert (forall ((|a#7#0#0@@0| T@U) ) (!  (=> (= (type |a#7#0#0@@0|) DatatypeTypeType) (= ($Is (|#Test.BetreeNode.BetreeNode| |a#7#0#0@@0|) Tclass.Test.BetreeNode) ($Is |a#7#0#0@@0| Tclass.Test.ChildMap)))
+ :qid |Testidfy.13:40|
+ :skolemid |924|
+ :pattern ( ($Is (|#Test.BetreeNode.BetreeNode| |a#7#0#0@@0|) Tclass.Test.BetreeNode))
 )))
-(assert (forall ((|a#8#0#0@@0| T@U) ($h@@23 T@U) ) (!  (=> (and (and (= (type |a#8#0#0@@0|) DatatypeTypeType) (= (type $h@@23) (MapType0Type refType MapType1Type))) ($IsGoodHeap $h@@23)) (= ($IsAlloc (|#Test.BetreeNode.BetreeNode| |a#8#0#0@@0|) Tclass.Test.BetreeNode $h@@23) ($IsAlloc |a#8#0#0@@0| Tclass.Test.ChildMap $h@@23)))
- :qid |Testidfy.21:40|
- :skolemid |930|
- :pattern ( ($IsAlloc (|#Test.BetreeNode.BetreeNode| |a#8#0#0@@0|) Tclass.Test.BetreeNode $h@@23))
+(assert (forall ((|a#8#0#0@@0| T@U) ($h@@21 T@U) ) (!  (=> (and (and (= (type |a#8#0#0@@0|) DatatypeTypeType) (= (type $h@@21) (MapType0Type refType MapType1Type))) ($IsGoodHeap $h@@21)) (= ($IsAlloc (|#Test.BetreeNode.BetreeNode| |a#8#0#0@@0|) Tclass.Test.BetreeNode $h@@21) ($IsAlloc |a#8#0#0@@0| Tclass.Test.ChildMap $h@@21)))
+ :qid |Testidfy.13:40|
+ :skolemid |925|
+ :pattern ( ($IsAlloc (|#Test.BetreeNode.BetreeNode| |a#8#0#0@@0|) Tclass.Test.BetreeNode $h@@21))
 )))
 (assert (forall ((arg0@@174 T@U) ) (! (= (type (Test.BetreeNode.children arg0@@174)) DatatypeTypeType)
  :qid |funType:Test.BetreeNode.children|
  :pattern ( (Test.BetreeNode.children arg0@@174))
 )))
-(assert (forall ((d@@20 T@U) ($h@@24 T@U) ) (!  (=> (and (and (= (type d@@20) DatatypeTypeType) (= (type $h@@24) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@24) (and (Test.BetreeNode.BetreeNode_q d@@20) ($IsAlloc d@@20 Tclass.Test.BetreeNode $h@@24)))) ($IsAlloc (Test.BetreeNode.children d@@20) Tclass.Test.ChildMap $h@@24))
+(assert (forall ((d@@20 T@U) ($h@@22 T@U) ) (!  (=> (and (and (= (type d@@20) DatatypeTypeType) (= (type $h@@22) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@22) (and (Test.BetreeNode.BetreeNode_q d@@20) ($IsAlloc d@@20 Tclass.Test.BetreeNode $h@@22)))) ($IsAlloc (Test.BetreeNode.children d@@20) Tclass.Test.ChildMap $h@@22))
  :qid |unknown.0:0|
- :skolemid |931|
- :pattern ( ($IsAlloc (Test.BetreeNode.children d@@20) Tclass.Test.ChildMap $h@@24))
+ :skolemid |926|
+ :pattern ( ($IsAlloc (Test.BetreeNode.children d@@20) Tclass.Test.ChildMap $h@@22))
 )))
 (assert (forall ((|a#9#0#0| T@U) ) (!  (=> (= (type |a#9#0#0|) DatatypeTypeType) (= (|#Test.BetreeNode.BetreeNode| (Lit |a#9#0#0|)) (Lit (|#Test.BetreeNode.BetreeNode| |a#9#0#0|))))
- :qid |Testidfy.21:40|
- :skolemid |932|
+ :qid |Testidfy.13:40|
+ :skolemid |927|
  :pattern ( (|#Test.BetreeNode.BetreeNode| (Lit |a#9#0#0|)))
 )))
 (assert (forall ((|a#10#0#0| T@U) ) (!  (=> (= (type |a#10#0#0|) DatatypeTypeType) (= (Test.BetreeNode.children (|#Test.BetreeNode.BetreeNode| |a#10#0#0|)) |a#10#0#0|))
- :qid |Testidfy.21:40|
- :skolemid |933|
+ :qid |Testidfy.13:40|
+ :skolemid |928|
  :pattern ( (|#Test.BetreeNode.BetreeNode| |a#10#0#0|))
 )))
 (assert (forall ((|a#11#0#0| T@U) ) (!  (=> (= (type |a#11#0#0|) DatatypeTypeType) (< (DtRank |a#11#0#0|) (DtRank (|#Test.BetreeNode.BetreeNode| |a#11#0#0|))))
- :qid |Testidfy.21:40|
- :skolemid |934|
+ :qid |Testidfy.13:40|
+ :skolemid |929|
  :pattern ( (|#Test.BetreeNode.BetreeNode| |a#11#0#0|))
 )))
 (assert (forall ((d@@21 T@U) ) (!  (=> (and (= (type d@@21) DatatypeTypeType) (|$IsA#Test.BetreeNode| d@@21)) (or (Test.BetreeNode.Nil_q d@@21) (Test.BetreeNode.BetreeNode_q d@@21)))
  :qid |unknown.0:0|
- :skolemid |935|
+ :skolemid |930|
  :pattern ( (|$IsA#Test.BetreeNode| d@@21))
 )))
 (assert (forall ((d@@22 T@U) ) (!  (=> (and (= (type d@@22) DatatypeTypeType) ($Is d@@22 Tclass.Test.BetreeNode)) (or (Test.BetreeNode.Nil_q d@@22) (Test.BetreeNode.BetreeNode_q d@@22)))
  :qid |unknown.0:0|
- :skolemid |936|
+ :skolemid |931|
  :pattern ( (Test.BetreeNode.BetreeNode_q d@@22) ($Is d@@22 Tclass.Test.BetreeNode))
  :pattern ( (Test.BetreeNode.Nil_q d@@22) ($Is d@@22 Tclass.Test.BetreeNode))
 )))
 (assert (forall ((a@@106 T@U) (b@@67 T@U) ) (!  (=> (and (and (= (type a@@106) DatatypeTypeType) (= (type b@@67) DatatypeTypeType)) (and (Test.BetreeNode.Nil_q a@@106) (Test.BetreeNode.Nil_q b@@67))) (= (|Test.BetreeNode#Equal| a@@106 b@@67) true))
  :qid |unknown.0:0|
- :skolemid |937|
+ :skolemid |932|
  :pattern ( (|Test.BetreeNode#Equal| a@@106 b@@67) (Test.BetreeNode.Nil_q a@@106))
  :pattern ( (|Test.BetreeNode#Equal| a@@106 b@@67) (Test.BetreeNode.Nil_q b@@67))
 )))
 (assert (forall ((a@@107 T@U) (b@@68 T@U) ) (!  (=> (and (and (= (type a@@107) DatatypeTypeType) (= (type b@@68) DatatypeTypeType)) (and (Test.BetreeNode.BetreeNode_q a@@107) (Test.BetreeNode.BetreeNode_q b@@68))) (= (|Test.BetreeNode#Equal| a@@107 b@@68) (|Test.ChildMap#Equal| (Test.BetreeNode.children a@@107) (Test.BetreeNode.children b@@68))))
  :qid |unknown.0:0|
- :skolemid |938|
+ :skolemid |933|
  :pattern ( (|Test.BetreeNode#Equal| a@@107 b@@68) (Test.BetreeNode.BetreeNode_q a@@107))
  :pattern ( (|Test.BetreeNode#Equal| a@@107 b@@68) (Test.BetreeNode.BetreeNode_q b@@68))
 )))
 (assert (forall ((a@@108 T@U) (b@@69 T@U) ) (!  (=> (and (= (type a@@108) DatatypeTypeType) (= (type b@@69) DatatypeTypeType)) (= (|Test.BetreeNode#Equal| a@@108 b@@69) (= a@@108 b@@69)))
  :qid |unknown.0:0|
- :skolemid |939|
+ :skolemid |934|
  :pattern ( (|Test.BetreeNode#Equal| a@@108 b@@69))
 )))
 (assert (forall (($ly@@5 T@U) (this@@5 T@U) ) (!  (=> (and (= (type $ly@@5) LayerTypeType) (= (type this@@5) DatatypeTypeType)) (= (Test.BetreeNode.WF ($LS $ly@@5) this@@5) (Test.BetreeNode.WF $ly@@5 this@@5)))
- :qid |Testidfy.22:15|
- :skolemid |940|
+ :qid |Testidfy.14:15|
+ :skolemid |935|
  :pattern ( (Test.BetreeNode.WF ($LS $ly@@5) this@@5))
 )))
 (assert (forall (($ly@@6 T@U) (this@@6 T@U) ) (!  (=> (and (= (type $ly@@6) LayerTypeType) (= (type this@@6) DatatypeTypeType)) (= (Test.BetreeNode.WF $ly@@6 this@@6) (Test.BetreeNode.WF $LZ this@@6)))
- :qid |Testidfy.22:15|
- :skolemid |941|
+ :qid |Testidfy.14:15|
+ :skolemid |936|
  :pattern ( (Test.BetreeNode.WF (AsFuelBottom $ly@@6) this@@6))
 )))
-(assert  (=> (<= 8 $FunctionContextHeight) (forall (($ly@@7 T@U) (this@@7 T@U) ) (!  (=> (and (and (= (type $ly@@7) LayerTypeType) (= (type this@@7) DatatypeTypeType)) (or (|Test.BetreeNode.WF#canCall| this@@7) (and (not (= 8 $FunctionContextHeight)) ($Is this@@7 Tclass.Test.BetreeNode)))) true)
- :qid |Testidfy.22:15|
- :skolemid |942|
+(assert  (=> (<= 5 $FunctionContextHeight) (forall (($ly@@7 T@U) (this@@7 T@U) ) (!  (=> (and (and (= (type $ly@@7) LayerTypeType) (= (type this@@7) DatatypeTypeType)) (or (|Test.BetreeNode.WF#canCall| this@@7) (and (not (= 5 $FunctionContextHeight)) ($Is this@@7 Tclass.Test.BetreeNode)))) true)
+ :qid |Testidfy.14:15|
+ :skolemid |937|
  :pattern ( (Test.BetreeNode.WF $ly@@7 this@@7))
 ))))
 (assert (forall (($ly@@8 T@U) (this@@8 T@U) ) (!  (=> (and (and (= (type $ly@@8) LayerTypeType) (= (type this@@8) DatatypeTypeType)) ($Is this@@8 Tclass.Test.BetreeNode)) (= (|Test.BetreeNode.WF#requires| $ly@@8 this@@8) true))
- :qid |Testidfy.22:15|
- :skolemid |943|
+ :qid |Testidfy.14:15|
+ :skolemid |938|
  :pattern ( (|Test.BetreeNode.WF#requires| $ly@@8 this@@8))
 )))
-(assert  (=> (<= 8 $FunctionContextHeight) (forall (($ly@@9 T@U) (this@@9 T@U) ) (!  (=> (and (and (= (type $ly@@9) LayerTypeType) (= (type this@@9) DatatypeTypeType)) (or (|Test.BetreeNode.WF#canCall| this@@9) (and (not (= 8 $FunctionContextHeight)) ($Is this@@9 Tclass.Test.BetreeNode)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (=> (Test.BetreeNode.BetreeNode_q this@@9) (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children this@@9)))) (= (Test.BetreeNode.WF ($LS $ly@@9) this@@9)  (and true (=> (Test.BetreeNode.BetreeNode_q this@@9) (Test.ChildMap.WF $ly@@9 (Test.BetreeNode.children this@@9)))))))
- :qid |Testidfy.22:15|
- :skolemid |944|
+(assert  (=> (<= 5 $FunctionContextHeight) (forall (($ly@@9 T@U) (this@@9 T@U) ) (!  (=> (and (and (= (type $ly@@9) LayerTypeType) (= (type this@@9) DatatypeTypeType)) (or (|Test.BetreeNode.WF#canCall| this@@9) (and (not (= 5 $FunctionContextHeight)) ($Is this@@9 Tclass.Test.BetreeNode)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (=> (Test.BetreeNode.BetreeNode_q this@@9) (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children this@@9)))) (= (Test.BetreeNode.WF ($LS $ly@@9) this@@9)  (and true (=> (Test.BetreeNode.BetreeNode_q this@@9) (Test.ChildMap.WF $ly@@9 (Test.BetreeNode.children this@@9)))))))
+ :qid |Testidfy.14:15|
+ :skolemid |939|
  :pattern ( (Test.BetreeNode.WF ($LS $ly@@9) this@@9))
 ))))
-(assert  (=> (<= 8 $FunctionContextHeight) (forall (($ly@@10 T@U) (this@@10 T@U) ) (!  (=> (and (and (= (type $ly@@10) LayerTypeType) (= (type this@@10) DatatypeTypeType)) (or (|Test.BetreeNode.WF#canCall| (Lit this@@10)) (and (not (= 8 $FunctionContextHeight)) ($Is this@@10 Tclass.Test.BetreeNode)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (=> (U_2_bool (Lit (bool_2_U (Test.BetreeNode.BetreeNode_q (Lit this@@10))))) (|Test.ChildMap.WF#canCall| (Lit (Test.BetreeNode.children (Lit this@@10)))))) (= (Test.BetreeNode.WF ($LS $ly@@10) (Lit this@@10)) (U_2_bool (Lit (bool_2_U  (and true (=> (Test.BetreeNode.BetreeNode_q (Lit this@@10)) (Test.ChildMap.WF ($LS $ly@@10) (Lit (Test.BetreeNode.children (Lit this@@10))))))))))))
- :qid |Testidfy.22:15|
+(assert  (=> (<= 5 $FunctionContextHeight) (forall (($ly@@10 T@U) (this@@10 T@U) ) (!  (=> (and (and (= (type $ly@@10) LayerTypeType) (= (type this@@10) DatatypeTypeType)) (or (|Test.BetreeNode.WF#canCall| (Lit this@@10)) (and (not (= 5 $FunctionContextHeight)) ($Is this@@10 Tclass.Test.BetreeNode)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (=> (U_2_bool (Lit (bool_2_U (Test.BetreeNode.BetreeNode_q (Lit this@@10))))) (|Test.ChildMap.WF#canCall| (Lit (Test.BetreeNode.children (Lit this@@10)))))) (= (Test.BetreeNode.WF ($LS $ly@@10) (Lit this@@10)) (U_2_bool (Lit (bool_2_U  (and true (=> (Test.BetreeNode.BetreeNode_q (Lit this@@10)) (Test.ChildMap.WF ($LS $ly@@10) (Lit (Test.BetreeNode.children (Lit this@@10))))))))))))
+ :qid |Testidfy.14:15|
  :weight 3
- :skolemid |945|
+ :skolemid |940|
  :pattern ( (Test.BetreeNode.WF ($LS $ly@@10) (Lit this@@10)))
 ))))
 (assert (forall ((arg0@@175 T@U) ) (! (= (type (|#Test.QueryReceiptLine.QueryReceiptLine| arg0@@175)) DatatypeTypeType)
  :qid |funType:#Test.QueryReceiptLine.QueryReceiptLine|
  :pattern ( (|#Test.QueryReceiptLine.QueryReceiptLine| arg0@@175))
 )))
-(assert (forall ((|a#0#0#0@@1| T@U) ) (!  (=> (= (type |a#0#0#0@@1|) DatatypeTypeType) (= (DatatypeCtorId (|#Test.QueryReceiptLine.QueryReceiptLine| |a#0#0#0@@1|)) |##Test.QueryReceiptLine.QueryReceiptLine|))
- :qid |Testidfy.27:46|
- :skolemid |947|
- :pattern ( (|#Test.QueryReceiptLine.QueryReceiptLine| |a#0#0#0@@1|))
+(assert (forall ((|a#0#0#0@@0| T@U) ) (!  (=> (= (type |a#0#0#0@@0|) DatatypeTypeType) (= (DatatypeCtorId (|#Test.QueryReceiptLine.QueryReceiptLine| |a#0#0#0@@0|)) |##Test.QueryReceiptLine.QueryReceiptLine|))
+ :qid |Testidfy.19:46|
+ :skolemid |942|
+ :pattern ( (|#Test.QueryReceiptLine.QueryReceiptLine| |a#0#0#0@@0|))
 )))
 (assert (forall ((d@@23 T@U) ) (!  (=> (= (type d@@23) DatatypeTypeType) (= (Test.QueryReceiptLine.QueryReceiptLine_q d@@23) (= (DatatypeCtorId d@@23) |##Test.QueryReceiptLine.QueryReceiptLine|)))
  :qid |unknown.0:0|
- :skolemid |948|
+ :skolemid |943|
  :pattern ( (Test.QueryReceiptLine.QueryReceiptLine_q d@@23))
 )))
-(assert (forall ((d@@24 T@U) ) (!  (=> (and (= (type d@@24) DatatypeTypeType) (Test.QueryReceiptLine.QueryReceiptLine_q d@@24)) (exists ((|a#1#0#0@@1| T@U) ) (!  (and (= (type |a#1#0#0@@1|) DatatypeTypeType) (= d@@24 (|#Test.QueryReceiptLine.QueryReceiptLine| |a#1#0#0@@1|)))
- :qid |Testidfy.27:46|
- :skolemid |949|
- :no-pattern (type |a#1#0#0@@1|)
- :no-pattern (U_2_int |a#1#0#0@@1|)
- :no-pattern (U_2_bool |a#1#0#0@@1|)
+(assert (forall ((d@@24 T@U) ) (!  (=> (and (= (type d@@24) DatatypeTypeType) (Test.QueryReceiptLine.QueryReceiptLine_q d@@24)) (exists ((|a#1#0#0@@0| T@U) ) (!  (and (= (type |a#1#0#0@@0|) DatatypeTypeType) (= d@@24 (|#Test.QueryReceiptLine.QueryReceiptLine| |a#1#0#0@@0|)))
+ :qid |Testidfy.19:46|
+ :skolemid |944|
+ :no-pattern (type |a#1#0#0@@0|)
+ :no-pattern (U_2_int |a#1#0#0@@0|)
+ :no-pattern (U_2_bool |a#1#0#0@@0|)
 )))
  :qid |unknown.0:0|
- :skolemid |950|
+ :skolemid |945|
  :pattern ( (Test.QueryReceiptLine.QueryReceiptLine_q d@@24))
 )))
 (assert (= (type Tclass.Test.QueryReceiptLine) TyType))
 (assert (= (Tag Tclass.Test.QueryReceiptLine) Tagclass.Test.QueryReceiptLine))
 (assert (= (TagFamily Tclass.Test.QueryReceiptLine) tytagFamily$QueryReceiptLine))
-(assert (forall ((bx@@57 T@U) ) (!  (=> (and (= (type bx@@57) BoxType) ($IsBox bx@@57 Tclass.Test.QueryReceiptLine)) (and (= ($Box ($Unbox DatatypeTypeType bx@@57)) bx@@57) ($Is ($Unbox DatatypeTypeType bx@@57) Tclass.Test.QueryReceiptLine)))
+(assert (forall ((bx@@56 T@U) ) (!  (=> (and (= (type bx@@56) BoxType) ($IsBox bx@@56 Tclass.Test.QueryReceiptLine)) (and (= ($Box ($Unbox DatatypeTypeType bx@@56)) bx@@56) ($Is ($Unbox DatatypeTypeType bx@@56) Tclass.Test.QueryReceiptLine)))
  :qid |unknown.0:0|
- :skolemid |951|
- :pattern ( ($IsBox bx@@57 Tclass.Test.QueryReceiptLine))
+ :skolemid |946|
+ :pattern ( ($IsBox bx@@56 Tclass.Test.QueryReceiptLine))
 )))
-(assert (forall ((|a#2#0#0@@1| T@U) ) (!  (=> (= (type |a#2#0#0@@1|) DatatypeTypeType) (= ($Is (|#Test.QueryReceiptLine.QueryReceiptLine| |a#2#0#0@@1|) Tclass.Test.QueryReceiptLine) ($Is |a#2#0#0@@1| Tclass.Test.BetreeNode)))
- :qid |Testidfy.27:46|
- :skolemid |952|
- :pattern ( ($Is (|#Test.QueryReceiptLine.QueryReceiptLine| |a#2#0#0@@1|) Tclass.Test.QueryReceiptLine))
+(assert (forall ((|a#2#0#0@@0| T@U) ) (!  (=> (= (type |a#2#0#0@@0|) DatatypeTypeType) (= ($Is (|#Test.QueryReceiptLine.QueryReceiptLine| |a#2#0#0@@0|) Tclass.Test.QueryReceiptLine) ($Is |a#2#0#0@@0| Tclass.Test.BetreeNode)))
+ :qid |Testidfy.19:46|
+ :skolemid |947|
+ :pattern ( ($Is (|#Test.QueryReceiptLine.QueryReceiptLine| |a#2#0#0@@0|) Tclass.Test.QueryReceiptLine))
 )))
-(assert (forall ((|a#3#0#0@@1| T@U) ($h@@25 T@U) ) (!  (=> (and (and (= (type |a#3#0#0@@1|) DatatypeTypeType) (= (type $h@@25) (MapType0Type refType MapType1Type))) ($IsGoodHeap $h@@25)) (= ($IsAlloc (|#Test.QueryReceiptLine.QueryReceiptLine| |a#3#0#0@@1|) Tclass.Test.QueryReceiptLine $h@@25) ($IsAlloc |a#3#0#0@@1| Tclass.Test.BetreeNode $h@@25)))
- :qid |Testidfy.27:46|
- :skolemid |953|
- :pattern ( ($IsAlloc (|#Test.QueryReceiptLine.QueryReceiptLine| |a#3#0#0@@1|) Tclass.Test.QueryReceiptLine $h@@25))
+(assert (forall ((|a#3#0#0@@0| T@U) ($h@@23 T@U) ) (!  (=> (and (and (= (type |a#3#0#0@@0|) DatatypeTypeType) (= (type $h@@23) (MapType0Type refType MapType1Type))) ($IsGoodHeap $h@@23)) (= ($IsAlloc (|#Test.QueryReceiptLine.QueryReceiptLine| |a#3#0#0@@0|) Tclass.Test.QueryReceiptLine $h@@23) ($IsAlloc |a#3#0#0@@0| Tclass.Test.BetreeNode $h@@23)))
+ :qid |Testidfy.19:46|
+ :skolemid |948|
+ :pattern ( ($IsAlloc (|#Test.QueryReceiptLine.QueryReceiptLine| |a#3#0#0@@0|) Tclass.Test.QueryReceiptLine $h@@23))
 )))
 (assert (forall ((arg0@@176 T@U) ) (! (= (type (Test.QueryReceiptLine.node arg0@@176)) DatatypeTypeType)
  :qid |funType:Test.QueryReceiptLine.node|
  :pattern ( (Test.QueryReceiptLine.node arg0@@176))
 )))
-(assert (forall ((d@@25 T@U) ($h@@26 T@U) ) (!  (=> (and (and (= (type d@@25) DatatypeTypeType) (= (type $h@@26) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@26) (and (Test.QueryReceiptLine.QueryReceiptLine_q d@@25) ($IsAlloc d@@25 Tclass.Test.QueryReceiptLine $h@@26)))) ($IsAlloc (Test.QueryReceiptLine.node d@@25) Tclass.Test.BetreeNode $h@@26))
+(assert (forall ((d@@25 T@U) ($h@@24 T@U) ) (!  (=> (and (and (= (type d@@25) DatatypeTypeType) (= (type $h@@24) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@24) (and (Test.QueryReceiptLine.QueryReceiptLine_q d@@25) ($IsAlloc d@@25 Tclass.Test.QueryReceiptLine $h@@24)))) ($IsAlloc (Test.QueryReceiptLine.node d@@25) Tclass.Test.BetreeNode $h@@24))
  :qid |unknown.0:0|
- :skolemid |954|
- :pattern ( ($IsAlloc (Test.QueryReceiptLine.node d@@25) Tclass.Test.BetreeNode $h@@26))
+ :skolemid |949|
+ :pattern ( ($IsAlloc (Test.QueryReceiptLine.node d@@25) Tclass.Test.BetreeNode $h@@24))
 )))
-(assert (forall ((|a#4#0#0@@1| T@U) ) (!  (=> (= (type |a#4#0#0@@1|) DatatypeTypeType) (= (|#Test.QueryReceiptLine.QueryReceiptLine| (Lit |a#4#0#0@@1|)) (Lit (|#Test.QueryReceiptLine.QueryReceiptLine| |a#4#0#0@@1|))))
- :qid |Testidfy.27:46|
- :skolemid |955|
- :pattern ( (|#Test.QueryReceiptLine.QueryReceiptLine| (Lit |a#4#0#0@@1|)))
+(assert (forall ((|a#4#0#0@@0| T@U) ) (!  (=> (= (type |a#4#0#0@@0|) DatatypeTypeType) (= (|#Test.QueryReceiptLine.QueryReceiptLine| (Lit |a#4#0#0@@0|)) (Lit (|#Test.QueryReceiptLine.QueryReceiptLine| |a#4#0#0@@0|))))
+ :qid |Testidfy.19:46|
+ :skolemid |950|
+ :pattern ( (|#Test.QueryReceiptLine.QueryReceiptLine| (Lit |a#4#0#0@@0|)))
 )))
-(assert (forall ((|a#5#0#0@@2| T@U) ) (!  (=> (= (type |a#5#0#0@@2|) DatatypeTypeType) (= (Test.QueryReceiptLine.node (|#Test.QueryReceiptLine.QueryReceiptLine| |a#5#0#0@@2|)) |a#5#0#0@@2|))
- :qid |Testidfy.27:46|
- :skolemid |956|
- :pattern ( (|#Test.QueryReceiptLine.QueryReceiptLine| |a#5#0#0@@2|))
+(assert (forall ((|a#5#0#0@@1| T@U) ) (!  (=> (= (type |a#5#0#0@@1|) DatatypeTypeType) (= (Test.QueryReceiptLine.node (|#Test.QueryReceiptLine.QueryReceiptLine| |a#5#0#0@@1|)) |a#5#0#0@@1|))
+ :qid |Testidfy.19:46|
+ :skolemid |951|
+ :pattern ( (|#Test.QueryReceiptLine.QueryReceiptLine| |a#5#0#0@@1|))
 )))
-(assert (forall ((|a#6#0#0@@2| T@U) ) (!  (=> (= (type |a#6#0#0@@2|) DatatypeTypeType) (< (DtRank |a#6#0#0@@2|) (DtRank (|#Test.QueryReceiptLine.QueryReceiptLine| |a#6#0#0@@2|))))
- :qid |Testidfy.27:46|
- :skolemid |957|
- :pattern ( (|#Test.QueryReceiptLine.QueryReceiptLine| |a#6#0#0@@2|))
+(assert (forall ((|a#6#0#0@@1| T@U) ) (!  (=> (= (type |a#6#0#0@@1|) DatatypeTypeType) (< (DtRank |a#6#0#0@@1|) (DtRank (|#Test.QueryReceiptLine.QueryReceiptLine| |a#6#0#0@@1|))))
+ :qid |Testidfy.19:46|
+ :skolemid |952|
+ :pattern ( (|#Test.QueryReceiptLine.QueryReceiptLine| |a#6#0#0@@1|))
 )))
 (assert (forall ((d@@26 T@U) ) (!  (=> (and (= (type d@@26) DatatypeTypeType) (|$IsA#Test.QueryReceiptLine| d@@26)) (Test.QueryReceiptLine.QueryReceiptLine_q d@@26))
  :qid |unknown.0:0|
- :skolemid |958|
+ :skolemid |953|
  :pattern ( (|$IsA#Test.QueryReceiptLine| d@@26))
 )))
 (assert (forall ((d@@27 T@U) ) (!  (=> (and (= (type d@@27) DatatypeTypeType) ($Is d@@27 Tclass.Test.QueryReceiptLine)) (Test.QueryReceiptLine.QueryReceiptLine_q d@@27))
  :qid |unknown.0:0|
- :skolemid |959|
+ :skolemid |954|
  :pattern ( (Test.QueryReceiptLine.QueryReceiptLine_q d@@27) ($Is d@@27 Tclass.Test.QueryReceiptLine))
 )))
 (assert (forall ((a@@109 T@U) (b@@70 T@U) ) (!  (=> (and (and (= (type a@@109) DatatypeTypeType) (= (type b@@70) DatatypeTypeType)) true) (= (|Test.QueryReceiptLine#Equal| a@@109 b@@70) (|Test.BetreeNode#Equal| (Test.QueryReceiptLine.node a@@109) (Test.QueryReceiptLine.node b@@70))))
  :qid |unknown.0:0|
- :skolemid |960|
+ :skolemid |955|
  :pattern ( (|Test.QueryReceiptLine#Equal| a@@109 b@@70))
 )))
 (assert (forall ((a@@110 T@U) (b@@71 T@U) ) (!  (=> (and (= (type a@@110) DatatypeTypeType) (= (type b@@71) DatatypeTypeType)) (= (|Test.QueryReceiptLine#Equal| a@@110 b@@71) (= a@@110 b@@71)))
  :qid |unknown.0:0|
- :skolemid |961|
+ :skolemid |956|
  :pattern ( (|Test.QueryReceiptLine#Equal| a@@110 b@@71))
 )))
-(assert  (=> (<= 9 $FunctionContextHeight) (forall ((this@@11 T@U) ) (!  (=> (and (= (type this@@11) DatatypeTypeType) (or (|Test.QueryReceiptLine.WF#canCall| this@@11) (and (not (= 9 $FunctionContextHeight)) ($Is this@@11 Tclass.Test.QueryReceiptLine)))) true)
- :qid |Testidfy.28:15|
- :skolemid |962|
+(assert  (=> (<= 6 $FunctionContextHeight) (forall ((this@@11 T@U) ) (!  (=> (and (= (type this@@11) DatatypeTypeType) (or (|Test.QueryReceiptLine.WF#canCall| this@@11) (and (not (= 6 $FunctionContextHeight)) ($Is this@@11 Tclass.Test.QueryReceiptLine)))) true)
+ :qid |Testidfy.20:15|
+ :skolemid |957|
  :pattern ( (Test.QueryReceiptLine.WF this@@11))
 ))))
 (assert (forall ((this@@12 T@U) ) (!  (=> (and (= (type this@@12) DatatypeTypeType) ($Is this@@12 Tclass.Test.QueryReceiptLine)) (= (|Test.QueryReceiptLine.WF#requires| this@@12) true))
- :qid |Testidfy.28:15|
- :skolemid |963|
+ :qid |Testidfy.20:15|
+ :skolemid |958|
  :pattern ( (|Test.QueryReceiptLine.WF#requires| this@@12))
 )))
-(assert  (=> (<= 9 $FunctionContextHeight) (forall ((this@@13 T@U) ) (!  (=> (and (= (type this@@13) DatatypeTypeType) (or (|Test.QueryReceiptLine.WF#canCall| this@@13) (and (not (= 9 $FunctionContextHeight)) ($Is this@@13 Tclass.Test.QueryReceiptLine)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (and (Test.QueryReceiptLine.QueryReceiptLine_q this@@13) (|Test.BetreeNode.WF#canCall| (Test.QueryReceiptLine.node this@@13)))) (= (Test.QueryReceiptLine.WF this@@13)  (and true (Test.BetreeNode.WF ($LS $LZ) (Test.QueryReceiptLine.node this@@13))))))
- :qid |Testidfy.28:15|
- :skolemid |964|
+(assert  (=> (<= 6 $FunctionContextHeight) (forall ((this@@13 T@U) ) (!  (=> (and (= (type this@@13) DatatypeTypeType) (or (|Test.QueryReceiptLine.WF#canCall| this@@13) (and (not (= 6 $FunctionContextHeight)) ($Is this@@13 Tclass.Test.QueryReceiptLine)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (and (Test.QueryReceiptLine.QueryReceiptLine_q this@@13) (|Test.BetreeNode.WF#canCall| (Test.QueryReceiptLine.node this@@13)))) (= (Test.QueryReceiptLine.WF this@@13)  (and true (Test.BetreeNode.WF ($LS $LZ) (Test.QueryReceiptLine.node this@@13))))))
+ :qid |Testidfy.20:15|
+ :skolemid |959|
  :pattern ( (Test.QueryReceiptLine.WF this@@13))
 ))))
-(assert  (=> (<= 9 $FunctionContextHeight) (forall ((this@@14 T@U) ) (!  (=> (and (= (type this@@14) DatatypeTypeType) (or (|Test.QueryReceiptLine.WF#canCall| (Lit this@@14)) (and (not (= 9 $FunctionContextHeight)) ($Is this@@14 Tclass.Test.QueryReceiptLine)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (and (Test.QueryReceiptLine.QueryReceiptLine_q (Lit this@@14)) (|Test.BetreeNode.WF#canCall| (Lit (Test.QueryReceiptLine.node (Lit this@@14)))))) (= (Test.QueryReceiptLine.WF (Lit this@@14)) (U_2_bool (Lit (bool_2_U  (and true (Test.BetreeNode.WF ($LS $LZ) (Lit (Test.QueryReceiptLine.node (Lit this@@14)))))))))))
- :qid |Testidfy.28:15|
+(assert  (=> (<= 6 $FunctionContextHeight) (forall ((this@@14 T@U) ) (!  (=> (and (= (type this@@14) DatatypeTypeType) (or (|Test.QueryReceiptLine.WF#canCall| (Lit this@@14)) (and (not (= 6 $FunctionContextHeight)) ($Is this@@14 Tclass.Test.QueryReceiptLine)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (and (Test.QueryReceiptLine.QueryReceiptLine_q (Lit this@@14)) (|Test.BetreeNode.WF#canCall| (Lit (Test.QueryReceiptLine.node (Lit this@@14)))))) (= (Test.QueryReceiptLine.WF (Lit this@@14)) (U_2_bool (Lit (bool_2_U  (and true (Test.BetreeNode.WF ($LS $LZ) (Lit (Test.QueryReceiptLine.node (Lit this@@14)))))))))))
+ :qid |Testidfy.20:15|
  :weight 3
- :skolemid |965|
+ :skolemid |960|
  :pattern ( (Test.QueryReceiptLine.WF (Lit this@@14)))
 ))))
 (assert (forall ((arg0@@177 T@U) (arg1@@80 T@U) (arg2@@32 T@U) ) (! (= (type (|#Test.QueryReceipt.QueryReceipt| arg0@@177 arg1@@80 arg2@@32)) DatatypeTypeType)
  :qid |funType:#Test.QueryReceipt.QueryReceipt|
  :pattern ( (|#Test.QueryReceipt.QueryReceipt| arg0@@177 arg1@@80 arg2@@32))
 )))
-(assert (forall ((|a#0#0#0@@2| T@U) (|a#0#1#0@@0| T@U) (|a#0#2#0| T@U) ) (!  (=> (and (and (= (type |a#0#0#0@@2|) (SeqType BoxType)) (= (type |a#0#1#0@@0|) DatatypeTypeType)) (= (type |a#0#2#0|) (SeqType BoxType))) (= (DatatypeCtorId (|#Test.QueryReceipt.QueryReceipt| |a#0#0#0@@2| |a#0#1#0@@0| |a#0#2#0|)) |##Test.QueryReceipt.QueryReceipt|))
- :qid |Testidfy.34:5|
- :skolemid |967|
- :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#0#0#0@@2| |a#0#1#0@@0| |a#0#2#0|))
+(assert (forall ((|a#0#0#0@@1| T@U) (|a#0#1#0@@0| T@U) (|a#0#2#0| T@U) ) (!  (=> (and (and (= (type |a#0#0#0@@1|) (SeqType BoxType)) (= (type |a#0#1#0@@0|) DatatypeTypeType)) (= (type |a#0#2#0|) (SeqType BoxType))) (= (DatatypeCtorId (|#Test.QueryReceipt.QueryReceipt| |a#0#0#0@@1| |a#0#1#0@@0| |a#0#2#0|)) |##Test.QueryReceipt.QueryReceipt|))
+ :qid |Testidfy.26:5|
+ :skolemid |962|
+ :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#0#0#0@@1| |a#0#1#0@@0| |a#0#2#0|))
 )))
 (assert (forall ((d@@28 T@U) ) (!  (=> (= (type d@@28) DatatypeTypeType) (= (Test.QueryReceipt.QueryReceipt_q d@@28) (= (DatatypeCtorId d@@28) |##Test.QueryReceipt.QueryReceipt|)))
  :qid |unknown.0:0|
- :skolemid |968|
+ :skolemid |963|
  :pattern ( (Test.QueryReceipt.QueryReceipt_q d@@28))
 )))
-(assert (forall ((d@@29 T@U) ) (!  (=> (and (= (type d@@29) DatatypeTypeType) (Test.QueryReceipt.QueryReceipt_q d@@29)) (exists ((|a#1#0#0@@2| T@U) (|a#1#1#0@@0| T@U) (|a#1#2#0| T@U) ) (!  (and (and (and (= (type |a#1#0#0@@2|) (SeqType BoxType)) (= (type |a#1#1#0@@0|) DatatypeTypeType)) (= (type |a#1#2#0|) (SeqType BoxType))) (= d@@29 (|#Test.QueryReceipt.QueryReceipt| |a#1#0#0@@2| |a#1#1#0@@0| |a#1#2#0|)))
- :qid |Testidfy.34:5|
- :skolemid |969|
- :no-pattern (type |a#1#0#0@@2|)
+(assert (forall ((d@@29 T@U) ) (!  (=> (and (= (type d@@29) DatatypeTypeType) (Test.QueryReceipt.QueryReceipt_q d@@29)) (exists ((|a#1#0#0@@1| T@U) (|a#1#1#0@@0| T@U) (|a#1#2#0| T@U) ) (!  (and (and (and (= (type |a#1#0#0@@1|) (SeqType BoxType)) (= (type |a#1#1#0@@0|) DatatypeTypeType)) (= (type |a#1#2#0|) (SeqType BoxType))) (= d@@29 (|#Test.QueryReceipt.QueryReceipt| |a#1#0#0@@1| |a#1#1#0@@0| |a#1#2#0|)))
+ :qid |Testidfy.26:5|
+ :skolemid |964|
+ :no-pattern (type |a#1#0#0@@1|)
  :no-pattern (type |a#1#1#0@@0|)
  :no-pattern (type |a#1#2#0|)
- :no-pattern (U_2_int |a#1#0#0@@2|)
- :no-pattern (U_2_bool |a#1#0#0@@2|)
+ :no-pattern (U_2_int |a#1#0#0@@1|)
+ :no-pattern (U_2_bool |a#1#0#0@@1|)
  :no-pattern (U_2_int |a#1#1#0@@0|)
  :no-pattern (U_2_bool |a#1#1#0@@0|)
  :no-pattern (U_2_int |a#1#2#0|)
  :no-pattern (U_2_bool |a#1#2#0|)
 )))
  :qid |unknown.0:0|
- :skolemid |970|
+ :skolemid |965|
  :pattern ( (Test.QueryReceipt.QueryReceipt_q d@@29))
 )))
 (assert (= (type Tclass.Test.QueryReceipt) TyType))
 (assert (= (Tag Tclass.Test.QueryReceipt) Tagclass.Test.QueryReceipt))
 (assert (= (TagFamily Tclass.Test.QueryReceipt) tytagFamily$QueryReceipt))
-(assert (forall ((bx@@58 T@U) ) (!  (=> (and (= (type bx@@58) BoxType) ($IsBox bx@@58 Tclass.Test.QueryReceipt)) (and (= ($Box ($Unbox DatatypeTypeType bx@@58)) bx@@58) ($Is ($Unbox DatatypeTypeType bx@@58) Tclass.Test.QueryReceipt)))
+(assert (forall ((bx@@57 T@U) ) (!  (=> (and (= (type bx@@57) BoxType) ($IsBox bx@@57 Tclass.Test.QueryReceipt)) (and (= ($Box ($Unbox DatatypeTypeType bx@@57)) bx@@57) ($Is ($Unbox DatatypeTypeType bx@@57) Tclass.Test.QueryReceipt)))
  :qid |unknown.0:0|
- :skolemid |971|
- :pattern ( ($IsBox bx@@58 Tclass.Test.QueryReceipt))
+ :skolemid |966|
+ :pattern ( ($IsBox bx@@57 Tclass.Test.QueryReceipt))
 )))
-(assert (forall ((|a#2#0#0@@2| T@U) (|a#2#1#0@@0| T@U) (|a#2#2#0| T@U) ) (!  (=> (and (and (= (type |a#2#0#0@@2|) (SeqType BoxType)) (= (type |a#2#1#0@@0|) DatatypeTypeType)) (= (type |a#2#2#0|) (SeqType BoxType))) (= ($Is (|#Test.QueryReceipt.QueryReceipt| |a#2#0#0@@2| |a#2#1#0@@0| |a#2#2#0|) Tclass.Test.QueryReceipt)  (and (and ($Is |a#2#0#0@@2| Tclass.Test.Key) ($Is |a#2#1#0@@0| Tclass.Test.BetreeNode)) ($Is |a#2#2#0| (TSeq Tclass.Test.QueryReceiptLine)))))
- :qid |Testidfy.34:5|
- :skolemid |972|
- :pattern ( ($Is (|#Test.QueryReceipt.QueryReceipt| |a#2#0#0@@2| |a#2#1#0@@0| |a#2#2#0|) Tclass.Test.QueryReceipt))
+(assert (forall ((|a#2#0#0@@1| T@U) (|a#2#1#0@@0| T@U) (|a#2#2#0| T@U) ) (!  (=> (and (and (= (type |a#2#0#0@@1|) (SeqType BoxType)) (= (type |a#2#1#0@@0|) DatatypeTypeType)) (= (type |a#2#2#0|) (SeqType BoxType))) (= ($Is (|#Test.QueryReceipt.QueryReceipt| |a#2#0#0@@1| |a#2#1#0@@0| |a#2#2#0|) Tclass.Test.QueryReceipt)  (and (and ($Is |a#2#0#0@@1| Tclass.Common.Key) ($Is |a#2#1#0@@0| Tclass.Test.BetreeNode)) ($Is |a#2#2#0| (TSeq Tclass.Test.QueryReceiptLine)))))
+ :qid |Testidfy.26:5|
+ :skolemid |967|
+ :pattern ( ($Is (|#Test.QueryReceipt.QueryReceipt| |a#2#0#0@@1| |a#2#1#0@@0| |a#2#2#0|) Tclass.Test.QueryReceipt))
 )))
-(assert (forall ((|a#3#0#0@@2| T@U) (|a#3#1#0@@0| T@U) (|a#3#2#0| T@U) ($h@@27 T@U) ) (!  (=> (and (and (and (and (= (type |a#3#0#0@@2|) (SeqType BoxType)) (= (type |a#3#1#0@@0|) DatatypeTypeType)) (= (type |a#3#2#0|) (SeqType BoxType))) (= (type $h@@27) (MapType0Type refType MapType1Type))) ($IsGoodHeap $h@@27)) (= ($IsAlloc (|#Test.QueryReceipt.QueryReceipt| |a#3#0#0@@2| |a#3#1#0@@0| |a#3#2#0|) Tclass.Test.QueryReceipt $h@@27)  (and (and ($IsAlloc |a#3#0#0@@2| Tclass.Test.Key $h@@27) ($IsAlloc |a#3#1#0@@0| Tclass.Test.BetreeNode $h@@27)) ($IsAlloc |a#3#2#0| (TSeq Tclass.Test.QueryReceiptLine) $h@@27))))
- :qid |Testidfy.34:5|
- :skolemid |973|
- :pattern ( ($IsAlloc (|#Test.QueryReceipt.QueryReceipt| |a#3#0#0@@2| |a#3#1#0@@0| |a#3#2#0|) Tclass.Test.QueryReceipt $h@@27))
+(assert (forall ((|a#3#0#0@@1| T@U) (|a#3#1#0@@0| T@U) (|a#3#2#0| T@U) ($h@@25 T@U) ) (!  (=> (and (and (and (and (= (type |a#3#0#0@@1|) (SeqType BoxType)) (= (type |a#3#1#0@@0|) DatatypeTypeType)) (= (type |a#3#2#0|) (SeqType BoxType))) (= (type $h@@25) (MapType0Type refType MapType1Type))) ($IsGoodHeap $h@@25)) (= ($IsAlloc (|#Test.QueryReceipt.QueryReceipt| |a#3#0#0@@1| |a#3#1#0@@0| |a#3#2#0|) Tclass.Test.QueryReceipt $h@@25)  (and (and ($IsAlloc |a#3#0#0@@1| Tclass.Common.Key $h@@25) ($IsAlloc |a#3#1#0@@0| Tclass.Test.BetreeNode $h@@25)) ($IsAlloc |a#3#2#0| (TSeq Tclass.Test.QueryReceiptLine) $h@@25))))
+ :qid |Testidfy.26:5|
+ :skolemid |968|
+ :pattern ( ($IsAlloc (|#Test.QueryReceipt.QueryReceipt| |a#3#0#0@@1| |a#3#1#0@@0| |a#3#2#0|) Tclass.Test.QueryReceipt $h@@25))
 )))
 (assert (forall ((arg0@@178 T@U) ) (! (= (type (Test.QueryReceipt.key arg0@@178)) (SeqType BoxType))
  :qid |funType:Test.QueryReceipt.key|
  :pattern ( (Test.QueryReceipt.key arg0@@178))
 )))
-(assert (forall ((d@@30 T@U) ($h@@28 T@U) ) (!  (=> (and (and (= (type d@@30) DatatypeTypeType) (= (type $h@@28) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@28) (and (Test.QueryReceipt.QueryReceipt_q d@@30) ($IsAlloc d@@30 Tclass.Test.QueryReceipt $h@@28)))) ($IsAlloc (Test.QueryReceipt.key d@@30) Tclass.Test.Key $h@@28))
+(assert (forall ((d@@30 T@U) ($h@@26 T@U) ) (!  (=> (and (and (= (type d@@30) DatatypeTypeType) (= (type $h@@26) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@26) (and (Test.QueryReceipt.QueryReceipt_q d@@30) ($IsAlloc d@@30 Tclass.Test.QueryReceipt $h@@26)))) ($IsAlloc (Test.QueryReceipt.key d@@30) Tclass.Common.Key $h@@26))
  :qid |unknown.0:0|
- :skolemid |974|
- :pattern ( ($IsAlloc (Test.QueryReceipt.key d@@30) Tclass.Test.Key $h@@28))
+ :skolemid |969|
+ :pattern ( ($IsAlloc (Test.QueryReceipt.key d@@30) Tclass.Common.Key $h@@26))
 )))
 (assert (forall ((arg0@@179 T@U) ) (! (= (type (Test.QueryReceipt.root arg0@@179)) DatatypeTypeType)
  :qid |funType:Test.QueryReceipt.root|
  :pattern ( (Test.QueryReceipt.root arg0@@179))
 )))
-(assert (forall ((d@@31 T@U) ($h@@29 T@U) ) (!  (=> (and (and (= (type d@@31) DatatypeTypeType) (= (type $h@@29) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@29) (and (Test.QueryReceipt.QueryReceipt_q d@@31) ($IsAlloc d@@31 Tclass.Test.QueryReceipt $h@@29)))) ($IsAlloc (Test.QueryReceipt.root d@@31) Tclass.Test.BetreeNode $h@@29))
+(assert (forall ((d@@31 T@U) ($h@@27 T@U) ) (!  (=> (and (and (= (type d@@31) DatatypeTypeType) (= (type $h@@27) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@27) (and (Test.QueryReceipt.QueryReceipt_q d@@31) ($IsAlloc d@@31 Tclass.Test.QueryReceipt $h@@27)))) ($IsAlloc (Test.QueryReceipt.root d@@31) Tclass.Test.BetreeNode $h@@27))
  :qid |unknown.0:0|
- :skolemid |975|
- :pattern ( ($IsAlloc (Test.QueryReceipt.root d@@31) Tclass.Test.BetreeNode $h@@29))
+ :skolemid |970|
+ :pattern ( ($IsAlloc (Test.QueryReceipt.root d@@31) Tclass.Test.BetreeNode $h@@27))
 )))
 (assert (forall ((arg0@@180 T@U) ) (! (= (type (Test.QueryReceipt.lines arg0@@180)) (SeqType BoxType))
  :qid |funType:Test.QueryReceipt.lines|
  :pattern ( (Test.QueryReceipt.lines arg0@@180))
 )))
-(assert (forall ((d@@32 T@U) ($h@@30 T@U) ) (!  (=> (and (and (= (type d@@32) DatatypeTypeType) (= (type $h@@30) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@30) (and (Test.QueryReceipt.QueryReceipt_q d@@32) ($IsAlloc d@@32 Tclass.Test.QueryReceipt $h@@30)))) ($IsAlloc (Test.QueryReceipt.lines d@@32) (TSeq Tclass.Test.QueryReceiptLine) $h@@30))
+(assert (forall ((d@@32 T@U) ($h@@28 T@U) ) (!  (=> (and (and (= (type d@@32) DatatypeTypeType) (= (type $h@@28) (MapType0Type refType MapType1Type))) (and ($IsGoodHeap $h@@28) (and (Test.QueryReceipt.QueryReceipt_q d@@32) ($IsAlloc d@@32 Tclass.Test.QueryReceipt $h@@28)))) ($IsAlloc (Test.QueryReceipt.lines d@@32) (TSeq Tclass.Test.QueryReceiptLine) $h@@28))
  :qid |unknown.0:0|
- :skolemid |976|
- :pattern ( ($IsAlloc (Test.QueryReceipt.lines d@@32) (TSeq Tclass.Test.QueryReceiptLine) $h@@30))
+ :skolemid |971|
+ :pattern ( ($IsAlloc (Test.QueryReceipt.lines d@@32) (TSeq Tclass.Test.QueryReceiptLine) $h@@28))
 )))
-(assert (forall ((|a#4#0#0@@2| T@U) (|a#4#1#0@@0| T@U) (|a#4#2#0| T@U) ) (!  (=> (and (and (= (type |a#4#0#0@@2|) (SeqType BoxType)) (= (type |a#4#1#0@@0|) DatatypeTypeType)) (= (type |a#4#2#0|) (SeqType BoxType))) (= (|#Test.QueryReceipt.QueryReceipt| (Lit |a#4#0#0@@2|) (Lit |a#4#1#0@@0|) (Lit |a#4#2#0|)) (Lit (|#Test.QueryReceipt.QueryReceipt| |a#4#0#0@@2| |a#4#1#0@@0| |a#4#2#0|))))
- :qid |Testidfy.34:5|
- :skolemid |977|
- :pattern ( (|#Test.QueryReceipt.QueryReceipt| (Lit |a#4#0#0@@2|) (Lit |a#4#1#0@@0|) (Lit |a#4#2#0|)))
+(assert (forall ((|a#4#0#0@@1| T@U) (|a#4#1#0@@0| T@U) (|a#4#2#0| T@U) ) (!  (=> (and (and (= (type |a#4#0#0@@1|) (SeqType BoxType)) (= (type |a#4#1#0@@0|) DatatypeTypeType)) (= (type |a#4#2#0|) (SeqType BoxType))) (= (|#Test.QueryReceipt.QueryReceipt| (Lit |a#4#0#0@@1|) (Lit |a#4#1#0@@0|) (Lit |a#4#2#0|)) (Lit (|#Test.QueryReceipt.QueryReceipt| |a#4#0#0@@1| |a#4#1#0@@0| |a#4#2#0|))))
+ :qid |Testidfy.26:5|
+ :skolemid |972|
+ :pattern ( (|#Test.QueryReceipt.QueryReceipt| (Lit |a#4#0#0@@1|) (Lit |a#4#1#0@@0|) (Lit |a#4#2#0|)))
 )))
-(assert (forall ((|a#5#0#0@@3| T@U) (|a#5#1#0@@0| T@U) (|a#5#2#0| T@U) ) (!  (=> (and (and (= (type |a#5#0#0@@3|) (SeqType BoxType)) (= (type |a#5#1#0@@0|) DatatypeTypeType)) (= (type |a#5#2#0|) (SeqType BoxType))) (= (Test.QueryReceipt.key (|#Test.QueryReceipt.QueryReceipt| |a#5#0#0@@3| |a#5#1#0@@0| |a#5#2#0|)) |a#5#0#0@@3|))
- :qid |Testidfy.34:5|
- :skolemid |978|
- :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#5#0#0@@3| |a#5#1#0@@0| |a#5#2#0|))
+(assert (forall ((|a#5#0#0@@2| T@U) (|a#5#1#0@@0| T@U) (|a#5#2#0| T@U) ) (!  (=> (and (and (= (type |a#5#0#0@@2|) (SeqType BoxType)) (= (type |a#5#1#0@@0|) DatatypeTypeType)) (= (type |a#5#2#0|) (SeqType BoxType))) (= (Test.QueryReceipt.key (|#Test.QueryReceipt.QueryReceipt| |a#5#0#0@@2| |a#5#1#0@@0| |a#5#2#0|)) |a#5#0#0@@2|))
+ :qid |Testidfy.26:5|
+ :skolemid |973|
+ :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#5#0#0@@2| |a#5#1#0@@0| |a#5#2#0|))
 )))
-(assert (forall ((|a#6#0#0@@3| T@U) (|a#6#1#0@@0| T@U) (|a#6#2#0| T@U) ) (!  (=> (and (and (= (type |a#6#0#0@@3|) (SeqType BoxType)) (= (type |a#6#1#0@@0|) DatatypeTypeType)) (= (type |a#6#2#0|) (SeqType BoxType))) (= (Test.QueryReceipt.root (|#Test.QueryReceipt.QueryReceipt| |a#6#0#0@@3| |a#6#1#0@@0| |a#6#2#0|)) |a#6#1#0@@0|))
- :qid |Testidfy.34:5|
- :skolemid |979|
- :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#6#0#0@@3| |a#6#1#0@@0| |a#6#2#0|))
+(assert (forall ((|a#6#0#0@@2| T@U) (|a#6#1#0@@0| T@U) (|a#6#2#0| T@U) ) (!  (=> (and (and (= (type |a#6#0#0@@2|) (SeqType BoxType)) (= (type |a#6#1#0@@0|) DatatypeTypeType)) (= (type |a#6#2#0|) (SeqType BoxType))) (= (Test.QueryReceipt.root (|#Test.QueryReceipt.QueryReceipt| |a#6#0#0@@2| |a#6#1#0@@0| |a#6#2#0|)) |a#6#1#0@@0|))
+ :qid |Testidfy.26:5|
+ :skolemid |974|
+ :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#6#0#0@@2| |a#6#1#0@@0| |a#6#2#0|))
 )))
-(assert (forall ((|a#7#0#0@@2| T@U) (|a#7#1#0@@0| T@U) (|a#7#2#0| T@U) ) (!  (=> (and (and (= (type |a#7#0#0@@2|) (SeqType BoxType)) (= (type |a#7#1#0@@0|) DatatypeTypeType)) (= (type |a#7#2#0|) (SeqType BoxType))) (< (DtRank |a#7#1#0@@0|) (DtRank (|#Test.QueryReceipt.QueryReceipt| |a#7#0#0@@2| |a#7#1#0@@0| |a#7#2#0|))))
- :qid |Testidfy.34:5|
- :skolemid |980|
- :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#7#0#0@@2| |a#7#1#0@@0| |a#7#2#0|))
+(assert (forall ((|a#7#0#0@@1| T@U) (|a#7#1#0@@0| T@U) (|a#7#2#0| T@U) ) (!  (=> (and (and (= (type |a#7#0#0@@1|) (SeqType BoxType)) (= (type |a#7#1#0@@0|) DatatypeTypeType)) (= (type |a#7#2#0|) (SeqType BoxType))) (< (DtRank |a#7#1#0@@0|) (DtRank (|#Test.QueryReceipt.QueryReceipt| |a#7#0#0@@1| |a#7#1#0@@0| |a#7#2#0|))))
+ :qid |Testidfy.26:5|
+ :skolemid |975|
+ :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#7#0#0@@1| |a#7#1#0@@0| |a#7#2#0|))
 )))
 (assert (forall ((|a#8#0#0@@1| T@U) (|a#8#1#0@@0| T@U) (|a#8#2#0| T@U) ) (!  (=> (and (and (= (type |a#8#0#0@@1|) (SeqType BoxType)) (= (type |a#8#1#0@@0|) DatatypeTypeType)) (= (type |a#8#2#0|) (SeqType BoxType))) (= (Test.QueryReceipt.lines (|#Test.QueryReceipt.QueryReceipt| |a#8#0#0@@1| |a#8#1#0@@0| |a#8#2#0|)) |a#8#2#0|))
- :qid |Testidfy.34:5|
- :skolemid |981|
+ :qid |Testidfy.26:5|
+ :skolemid |976|
  :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#8#0#0@@1| |a#8#1#0@@0| |a#8#2#0|))
 )))
 (assert (forall ((|a#9#0#0@@0| T@U) (|a#9#1#0| T@U) (|a#9#2#0| T@U) (i@@25 Int) ) (!  (=> (and (and (and (= (type |a#9#0#0@@0|) (SeqType BoxType)) (= (type |a#9#1#0|) DatatypeTypeType)) (= (type |a#9#2#0|) (SeqType BoxType))) (and (<= 0 i@@25) (< i@@25 (|Seq#Length| |a#9#2#0|)))) (< (DtRank ($Unbox DatatypeTypeType (|Seq#Index| |a#9#2#0| i@@25))) (DtRank (|#Test.QueryReceipt.QueryReceipt| |a#9#0#0@@0| |a#9#1#0| |a#9#2#0|))))
- :qid |Testidfy.34:5|
- :skolemid |982|
+ :qid |Testidfy.26:5|
+ :skolemid |977|
  :pattern ( (|Seq#Index| |a#9#2#0| i@@25) (|#Test.QueryReceipt.QueryReceipt| |a#9#0#0@@0| |a#9#1#0| |a#9#2#0|))
 )))
 (assert (forall ((|a#10#0#0@@0| T@U) (|a#10#1#0| T@U) (|a#10#2#0| T@U) ) (!  (=> (and (and (= (type |a#10#0#0@@0|) (SeqType BoxType)) (= (type |a#10#1#0|) DatatypeTypeType)) (= (type |a#10#2#0|) (SeqType BoxType))) (< (|Seq#Rank| |a#10#2#0|) (DtRank (|#Test.QueryReceipt.QueryReceipt| |a#10#0#0@@0| |a#10#1#0| |a#10#2#0|))))
- :qid |Testidfy.34:5|
- :skolemid |983|
+ :qid |Testidfy.26:5|
+ :skolemid |978|
  :pattern ( (|#Test.QueryReceipt.QueryReceipt| |a#10#0#0@@0| |a#10#1#0| |a#10#2#0|))
 )))
 (assert (forall ((d@@33 T@U) ) (!  (=> (and (= (type d@@33) DatatypeTypeType) (|$IsA#Test.QueryReceipt| d@@33)) (Test.QueryReceipt.QueryReceipt_q d@@33))
  :qid |unknown.0:0|
- :skolemid |984|
+ :skolemid |979|
  :pattern ( (|$IsA#Test.QueryReceipt| d@@33))
 )))
 (assert (forall ((d@@34 T@U) ) (!  (=> (and (= (type d@@34) DatatypeTypeType) ($Is d@@34 Tclass.Test.QueryReceipt)) (Test.QueryReceipt.QueryReceipt_q d@@34))
  :qid |unknown.0:0|
- :skolemid |985|
+ :skolemid |980|
  :pattern ( (Test.QueryReceipt.QueryReceipt_q d@@34) ($Is d@@34 Tclass.Test.QueryReceipt))
 )))
 (assert (forall ((a@@111 T@U) (b@@72 T@U) ) (!  (=> (and (and (= (type a@@111) DatatypeTypeType) (= (type b@@72) DatatypeTypeType)) true) (= (|Test.QueryReceipt#Equal| a@@111 b@@72)  (and (and (|Seq#Equal| (Test.QueryReceipt.key a@@111) (Test.QueryReceipt.key b@@72)) (|Test.BetreeNode#Equal| (Test.QueryReceipt.root a@@111) (Test.QueryReceipt.root b@@72))) (|Seq#Equal| (Test.QueryReceipt.lines a@@111) (Test.QueryReceipt.lines b@@72)))))
  :qid |unknown.0:0|
- :skolemid |986|
+ :skolemid |981|
  :pattern ( (|Test.QueryReceipt#Equal| a@@111 b@@72))
 )))
 (assert (forall ((a@@112 T@U) (b@@73 T@U) ) (!  (=> (and (= (type a@@112) DatatypeTypeType) (= (type b@@73) DatatypeTypeType)) (= (|Test.QueryReceipt#Equal| a@@112 b@@73) (= a@@112 b@@73)))
  :qid |unknown.0:0|
- :skolemid |987|
+ :skolemid |982|
  :pattern ( (|Test.QueryReceipt#Equal| a@@112 b@@73))
 )))
-(assert  (=> (<= 11 $FunctionContextHeight) (forall ((this@@15 T@U) ) (!  (=> (and (= (type this@@15) DatatypeTypeType) (or (|Test.QueryReceipt.Structure#canCall| this@@15) (and (not (= 11 $FunctionContextHeight)) ($Is this@@15 Tclass.Test.QueryReceipt)))) true)
- :qid |Testidfy.38:15|
- :skolemid |988|
+(assert  (=> (<= 8 $FunctionContextHeight) (forall ((this@@15 T@U) ) (!  (=> (and (= (type this@@15) DatatypeTypeType) (or (|Test.QueryReceipt.Structure#canCall| this@@15) (and (not (= 8 $FunctionContextHeight)) ($Is this@@15 Tclass.Test.QueryReceipt)))) true)
+ :qid |Testidfy.30:15|
+ :skolemid |983|
  :pattern ( (Test.QueryReceipt.Structure this@@15))
 ))))
 (assert (forall ((this@@16 T@U) ) (!  (=> (and (= (type this@@16) DatatypeTypeType) ($Is this@@16 Tclass.Test.QueryReceipt)) (= (|Test.QueryReceipt.Structure#requires| this@@16) true))
- :qid |Testidfy.38:15|
- :skolemid |989|
+ :qid |Testidfy.30:15|
+ :skolemid |984|
  :pattern ( (|Test.QueryReceipt.Structure#requires| this@@16))
 )))
-(assert  (=> (<= 11 $FunctionContextHeight) (forall ((this@@17 T@U) ) (!  (=> (and (= (type this@@17) DatatypeTypeType) (or (|Test.QueryReceipt.Structure#canCall| this@@17) (and (not (= 11 $FunctionContextHeight)) ($Is this@@17 Tclass.Test.QueryReceipt)))) (and (and (Test.QueryReceipt.QueryReceipt_q this@@17) (=> (INTERNAL_lt_boogie 0 (|Seq#Length| (Test.QueryReceipt.lines this@@17))) (and (and (and (|$IsA#Test.BetreeNode| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) (LitInt 0))))) (|$IsA#Test.BetreeNode| (Test.QueryReceipt.root this@@17))) (and (and (Test.QueryReceipt.QueryReceipt_q this@@17) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) (LitInt 0))))) (Test.QueryReceipt.QueryReceipt_q this@@17))) (=> (|Test.BetreeNode#Equal| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) (LitInt 0)))) (Test.QueryReceipt.root this@@17)) (forall ((|i#0@@1| Int) ) (!  (=> (INTERNAL_le_boogie 0 |i#0@@1|) (and (Test.QueryReceipt.QueryReceipt_q this@@17) (=> (INTERNAL_lt_boogie |i#0@@1| (|Seq#Length| (Test.QueryReceipt.lines this@@17))) (and (and (Test.QueryReceipt.QueryReceipt_q this@@17) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) |i#0@@1|)))) (Test.QueryReceipt.QueryReceipt_q this@@17)))))
- :qid |Testidfy.41:20|
- :skolemid |991|
- :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) |i#0@@1|)))
-)))))) (= (Test.QueryReceipt.Structure this@@17)  (and (and (INTERNAL_lt_boogie 0 (|Seq#Length| (Test.QueryReceipt.lines this@@17))) (|Test.BetreeNode#Equal| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) (LitInt 0)))) (Test.QueryReceipt.root this@@17))) (forall ((|i#0@@2| Int) ) (!  (=> (and (INTERNAL_le_boogie 0 |i#0@@2|) (INTERNAL_lt_boogie |i#0@@2| (|Seq#Length| (Test.QueryReceipt.lines this@@17)))) (= (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) |i#0@@2|)))) (INTERNAL_lt_boogie |i#0@@2| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@17)) 1))))
- :qid |Testidfy.41:20|
- :skolemid |990|
- :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) |i#0@@2|)))
+(assert  (=> (<= 8 $FunctionContextHeight) (forall ((this@@17 T@U) ) (!  (=> (and (= (type this@@17) DatatypeTypeType) (or (|Test.QueryReceipt.Structure#canCall| this@@17) (and (not (= 8 $FunctionContextHeight)) ($Is this@@17 Tclass.Test.QueryReceipt)))) (and (and (Test.QueryReceipt.QueryReceipt_q this@@17) (=> (INTERNAL_lt_boogie 0 (|Seq#Length| (Test.QueryReceipt.lines this@@17))) (and (and (and (|$IsA#Test.BetreeNode| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) (LitInt 0))))) (|$IsA#Test.BetreeNode| (Test.QueryReceipt.root this@@17))) (and (and (Test.QueryReceipt.QueryReceipt_q this@@17) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) (LitInt 0))))) (Test.QueryReceipt.QueryReceipt_q this@@17))) (=> (|Test.BetreeNode#Equal| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) (LitInt 0)))) (Test.QueryReceipt.root this@@17)) (forall ((|i#0| Int) ) (!  (=> (INTERNAL_le_boogie 0 |i#0|) (and (Test.QueryReceipt.QueryReceipt_q this@@17) (=> (INTERNAL_lt_boogie |i#0| (|Seq#Length| (Test.QueryReceipt.lines this@@17))) (and (and (Test.QueryReceipt.QueryReceipt_q this@@17) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) |i#0|)))) (Test.QueryReceipt.QueryReceipt_q this@@17)))))
+ :qid |Testidfy.33:20|
+ :skolemid |986|
+ :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) |i#0|)))
+)))))) (= (Test.QueryReceipt.Structure this@@17)  (and (and (INTERNAL_lt_boogie 0 (|Seq#Length| (Test.QueryReceipt.lines this@@17))) (|Test.BetreeNode#Equal| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) (LitInt 0)))) (Test.QueryReceipt.root this@@17))) (forall ((|i#0@@0| Int) ) (!  (=> (and (INTERNAL_le_boogie 0 |i#0@@0|) (INTERNAL_lt_boogie |i#0@@0| (|Seq#Length| (Test.QueryReceipt.lines this@@17)))) (= (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) |i#0@@0|)))) (INTERNAL_lt_boogie |i#0@@0| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@17)) 1))))
+ :qid |Testidfy.33:20|
+ :skolemid |985|
+ :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@17) |i#0@@0|)))
 ))))))
- :qid |Testidfy.38:15|
- :skolemid |992|
+ :qid |Testidfy.30:15|
+ :skolemid |987|
  :pattern ( (Test.QueryReceipt.Structure this@@17))
 ))))
-(assert  (=> (<= 11 $FunctionContextHeight) (forall ((this@@18 T@U) ) (!  (=> (and (= (type this@@18) DatatypeTypeType) (or (|Test.QueryReceipt.Structure#canCall| (Lit this@@18)) (and (not (= 11 $FunctionContextHeight)) ($Is this@@18 Tclass.Test.QueryReceipt)))) (and (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)) (=> (INTERNAL_lt_boogie 0 (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@18))))) (and (and (and (|$IsA#Test.BetreeNode| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) (LitInt 0))))) (|$IsA#Test.BetreeNode| (Lit (Test.QueryReceipt.root (Lit this@@18))))) (and (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) (LitInt 0))))) (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)))) (=> (|Test.BetreeNode#Equal| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) (LitInt 0)))) (Test.QueryReceipt.root (Lit this@@18))) (forall ((|i#1| Int) ) (!  (=> (INTERNAL_le_boogie 0 |i#1|) (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)) (=> (INTERNAL_lt_boogie |i#1| (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@18))))) (and (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) |i#1|)))) (Test.QueryReceipt.QueryReceipt_q (Lit this@@18))))))
- :qid |Testidfy.41:20|
- :skolemid |994|
+(assert  (=> (<= 8 $FunctionContextHeight) (forall ((this@@18 T@U) ) (!  (=> (and (= (type this@@18) DatatypeTypeType) (or (|Test.QueryReceipt.Structure#canCall| (Lit this@@18)) (and (not (= 8 $FunctionContextHeight)) ($Is this@@18 Tclass.Test.QueryReceipt)))) (and (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)) (=> (INTERNAL_lt_boogie 0 (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@18))))) (and (and (and (|$IsA#Test.BetreeNode| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) (LitInt 0))))) (|$IsA#Test.BetreeNode| (Lit (Test.QueryReceipt.root (Lit this@@18))))) (and (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) (LitInt 0))))) (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)))) (=> (|Test.BetreeNode#Equal| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) (LitInt 0)))) (Test.QueryReceipt.root (Lit this@@18))) (forall ((|i#1| Int) ) (!  (=> (INTERNAL_le_boogie 0 |i#1|) (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)) (=> (INTERNAL_lt_boogie |i#1| (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@18))))) (and (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@18)) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) |i#1|)))) (Test.QueryReceipt.QueryReceipt_q (Lit this@@18))))))
+ :qid |Testidfy.33:20|
+ :skolemid |989|
  :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@18) |i#1|)))
 )))))) (= (Test.QueryReceipt.Structure (Lit this@@18))  (and (and (INTERNAL_lt_boogie 0 (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@18))))) (|Test.BetreeNode#Equal| (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) (LitInt 0)))) (Test.QueryReceipt.root (Lit this@@18)))) (forall ((|i#1@@0| Int) ) (!  (=> (and (INTERNAL_le_boogie 0 |i#1@@0|) (INTERNAL_lt_boogie |i#1@@0| (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@18)))))) (= (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@18))) |i#1@@0|)))) (INTERNAL_lt_boogie |i#1@@0| (INTERNAL_sub_boogie (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@18)))) 1))))
- :qid |Testidfy.41:20|
- :skolemid |993|
+ :qid |Testidfy.33:20|
+ :skolemid |988|
  :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@18) |i#1@@0|)))
 ))))))
- :qid |Testidfy.38:15|
+ :qid |Testidfy.30:15|
  :weight 3
- :skolemid |995|
+ :skolemid |990|
  :pattern ( (Test.QueryReceipt.Structure (Lit this@@18)))
 ))))
-(assert  (=> (<= 10 $FunctionContextHeight) (forall ((this@@19 T@U) ) (!  (=> (and (= (type this@@19) DatatypeTypeType) (or (|Test.QueryReceipt.AllLinesWF#canCall| this@@19) (and (not (= 10 $FunctionContextHeight)) ($Is this@@19 Tclass.Test.QueryReceipt)))) true)
- :qid |Testidfy.44:15|
- :skolemid |998|
+(assert  (=> (<= 7 $FunctionContextHeight) (forall ((this@@19 T@U) ) (!  (=> (and (= (type this@@19) DatatypeTypeType) (or (|Test.QueryReceipt.AllLinesWF#canCall| this@@19) (and (not (= 7 $FunctionContextHeight)) ($Is this@@19 Tclass.Test.QueryReceipt)))) true)
+ :qid |Testidfy.36:15|
+ :skolemid |993|
  :pattern ( (Test.QueryReceipt.AllLinesWF this@@19))
 ))))
 (assert (forall ((this@@20 T@U) ) (!  (=> (and (= (type this@@20) DatatypeTypeType) ($Is this@@20 Tclass.Test.QueryReceipt)) (= (|Test.QueryReceipt.AllLinesWF#requires| this@@20) true))
- :qid |Testidfy.44:15|
- :skolemid |999|
+ :qid |Testidfy.36:15|
+ :skolemid |994|
  :pattern ( (|Test.QueryReceipt.AllLinesWF#requires| this@@20))
 )))
-(assert  (=> (<= 10 $FunctionContextHeight) (forall ((this@@21 T@U) ) (!  (=> (and (= (type this@@21) DatatypeTypeType) (or (|Test.QueryReceipt.AllLinesWF#canCall| this@@21) (and (not (= 10 $FunctionContextHeight)) ($Is this@@21 Tclass.Test.QueryReceipt)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (forall ((|i#0@@3| Int) ) (!  (=> (INTERNAL_le_boogie 0 |i#0@@3|) (and (Test.QueryReceipt.QueryReceipt_q this@@21) (=> (INTERNAL_lt_boogie |i#0@@3| (|Seq#Length| (Test.QueryReceipt.lines this@@21))) (and (Test.QueryReceipt.QueryReceipt_q this@@21) (|Test.QueryReceiptLine.WF#canCall| ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@21) |i#0@@3|)))))))
- :qid |Testidfy.45:20|
- :skolemid |1001|
- :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@21) |i#0@@3|)))
-))) (= (Test.QueryReceipt.AllLinesWF this@@21)  (and true (forall ((|i#0@@4| Int) ) (!  (=> (and (INTERNAL_le_boogie 0 |i#0@@4|) (INTERNAL_lt_boogie |i#0@@4| (|Seq#Length| (Test.QueryReceipt.lines this@@21)))) (Test.QueryReceiptLine.WF ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@21) |i#0@@4|))))
- :qid |Testidfy.45:20|
- :skolemid |1000|
- :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@21) |i#0@@4|)))
+(assert  (=> (<= 7 $FunctionContextHeight) (forall ((this@@21 T@U) ) (!  (=> (and (= (type this@@21) DatatypeTypeType) (or (|Test.QueryReceipt.AllLinesWF#canCall| this@@21) (and (not (= 7 $FunctionContextHeight)) ($Is this@@21 Tclass.Test.QueryReceipt)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (forall ((|i#0@@1| Int) ) (!  (=> (INTERNAL_le_boogie 0 |i#0@@1|) (and (Test.QueryReceipt.QueryReceipt_q this@@21) (=> (INTERNAL_lt_boogie |i#0@@1| (|Seq#Length| (Test.QueryReceipt.lines this@@21))) (and (Test.QueryReceipt.QueryReceipt_q this@@21) (|Test.QueryReceiptLine.WF#canCall| ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@21) |i#0@@1|)))))))
+ :qid |Testidfy.37:20|
+ :skolemid |996|
+ :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@21) |i#0@@1|)))
+))) (= (Test.QueryReceipt.AllLinesWF this@@21)  (and true (forall ((|i#0@@2| Int) ) (!  (=> (and (INTERNAL_le_boogie 0 |i#0@@2|) (INTERNAL_lt_boogie |i#0@@2| (|Seq#Length| (Test.QueryReceipt.lines this@@21)))) (Test.QueryReceiptLine.WF ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@21) |i#0@@2|))))
+ :qid |Testidfy.37:20|
+ :skolemid |995|
+ :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@21) |i#0@@2|)))
 ))))))
- :qid |Testidfy.44:15|
- :skolemid |1002|
+ :qid |Testidfy.36:15|
+ :skolemid |997|
  :pattern ( (Test.QueryReceipt.AllLinesWF this@@21))
 ))))
-(assert  (=> (<= 10 $FunctionContextHeight) (forall ((this@@22 T@U) ) (!  (=> (and (= (type this@@22) DatatypeTypeType) (or (|Test.QueryReceipt.AllLinesWF#canCall| (Lit this@@22)) (and (not (= 10 $FunctionContextHeight)) ($Is this@@22 Tclass.Test.QueryReceipt)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (forall ((|i#1@@1| Int) ) (!  (=> (INTERNAL_le_boogie 0 |i#1@@1|) (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@22)) (=> (INTERNAL_lt_boogie |i#1@@1| (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@22))))) (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@22)) (|Test.QueryReceiptLine.WF#canCall| ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@22))) |i#1@@1|)))))))
- :qid |Testidfy.45:20|
- :skolemid |1004|
+(assert  (=> (<= 7 $FunctionContextHeight) (forall ((this@@22 T@U) ) (!  (=> (and (= (type this@@22) DatatypeTypeType) (or (|Test.QueryReceipt.AllLinesWF#canCall| (Lit this@@22)) (and (not (= 7 $FunctionContextHeight)) ($Is this@@22 Tclass.Test.QueryReceipt)))) (and (=> (U_2_bool (Lit (bool_2_U true))) (forall ((|i#1@@1| Int) ) (!  (=> (INTERNAL_le_boogie 0 |i#1@@1|) (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@22)) (=> (INTERNAL_lt_boogie |i#1@@1| (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@22))))) (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@22)) (|Test.QueryReceiptLine.WF#canCall| ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@22))) |i#1@@1|)))))))
+ :qid |Testidfy.37:20|
+ :skolemid |999|
  :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@22) |i#1@@1|)))
 ))) (= (Test.QueryReceipt.AllLinesWF (Lit this@@22))  (and true (forall ((|i#1@@2| Int) ) (!  (=> (and (INTERNAL_le_boogie 0 |i#1@@2|) (INTERNAL_lt_boogie |i#1@@2| (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@22)))))) (Test.QueryReceiptLine.WF ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@22))) |i#1@@2|))))
- :qid |Testidfy.45:20|
- :skolemid |1003|
+ :qid |Testidfy.37:20|
+ :skolemid |998|
  :pattern ( ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@22) |i#1@@2|)))
 ))))))
- :qid |Testidfy.44:15|
+ :qid |Testidfy.36:15|
  :weight 3
- :skolemid |1005|
+ :skolemid |1000|
  :pattern ( (Test.QueryReceipt.AllLinesWF (Lit this@@22)))
 ))))
 (assert (forall ((arg0@@181 T@U) (arg1@@81 Int) ) (! (= (type (Test.QueryReceipt.ChildAt arg0@@181 arg1@@81)) DatatypeTypeType)
  :qid |funType:Test.QueryReceipt.ChildAt|
  :pattern ( (Test.QueryReceipt.ChildAt arg0@@181 arg1@@81))
 )))
-(assert  (=> (<= 12 $FunctionContextHeight) (forall ((this@@23 T@U) (|i#0@@5| Int) ) (!  (=> (and (= (type this@@23) DatatypeTypeType) (or (|Test.QueryReceipt.ChildAt#canCall| this@@23 |i#0@@5|) (and (not (= 12 $FunctionContextHeight)) (and (and ($Is this@@23 Tclass.Test.QueryReceipt) (INTERNAL_le_boogie 0 |i#0@@5|)) (and (and (Test.QueryReceipt.AllLinesWF this@@23) (Test.QueryReceipt.Structure this@@23)) (INTERNAL_lt_boogie |i#0@@5| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@23)) 1))))))) ($Is (Test.QueryReceipt.ChildAt this@@23 |i#0@@5|) Tclass.Test.BetreeNode))
- :qid |Testidfy.48:14|
- :skolemid |1009|
- :pattern ( (Test.QueryReceipt.ChildAt this@@23 |i#0@@5|))
+(assert  (=> (<= 9 $FunctionContextHeight) (forall ((this@@23 T@U) (|i#0@@3| Int) ) (!  (=> (and (= (type this@@23) DatatypeTypeType) (or (|Test.QueryReceipt.ChildAt#canCall| this@@23 |i#0@@3|) (and (not (= 9 $FunctionContextHeight)) (and (and ($Is this@@23 Tclass.Test.QueryReceipt) (INTERNAL_le_boogie 0 |i#0@@3|)) (and (and (Test.QueryReceipt.AllLinesWF this@@23) (Test.QueryReceipt.Structure this@@23)) (INTERNAL_lt_boogie |i#0@@3| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@23)) 1))))))) ($Is (Test.QueryReceipt.ChildAt this@@23 |i#0@@3|) Tclass.Test.BetreeNode))
+ :qid |Testidfy.40:14|
+ :skolemid |1004|
+ :pattern ( (Test.QueryReceipt.ChildAt this@@23 |i#0@@3|))
 ))))
-(assert (forall ((this@@24 T@U) (|i#0@@6| Int) ) (!  (=> (= (type this@@24) DatatypeTypeType) (=> (and ($Is this@@24 Tclass.Test.QueryReceipt) (INTERNAL_le_boogie 0 |i#0@@6|)) (= (|Test.QueryReceipt.ChildAt#requires| this@@24 |i#0@@6|)  (and (and (Test.QueryReceipt.AllLinesWF this@@24) (Test.QueryReceipt.Structure this@@24)) (INTERNAL_lt_boogie |i#0@@6| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@24)) 1))))))
- :qid |Testidfy.48:14|
- :skolemid |1010|
- :pattern ( (|Test.QueryReceipt.ChildAt#requires| this@@24 |i#0@@6|))
+(assert (forall ((this@@24 T@U) (|i#0@@4| Int) ) (!  (=> (= (type this@@24) DatatypeTypeType) (=> (and ($Is this@@24 Tclass.Test.QueryReceipt) (INTERNAL_le_boogie 0 |i#0@@4|)) (= (|Test.QueryReceipt.ChildAt#requires| this@@24 |i#0@@4|)  (and (and (Test.QueryReceipt.AllLinesWF this@@24) (Test.QueryReceipt.Structure this@@24)) (INTERNAL_lt_boogie |i#0@@4| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@24)) 1))))))
+ :qid |Testidfy.40:14|
+ :skolemid |1005|
+ :pattern ( (|Test.QueryReceipt.ChildAt#requires| this@@24 |i#0@@4|))
 )))
-(assert  (=> (<= 12 $FunctionContextHeight) (forall ((this@@25 T@U) (|i#0@@7| Int) ) (!  (=> (and (= (type this@@25) DatatypeTypeType) (or (|Test.QueryReceipt.ChildAt#canCall| this@@25 |i#0@@7|) (and (not (= 12 $FunctionContextHeight)) (and (and ($Is this@@25 Tclass.Test.QueryReceipt) (INTERNAL_le_boogie 0 |i#0@@7|)) (and (and (Test.QueryReceipt.AllLinesWF this@@25) (Test.QueryReceipt.Structure this@@25)) (INTERNAL_lt_boogie |i#0@@7| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@25)) 1))))))) (and (and (and (and (Test.QueryReceipt.QueryReceipt_q this@@25) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@25) |i#0@@7|)))) (Test.ChildMap.ChildMap_q (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@25) |i#0@@7|)))))) (Test.QueryReceipt.QueryReceipt_q this@@25)) (= (Test.QueryReceipt.ChildAt this@@25 |i#0@@7|) ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@25) |i#0@@7|)))))) ($Box (Test.QueryReceipt.key this@@25)))))))
- :qid |Testidfy.48:14|
- :skolemid |1011|
- :pattern ( (Test.QueryReceipt.ChildAt this@@25 |i#0@@7|))
+(assert  (=> (<= 9 $FunctionContextHeight) (forall ((this@@25 T@U) (|i#0@@5| Int) ) (!  (=> (and (= (type this@@25) DatatypeTypeType) (or (|Test.QueryReceipt.ChildAt#canCall| this@@25 |i#0@@5|) (and (not (= 9 $FunctionContextHeight)) (and (and ($Is this@@25 Tclass.Test.QueryReceipt) (INTERNAL_le_boogie 0 |i#0@@5|)) (and (and (Test.QueryReceipt.AllLinesWF this@@25) (Test.QueryReceipt.Structure this@@25)) (INTERNAL_lt_boogie |i#0@@5| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@25)) 1))))))) (and (and (and (and (Test.QueryReceipt.QueryReceipt_q this@@25) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@25) |i#0@@5|)))) (Test.ChildMap.ChildMap_q (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@25) |i#0@@5|)))))) (Test.QueryReceipt.QueryReceipt_q this@@25)) (= (Test.QueryReceipt.ChildAt this@@25 |i#0@@5|) ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@25) |i#0@@5|)))))) ($Box (Test.QueryReceipt.key this@@25)))))))
+ :qid |Testidfy.40:14|
+ :skolemid |1006|
+ :pattern ( (Test.QueryReceipt.ChildAt this@@25 |i#0@@5|))
 ))))
-(assert  (=> (<= 12 $FunctionContextHeight) (forall ((this@@26 T@U) (|i#0@@8| Int) ) (!  (=> (and (= (type this@@26) DatatypeTypeType) (or (|Test.QueryReceipt.ChildAt#canCall| (Lit this@@26) (LitInt |i#0@@8|)) (and (not (= 12 $FunctionContextHeight)) (and (and ($Is this@@26 Tclass.Test.QueryReceipt) (INTERNAL_le_boogie 0 |i#0@@8|)) (and (and (U_2_bool (Lit (bool_2_U (Test.QueryReceipt.AllLinesWF (Lit this@@26))))) (U_2_bool (Lit (bool_2_U (Test.QueryReceipt.Structure (Lit this@@26)))))) (INTERNAL_lt_boogie |i#0@@8| (INTERNAL_sub_boogie (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@26)))) 1))))))) (and (and (and (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@26)) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@26))) (LitInt |i#0@@8|))))) (Test.ChildMap.ChildMap_q (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@26))) (LitInt |i#0@@8|))))))) (Test.QueryReceipt.QueryReceipt_q (Lit this@@26))) (= (Test.QueryReceipt.ChildAt (Lit this@@26) (LitInt |i#0@@8|)) ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@26))) (LitInt |i#0@@8|))))))) ($Box (Lit (Test.QueryReceipt.key (Lit this@@26)))))))))
- :qid |Testidfy.48:14|
+(assert  (=> (<= 9 $FunctionContextHeight) (forall ((this@@26 T@U) (|i#0@@6| Int) ) (!  (=> (and (= (type this@@26) DatatypeTypeType) (or (|Test.QueryReceipt.ChildAt#canCall| (Lit this@@26) (LitInt |i#0@@6|)) (and (not (= 9 $FunctionContextHeight)) (and (and ($Is this@@26 Tclass.Test.QueryReceipt) (INTERNAL_le_boogie 0 |i#0@@6|)) (and (and (U_2_bool (Lit (bool_2_U (Test.QueryReceipt.AllLinesWF (Lit this@@26))))) (U_2_bool (Lit (bool_2_U (Test.QueryReceipt.Structure (Lit this@@26)))))) (INTERNAL_lt_boogie |i#0@@6| (INTERNAL_sub_boogie (|Seq#Length| (Lit (Test.QueryReceipt.lines (Lit this@@26)))) 1))))))) (and (and (and (and (Test.QueryReceipt.QueryReceipt_q (Lit this@@26)) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@26))) (LitInt |i#0@@6|))))) (Test.ChildMap.ChildMap_q (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@26))) (LitInt |i#0@@6|))))))) (Test.QueryReceipt.QueryReceipt_q (Lit this@@26))) (= (Test.QueryReceipt.ChildAt (Lit this@@26) (LitInt |i#0@@6|)) ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Lit (Test.QueryReceipt.lines (Lit this@@26))) (LitInt |i#0@@6|))))))) ($Box (Lit (Test.QueryReceipt.key (Lit this@@26)))))))))
+ :qid |Testidfy.40:14|
  :weight 3
- :skolemid |1012|
- :pattern ( (Test.QueryReceipt.ChildAt (Lit this@@26) (LitInt |i#0@@8|)))
+ :skolemid |1007|
+ :pattern ( (Test.QueryReceipt.ChildAt (Lit this@@26) (LitInt |i#0@@6|)))
 ))))
 (assert (= (type Tclass.Test.__default) TyType))
 (assert (= (Tag Tclass.Test.__default) Tagclass.Test.__default))
 (assert (= (TagFamily Tclass.Test.__default) tytagFamily$_default))
-(assert (forall ((bx@@59 T@U) ) (!  (=> (and (= (type bx@@59) BoxType) ($IsBox bx@@59 Tclass.Test.__default)) (and (= ($Box ($Unbox refType bx@@59)) bx@@59) ($Is ($Unbox refType bx@@59) Tclass.Test.__default)))
+(assert (forall ((bx@@58 T@U) ) (!  (=> (and (= (type bx@@58) BoxType) ($IsBox bx@@58 Tclass.Test.__default)) (and (= ($Box ($Unbox refType bx@@58)) bx@@58) ($Is ($Unbox refType bx@@58) Tclass.Test.__default)))
  :qid |unknown.0:0|
- :skolemid |1020|
- :pattern ( ($IsBox bx@@59 Tclass.Test.__default))
+ :skolemid |1015|
+ :pattern ( ($IsBox bx@@58 Tclass.Test.__default))
 )))
 (assert (forall (($o@@9 T@U) ) (!  (=> (= (type $o@@9) refType) (= ($Is $o@@9 Tclass.Test.__default)  (or (= $o@@9 null) (= (dtype $o@@9) Tclass.Test.__default))))
  :qid |unknown.0:0|
- :skolemid |1021|
+ :skolemid |1016|
  :pattern ( ($Is $o@@9 Tclass.Test.__default))
 )))
-(assert (forall (($o@@10 T@U) ($h@@31 T@U) ) (!  (=> (and (= (type $o@@10) refType) (= (type $h@@31) (MapType0Type refType MapType1Type))) (= ($IsAlloc $o@@10 Tclass.Test.__default $h@@31)  (or (= $o@@10 null) (U_2_bool (MapType1Select (MapType0Select $h@@31 $o@@10) alloc)))))
+(assert (forall (($o@@10 T@U) ($h@@29 T@U) ) (!  (=> (and (= (type $o@@10) refType) (= (type $h@@29) (MapType0Type refType MapType1Type))) (= ($IsAlloc $o@@10 Tclass.Test.__default $h@@29)  (or (= $o@@10 null) (U_2_bool (MapType1Select (MapType0Select $h@@29 $o@@10) alloc)))))
+ :qid |unknown.0:0|
+ :skolemid |1017|
+ :pattern ( ($IsAlloc $o@@10 Tclass.Test.__default $h@@29))
+)))
+(assert (= (type Tclass.Common.byte) TyType))
+(assert (= (Tag Tclass.Common.byte) Tagclass.Common.byte))
+(assert (= (TagFamily Tclass.Common.byte) tytagFamily$byte))
+(assert (forall ((bx@@59 T@U) ) (!  (=> (and (= (type bx@@59) BoxType) ($IsBox bx@@59 Tclass.Common.byte)) (and (= ($Box ($Unbox intType bx@@59)) bx@@59) ($Is ($Unbox intType bx@@59) Tclass.Common.byte)))
+ :qid |unknown.0:0|
+ :skolemid |1018|
+ :pattern ( ($IsBox bx@@59 Tclass.Common.byte))
+)))
+(assert (forall ((|i#0@@7| T@U) ) (!  (=> (= (type |i#0@@7|) intType) (= ($Is |i#0@@7| Tclass.Common.byte)  (and (INTERNAL_le_boogie 0 (U_2_int |i#0@@7|)) (INTERNAL_lt_boogie (U_2_int |i#0@@7|) 256))))
+ :qid |unknown.0:0|
+ :skolemid |1019|
+ :pattern ( ($Is |i#0@@7| Tclass.Common.byte))
+)))
+(assert (forall ((|i#0@@8| T@U) ($h@@30 T@U) ) (!  (=> (and (= (type |i#0@@8|) intType) (= (type $h@@30) (MapType0Type refType MapType1Type))) ($IsAlloc |i#0@@8| Tclass.Common.byte $h@@30))
+ :qid |unknown.0:0|
+ :skolemid |1020|
+ :pattern ( ($IsAlloc |i#0@@8| Tclass.Common.byte $h@@30))
+)))
+(assert (forall ((|s#0| T@U) ) (!  (=> (= (type |s#0|) (SeqType BoxType)) (= ($Is |s#0| Tclass.Common.Key)  (and ($Is |s#0| (TSeq Tclass.Common.byte)) (INTERNAL_le_boogie (|Seq#Length| |s#0|) 1024))))
+ :qid |unknown.0:0|
+ :skolemid |1021|
+ :pattern ( ($Is |s#0| Tclass.Common.Key))
+)))
+(assert (forall ((|s#0@@0| T@U) ($h@@31 T@U) ) (!  (=> (and (= (type |s#0@@0|) (SeqType BoxType)) (= (type $h@@31) (MapType0Type refType MapType1Type))) (= ($IsAlloc |s#0@@0| Tclass.Common.Key $h@@31) ($IsAlloc |s#0@@0| (TSeq Tclass.Common.byte) $h@@31)))
  :qid |unknown.0:0|
  :skolemid |1022|
- :pattern ( ($IsAlloc $o@@10 Tclass.Test.__default $h@@31))
+ :pattern ( ($IsAlloc |s#0@@0| Tclass.Common.Key $h@@31))
 )))
-(assert  (=> (<= 6 $FunctionContextHeight) (forall ((|key#0| T@U) ) (!  (=> (and (= (type |key#0|) (SeqType BoxType)) (or (|Test.__default.AnyKey#canCall| |key#0|) (and (not (= 6 $FunctionContextHeight)) ($Is |key#0| Tclass.Test.Key)))) true)
- :qid |Testidfy.6:18|
+(assert (= (type Tclass.Common.__default) TyType))
+(assert (= (Tag Tclass.Common.__default) Tagclass.Common.__default))
+(assert (= (TagFamily Tclass.Common.__default) tytagFamily$_default))
+(assert (forall ((bx@@60 T@U) ) (!  (=> (and (= (type bx@@60) BoxType) ($IsBox bx@@60 Tclass.Common.__default)) (and (= ($Box ($Unbox refType bx@@60)) bx@@60) ($Is ($Unbox refType bx@@60) Tclass.Common.__default)))
+ :qid |unknown.0:0|
  :skolemid |1023|
- :pattern ( (Test.__default.AnyKey |key#0|))
-))))
-(assert (forall ((|key#0@@0| T@U) ) (!  (=> (and (= (type |key#0@@0|) (SeqType BoxType)) ($Is |key#0@@0| Tclass.Test.Key)) (= (|Test.__default.AnyKey#requires| |key#0@@0|) true))
- :qid |Testidfy.6:18|
+ :pattern ( ($IsBox bx@@60 Tclass.Common.__default))
+)))
+(assert (forall (($o@@11 T@U) ) (!  (=> (= (type $o@@11) refType) (= ($Is $o@@11 Tclass.Common.__default)  (or (= $o@@11 null) (= (dtype $o@@11) Tclass.Common.__default))))
+ :qid |unknown.0:0|
  :skolemid |1024|
- :pattern ( (|Test.__default.AnyKey#requires| |key#0@@0|))
+ :pattern ( ($Is $o@@11 Tclass.Common.__default))
 )))
-(assert  (=> (<= 6 $FunctionContextHeight) (forall ((|key#0@@1| T@U) ) (!  (=> (and (= (type |key#0@@1|) (SeqType BoxType)) (or (|Test.__default.AnyKey#canCall| |key#0@@1|) (and (not (= 6 $FunctionContextHeight)) ($Is |key#0@@1| Tclass.Test.Key)))) (= (Test.__default.AnyKey |key#0@@1|) (U_2_bool (Lit (bool_2_U true)))))
- :qid |Testidfy.6:18|
+(assert (forall (($o@@12 T@U) ($h@@32 T@U) ) (!  (=> (and (= (type $o@@12) refType) (= (type $h@@32) (MapType0Type refType MapType1Type))) (= ($IsAlloc $o@@12 Tclass.Common.__default $h@@32)  (or (= $o@@12 null) (U_2_bool (MapType1Select (MapType0Select $h@@32 $o@@12) alloc)))))
+ :qid |unknown.0:0|
  :skolemid |1025|
- :pattern ( (Test.__default.AnyKey |key#0@@1|))
-))))
-(assert  (=> (<= 6 $FunctionContextHeight) (forall ((|key#0@@2| T@U) ) (!  (=> (and (= (type |key#0@@2|) (SeqType BoxType)) (or (|Test.__default.AnyKey#canCall| (Lit |key#0@@2|)) (and (not (= 6 $FunctionContextHeight)) ($Is |key#0@@2| Tclass.Test.Key)))) (= (Test.__default.AnyKey (Lit |key#0@@2|)) (U_2_bool (Lit (bool_2_U true)))))
- :qid |Testidfy.6:18|
- :weight 3
- :skolemid |1026|
- :pattern ( (Test.__default.AnyKey (Lit |key#0@@2|)))
-))))
-(assert  (=> (<= 7 $FunctionContextHeight) (forall ((|keys#0| T@U) ) (!  (=> (and (= (type |keys#0|) (MapType0Type BoxType boolType)) (or (|Test.__default.Total#canCall| |keys#0|) (and (not (= 7 $FunctionContextHeight)) ($Is |keys#0| (TISet Tclass.Test.Key))))) true)
- :qid |Testidfy.10:17|
- :skolemid |1027|
- :pattern ( (Test.__default.Total |keys#0|))
-))))
-(assert (forall ((|keys#0@@0| T@U) ) (!  (=> (and (= (type |keys#0@@0|) (MapType0Type BoxType boolType)) ($Is |keys#0@@0| (TISet Tclass.Test.Key))) (= (|Test.__default.Total#requires| |keys#0@@0|) true))
- :qid |Testidfy.10:17|
- :skolemid |1028|
- :pattern ( (|Test.__default.Total#requires| |keys#0@@0|))
+ :pattern ( ($IsAlloc $o@@12 Tclass.Common.__default $h@@32))
 )))
-(assert  (=> (<= 7 $FunctionContextHeight) (forall ((|keys#0@@1| T@U) ) (!  (=> (and (= (type |keys#0@@1|) (MapType0Type BoxType boolType)) (or (|Test.__default.Total#canCall| |keys#0@@1|) (and (not (= 7 $FunctionContextHeight)) ($Is |keys#0@@1| (TISet Tclass.Test.Key))))) (and (forall ((|k#0@@1| T@U) ) (!  (=> (and (= (type |k#0@@1|) (SeqType BoxType)) ($Is |k#0@@1| Tclass.Test.Key)) (|Test.__default.AnyKey#canCall| |k#0@@1|))
- :qid |Testidfy.11:12|
- :skolemid |1030|
- :pattern ( (MapType0Select |keys#0@@1| ($Box |k#0@@1|)))
- :pattern ( (Test.__default.AnyKey |k#0@@1|))
-)) (= (Test.__default.Total |keys#0@@1|) (forall ((|k#0@@2| T@U) ) (!  (=> (= (type |k#0@@2|) (SeqType BoxType)) (=> (and ($Is |k#0@@2| Tclass.Test.Key) (Test.__default.AnyKey |k#0@@2|)) (U_2_bool (MapType0Select |keys#0@@1| ($Box |k#0@@2|)))))
- :qid |Testidfy.11:12|
- :skolemid |1029|
- :pattern ( (MapType0Select |keys#0@@1| ($Box |k#0@@2|)))
- :pattern ( (Test.__default.AnyKey |k#0@@2|))
-)))))
- :qid |Testidfy.10:17|
- :skolemid |1031|
- :pattern ( (Test.__default.Total |keys#0@@1|))
+(assert  (=> true (forall ((|key#0| T@U) ) (!  (=> (and (= (type |key#0|) (SeqType BoxType)) (or (|Common.__default.AnyKey#canCall| |key#0|) ($Is |key#0| Tclass.Common.Key))) true)
+ :qid |Commonidfy.6:18|
+ :skolemid |1026|
+ :pattern ( (Common.__default.AnyKey |key#0|))
 ))))
-(assert  (=> (<= 7 $FunctionContextHeight) (forall ((|keys#0@@2| T@U) ) (!  (=> (and (= (type |keys#0@@2|) (MapType0Type BoxType boolType)) (or (|Test.__default.Total#canCall| (Lit |keys#0@@2|)) (and (not (= 7 $FunctionContextHeight)) ($Is |keys#0@@2| (TISet Tclass.Test.Key))))) (and (forall ((|k#1@@1| T@U) ) (!  (=> (and (= (type |k#1@@1|) (SeqType BoxType)) ($Is |k#1@@1| Tclass.Test.Key)) (|Test.__default.AnyKey#canCall| |k#1@@1|))
- :qid |Testidfy.11:12|
- :skolemid |1033|
- :pattern ( (MapType0Select |keys#0@@2| ($Box |k#1@@1|)))
- :pattern ( (Test.__default.AnyKey |k#1@@1|))
-)) (= (Test.__default.Total (Lit |keys#0@@2|)) (forall ((|k#1@@2| T@U) ) (!  (=> (= (type |k#1@@2|) (SeqType BoxType)) (=> (and ($Is |k#1@@2| Tclass.Test.Key) (Test.__default.AnyKey |k#1@@2|)) (U_2_bool (MapType0Select (Lit |keys#0@@2|) ($Box |k#1@@2|)))))
- :qid |Testidfy.11:12|
- :skolemid |1032|
- :pattern ( (MapType0Select |keys#0@@2| ($Box |k#1@@2|)))
- :pattern ( (Test.__default.AnyKey |k#1@@2|))
-)))))
- :qid |Testidfy.10:17|
+(assert (forall ((|key#0@@0| T@U) ) (!  (=> (and (= (type |key#0@@0|) (SeqType BoxType)) ($Is |key#0@@0| Tclass.Common.Key)) (= (|Common.__default.AnyKey#requires| |key#0@@0|) true))
+ :qid |Commonidfy.6:18|
+ :skolemid |1027|
+ :pattern ( (|Common.__default.AnyKey#requires| |key#0@@0|))
+)))
+(assert  (=> true (forall ((|key#0@@1| T@U) ) (!  (=> (and (= (type |key#0@@1|) (SeqType BoxType)) (or (|Common.__default.AnyKey#canCall| |key#0@@1|) ($Is |key#0@@1| Tclass.Common.Key))) (= (Common.__default.AnyKey |key#0@@1|) (U_2_bool (Lit (bool_2_U true)))))
+ :qid |Commonidfy.6:18|
+ :skolemid |1028|
+ :pattern ( (Common.__default.AnyKey |key#0@@1|))
+))))
+(assert  (=> true (forall ((|key#0@@2| T@U) ) (!  (=> (and (= (type |key#0@@2|) (SeqType BoxType)) (or (|Common.__default.AnyKey#canCall| (Lit |key#0@@2|)) ($Is |key#0@@2| Tclass.Common.Key))) (= (Common.__default.AnyKey (Lit |key#0@@2|)) (U_2_bool (Lit (bool_2_U true)))))
+ :qid |Commonidfy.6:18|
  :weight 3
+ :skolemid |1029|
+ :pattern ( (Common.__default.AnyKey (Lit |key#0@@2|)))
+))))
+(assert  (=> true (forall ((|keys#0| T@U) ) (!  (=> (and (= (type |keys#0|) (MapType0Type BoxType boolType)) (or (|Common.__default.TotalSet#canCall| |keys#0|) ($Is |keys#0| (TISet Tclass.Common.Key)))) true)
+ :qid |Commonidfy.10:20|
+ :skolemid |1030|
+ :pattern ( (Common.__default.TotalSet |keys#0|))
+))))
+(assert (forall ((|keys#0@@0| T@U) ) (!  (=> (and (= (type |keys#0@@0|) (MapType0Type BoxType boolType)) ($Is |keys#0@@0| (TISet Tclass.Common.Key))) (= (|Common.__default.TotalSet#requires| |keys#0@@0|) true))
+ :qid |Commonidfy.10:20|
+ :skolemid |1031|
+ :pattern ( (|Common.__default.TotalSet#requires| |keys#0@@0|))
+)))
+(assert  (=> true (forall ((|keys#0@@1| T@U) ) (!  (=> (and (= (type |keys#0@@1|) (MapType0Type BoxType boolType)) (or (|Common.__default.TotalSet#canCall| |keys#0@@1|) ($Is |keys#0@@1| (TISet Tclass.Common.Key)))) (and (forall ((|k#0@@1| T@U) ) (!  (=> (and (= (type |k#0@@1|) (SeqType BoxType)) ($Is |k#0@@1| Tclass.Common.Key)) (|Common.__default.AnyKey#canCall| |k#0@@1|))
+ :qid |Commonidfy.11:12|
+ :skolemid |1033|
+ :pattern ( (MapType0Select |keys#0@@1| ($Box |k#0@@1|)))
+ :pattern ( (Common.__default.AnyKey |k#0@@1|))
+)) (= (Common.__default.TotalSet |keys#0@@1|) (forall ((|k#0@@2| T@U) ) (!  (=> (= (type |k#0@@2|) (SeqType BoxType)) (=> (and ($Is |k#0@@2| Tclass.Common.Key) (Common.__default.AnyKey |k#0@@2|)) (U_2_bool (MapType0Select |keys#0@@1| ($Box |k#0@@2|)))))
+ :qid |Commonidfy.11:12|
+ :skolemid |1032|
+ :pattern ( (MapType0Select |keys#0@@1| ($Box |k#0@@2|)))
+ :pattern ( (Common.__default.AnyKey |k#0@@2|))
+)))))
+ :qid |Commonidfy.10:20|
  :skolemid |1034|
- :pattern ( (Test.__default.Total (Lit |keys#0@@2|)))
+ :pattern ( (Common.__default.TotalSet |keys#0@@1|))
+))))
+(assert  (=> true (forall ((|keys#0@@2| T@U) ) (!  (=> (and (= (type |keys#0@@2|) (MapType0Type BoxType boolType)) (or (|Common.__default.TotalSet#canCall| (Lit |keys#0@@2|)) ($Is |keys#0@@2| (TISet Tclass.Common.Key)))) (and (forall ((|k#1@@1| T@U) ) (!  (=> (and (= (type |k#1@@1|) (SeqType BoxType)) ($Is |k#1@@1| Tclass.Common.Key)) (|Common.__default.AnyKey#canCall| |k#1@@1|))
+ :qid |Commonidfy.11:12|
+ :skolemid |1036|
+ :pattern ( (MapType0Select |keys#0@@2| ($Box |k#1@@1|)))
+ :pattern ( (Common.__default.AnyKey |k#1@@1|))
+)) (= (Common.__default.TotalSet (Lit |keys#0@@2|)) (forall ((|k#1@@2| T@U) ) (!  (=> (= (type |k#1@@2|) (SeqType BoxType)) (=> (and ($Is |k#1@@2| Tclass.Common.Key) (Common.__default.AnyKey |k#1@@2|)) (U_2_bool (MapType0Select (Lit |keys#0@@2|) ($Box |k#1@@2|)))))
+ :qid |Commonidfy.11:12|
+ :skolemid |1035|
+ :pattern ( (MapType0Select |keys#0@@2| ($Box |k#1@@2|)))
+ :pattern ( (Common.__default.AnyKey |k#1@@2|))
+)))))
+ :qid |Commonidfy.10:20|
+ :weight 3
+ :skolemid |1037|
+ :pattern ( (Common.__default.TotalSet (Lit |keys#0@@2|)))
 ))))
 (assert  (and (and (and (and (and (and (and (forall ((arg0@@182 T@T) (arg1@@82 T@T) ) (! (= (Ctor (MapType4Type arg0@@182 arg1@@82)) 26)
  :qid |ctor:MapType4Type|
@@ -5057,161 +5074,121 @@
  :qid |funType:lambda#0|
  :pattern ( (|lambda#0| arg0@@187 arg1@@87 arg2@@35 arg3@@13))
 ))))
-(assert (forall ((|l#0| T@U) (|l#1| T@U) (|l#2| T@U) (|l#3| Bool) ($o@@11 T@U) ($f T@U) ) (! (let ((alpha@@6 (FieldTypeInv0 (type $f))))
- (=> (and (and (and (and (= (type |l#0|) refType) (= (type |l#1|) (MapType0Type refType MapType1Type))) (= (type |l#2|) (FieldType boolType))) (= (type $o@@11) refType)) (= (type $f) (FieldType alpha@@6))) (= (U_2_bool (MapType4Select (|lambda#0| |l#0| |l#1| |l#2| |l#3|) $o@@11 $f))  (=> (and (not (= $o@@11 |l#0|)) (U_2_bool (MapType1Select (MapType0Select |l#1| $o@@11) |l#2|))) |l#3|))))
+(assert (forall ((|l#0| T@U) (|l#1| T@U) (|l#2| T@U) (|l#3| Bool) ($o@@13 T@U) ($f T@U) ) (! (let ((alpha@@6 (FieldTypeInv0 (type $f))))
+ (=> (and (and (and (and (= (type |l#0|) refType) (= (type |l#1|) (MapType0Type refType MapType1Type))) (= (type |l#2|) (FieldType boolType))) (= (type $o@@13) refType)) (= (type $f) (FieldType alpha@@6))) (= (U_2_bool (MapType4Select (|lambda#0| |l#0| |l#1| |l#2| |l#3|) $o@@13 $f))  (=> (and (not (= $o@@13 |l#0|)) (U_2_bool (MapType1Select (MapType0Select |l#1| $o@@13) |l#2|))) |l#3|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1038|
- :pattern ( (MapType4Select (|lambda#0| |l#0| |l#1| |l#2| |l#3|) $o@@11 $f))
+ :pattern ( (MapType4Select (|lambda#0| |l#0| |l#1| |l#2| |l#3|) $o@@13 $f))
 )))
 (assert (forall ((arg0@@188 T@U) (arg1@@88 T@U) (arg2@@36 T@U) (arg3@@14 Bool) ) (! (= (type (|lambda#1| arg0@@188 arg1@@88 arg2@@36 arg3@@14)) (MapType4Type refType boolType))
  :qid |funType:lambda#1|
  :pattern ( (|lambda#1| arg0@@188 arg1@@88 arg2@@36 arg3@@14))
 )))
-(assert (forall ((|l#0@@0| T@U) (|l#1@@0| T@U) (|l#2@@0| T@U) (|l#3@@0| Bool) ($o@@12 T@U) ($f@@0 T@U) ) (! (let ((alpha@@7 (FieldTypeInv0 (type $f@@0))))
- (=> (and (and (and (and (= (type |l#0@@0|) refType) (= (type |l#1@@0|) (MapType0Type refType MapType1Type))) (= (type |l#2@@0|) (FieldType boolType))) (= (type $o@@12) refType)) (= (type $f@@0) (FieldType alpha@@7))) (= (U_2_bool (MapType4Select (|lambda#1| |l#0@@0| |l#1@@0| |l#2@@0| |l#3@@0|) $o@@12 $f@@0))  (=> (and (not (= $o@@12 |l#0@@0|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@0| $o@@12) |l#2@@0|))) |l#3@@0|))))
+(assert (forall ((|l#0@@0| T@U) (|l#1@@0| T@U) (|l#2@@0| T@U) (|l#3@@0| Bool) ($o@@14 T@U) ($f@@0 T@U) ) (! (let ((alpha@@7 (FieldTypeInv0 (type $f@@0))))
+ (=> (and (and (and (and (= (type |l#0@@0|) refType) (= (type |l#1@@0|) (MapType0Type refType MapType1Type))) (= (type |l#2@@0|) (FieldType boolType))) (= (type $o@@14) refType)) (= (type $f@@0) (FieldType alpha@@7))) (= (U_2_bool (MapType4Select (|lambda#1| |l#0@@0| |l#1@@0| |l#2@@0| |l#3@@0|) $o@@14 $f@@0))  (=> (and (not (= $o@@14 |l#0@@0|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@0| $o@@14) |l#2@@0|))) |l#3@@0|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1039|
- :pattern ( (MapType4Select (|lambda#1| |l#0@@0| |l#1@@0| |l#2@@0| |l#3@@0|) $o@@12 $f@@0))
+ :pattern ( (MapType4Select (|lambda#1| |l#0@@0| |l#1@@0| |l#2@@0| |l#3@@0|) $o@@14 $f@@0))
 )))
 (assert (forall ((arg0@@189 T@U) (arg1@@89 T@U) (arg2@@37 T@U) (arg3@@15 Bool) ) (! (= (type (|lambda#2| arg0@@189 arg1@@89 arg2@@37 arg3@@15)) (MapType4Type refType boolType))
  :qid |funType:lambda#2|
  :pattern ( (|lambda#2| arg0@@189 arg1@@89 arg2@@37 arg3@@15))
 )))
-(assert (forall ((|l#0@@1| T@U) (|l#1@@1| T@U) (|l#2@@1| T@U) (|l#3@@1| Bool) ($o@@13 T@U) ($f@@1 T@U) ) (! (let ((alpha@@8 (FieldTypeInv0 (type $f@@1))))
- (=> (and (and (and (and (= (type |l#0@@1|) refType) (= (type |l#1@@1|) (MapType0Type refType MapType1Type))) (= (type |l#2@@1|) (FieldType boolType))) (= (type $o@@13) refType)) (= (type $f@@1) (FieldType alpha@@8))) (= (U_2_bool (MapType4Select (|lambda#2| |l#0@@1| |l#1@@1| |l#2@@1| |l#3@@1|) $o@@13 $f@@1))  (=> (and (not (= $o@@13 |l#0@@1|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@1| $o@@13) |l#2@@1|))) |l#3@@1|))))
+(assert (forall ((|l#0@@1| T@U) (|l#1@@1| T@U) (|l#2@@1| T@U) (|l#3@@1| Bool) ($o@@15 T@U) ($f@@1 T@U) ) (! (let ((alpha@@8 (FieldTypeInv0 (type $f@@1))))
+ (=> (and (and (and (and (= (type |l#0@@1|) refType) (= (type |l#1@@1|) (MapType0Type refType MapType1Type))) (= (type |l#2@@1|) (FieldType boolType))) (= (type $o@@15) refType)) (= (type $f@@1) (FieldType alpha@@8))) (= (U_2_bool (MapType4Select (|lambda#2| |l#0@@1| |l#1@@1| |l#2@@1| |l#3@@1|) $o@@15 $f@@1))  (=> (and (not (= $o@@15 |l#0@@1|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@1| $o@@15) |l#2@@1|))) |l#3@@1|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1040|
- :pattern ( (MapType4Select (|lambda#2| |l#0@@1| |l#1@@1| |l#2@@1| |l#3@@1|) $o@@13 $f@@1))
+ :pattern ( (MapType4Select (|lambda#2| |l#0@@1| |l#1@@1| |l#2@@1| |l#3@@1|) $o@@15 $f@@1))
 )))
 (assert (forall ((arg0@@190 T@U) (arg1@@90 T@U) (arg2@@38 T@U) (arg3@@16 Bool) ) (! (= (type (|lambda#3| arg0@@190 arg1@@90 arg2@@38 arg3@@16)) (MapType4Type refType boolType))
  :qid |funType:lambda#3|
  :pattern ( (|lambda#3| arg0@@190 arg1@@90 arg2@@38 arg3@@16))
 )))
-(assert (forall ((|l#0@@2| T@U) (|l#1@@2| T@U) (|l#2@@2| T@U) (|l#3@@2| Bool) ($o@@14 T@U) ($f@@2 T@U) ) (! (let ((alpha@@9 (FieldTypeInv0 (type $f@@2))))
- (=> (and (and (and (and (= (type |l#0@@2|) refType) (= (type |l#1@@2|) (MapType0Type refType MapType1Type))) (= (type |l#2@@2|) (FieldType boolType))) (= (type $o@@14) refType)) (= (type $f@@2) (FieldType alpha@@9))) (= (U_2_bool (MapType4Select (|lambda#3| |l#0@@2| |l#1@@2| |l#2@@2| |l#3@@2|) $o@@14 $f@@2))  (=> (and (not (= $o@@14 |l#0@@2|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@2| $o@@14) |l#2@@2|))) |l#3@@2|))))
+(assert (forall ((|l#0@@2| T@U) (|l#1@@2| T@U) (|l#2@@2| T@U) (|l#3@@2| Bool) ($o@@16 T@U) ($f@@2 T@U) ) (! (let ((alpha@@9 (FieldTypeInv0 (type $f@@2))))
+ (=> (and (and (and (and (= (type |l#0@@2|) refType) (= (type |l#1@@2|) (MapType0Type refType MapType1Type))) (= (type |l#2@@2|) (FieldType boolType))) (= (type $o@@16) refType)) (= (type $f@@2) (FieldType alpha@@9))) (= (U_2_bool (MapType4Select (|lambda#3| |l#0@@2| |l#1@@2| |l#2@@2| |l#3@@2|) $o@@16 $f@@2))  (=> (and (not (= $o@@16 |l#0@@2|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@2| $o@@16) |l#2@@2|))) |l#3@@2|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1041|
- :pattern ( (MapType4Select (|lambda#3| |l#0@@2| |l#1@@2| |l#2@@2| |l#3@@2|) $o@@14 $f@@2))
+ :pattern ( (MapType4Select (|lambda#3| |l#0@@2| |l#1@@2| |l#2@@2| |l#3@@2|) $o@@16 $f@@2))
 )))
 (assert (forall ((arg0@@191 T@U) (arg1@@91 T@U) (arg2@@39 T@U) (arg3@@17 Bool) ) (! (= (type (|lambda#4| arg0@@191 arg1@@91 arg2@@39 arg3@@17)) (MapType4Type refType boolType))
  :qid |funType:lambda#4|
  :pattern ( (|lambda#4| arg0@@191 arg1@@91 arg2@@39 arg3@@17))
 )))
-(assert (forall ((|l#0@@3| T@U) (|l#1@@3| T@U) (|l#2@@3| T@U) (|l#3@@3| Bool) ($o@@15 T@U) ($f@@3 T@U) ) (! (let ((alpha@@10 (FieldTypeInv0 (type $f@@3))))
- (=> (and (and (and (and (= (type |l#0@@3|) refType) (= (type |l#1@@3|) (MapType0Type refType MapType1Type))) (= (type |l#2@@3|) (FieldType boolType))) (= (type $o@@15) refType)) (= (type $f@@3) (FieldType alpha@@10))) (= (U_2_bool (MapType4Select (|lambda#4| |l#0@@3| |l#1@@3| |l#2@@3| |l#3@@3|) $o@@15 $f@@3))  (=> (and (not (= $o@@15 |l#0@@3|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@3| $o@@15) |l#2@@3|))) |l#3@@3|))))
+(assert (forall ((|l#0@@3| T@U) (|l#1@@3| T@U) (|l#2@@3| T@U) (|l#3@@3| Bool) ($o@@17 T@U) ($f@@3 T@U) ) (! (let ((alpha@@10 (FieldTypeInv0 (type $f@@3))))
+ (=> (and (and (and (and (= (type |l#0@@3|) refType) (= (type |l#1@@3|) (MapType0Type refType MapType1Type))) (= (type |l#2@@3|) (FieldType boolType))) (= (type $o@@17) refType)) (= (type $f@@3) (FieldType alpha@@10))) (= (U_2_bool (MapType4Select (|lambda#4| |l#0@@3| |l#1@@3| |l#2@@3| |l#3@@3|) $o@@17 $f@@3))  (=> (and (not (= $o@@17 |l#0@@3|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@3| $o@@17) |l#2@@3|))) |l#3@@3|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1042|
- :pattern ( (MapType4Select (|lambda#4| |l#0@@3| |l#1@@3| |l#2@@3| |l#3@@3|) $o@@15 $f@@3))
+ :pattern ( (MapType4Select (|lambda#4| |l#0@@3| |l#1@@3| |l#2@@3| |l#3@@3|) $o@@17 $f@@3))
 )))
 (assert (forall ((arg0@@192 T@U) (arg1@@92 T@U) (arg2@@40 T@U) (arg3@@18 Bool) ) (! (= (type (|lambda#5| arg0@@192 arg1@@92 arg2@@40 arg3@@18)) (MapType4Type refType boolType))
  :qid |funType:lambda#5|
  :pattern ( (|lambda#5| arg0@@192 arg1@@92 arg2@@40 arg3@@18))
 )))
-(assert (forall ((|l#0@@4| T@U) (|l#1@@4| T@U) (|l#2@@4| T@U) (|l#3@@4| Bool) ($o@@16 T@U) ($f@@4 T@U) ) (! (let ((alpha@@11 (FieldTypeInv0 (type $f@@4))))
- (=> (and (and (and (and (= (type |l#0@@4|) refType) (= (type |l#1@@4|) (MapType0Type refType MapType1Type))) (= (type |l#2@@4|) (FieldType boolType))) (= (type $o@@16) refType)) (= (type $f@@4) (FieldType alpha@@11))) (= (U_2_bool (MapType4Select (|lambda#5| |l#0@@4| |l#1@@4| |l#2@@4| |l#3@@4|) $o@@16 $f@@4))  (=> (and (not (= $o@@16 |l#0@@4|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@4| $o@@16) |l#2@@4|))) |l#3@@4|))))
+(assert (forall ((|l#0@@4| T@U) (|l#1@@4| T@U) (|l#2@@4| T@U) (|l#3@@4| Bool) ($o@@18 T@U) ($f@@4 T@U) ) (! (let ((alpha@@11 (FieldTypeInv0 (type $f@@4))))
+ (=> (and (and (and (and (= (type |l#0@@4|) refType) (= (type |l#1@@4|) (MapType0Type refType MapType1Type))) (= (type |l#2@@4|) (FieldType boolType))) (= (type $o@@18) refType)) (= (type $f@@4) (FieldType alpha@@11))) (= (U_2_bool (MapType4Select (|lambda#5| |l#0@@4| |l#1@@4| |l#2@@4| |l#3@@4|) $o@@18 $f@@4))  (=> (and (not (= $o@@18 |l#0@@4|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@4| $o@@18) |l#2@@4|))) |l#3@@4|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1043|
- :pattern ( (MapType4Select (|lambda#5| |l#0@@4| |l#1@@4| |l#2@@4| |l#3@@4|) $o@@16 $f@@4))
+ :pattern ( (MapType4Select (|lambda#5| |l#0@@4| |l#1@@4| |l#2@@4| |l#3@@4|) $o@@18 $f@@4))
 )))
 (assert (forall ((arg0@@193 T@U) (arg1@@93 T@U) (arg2@@41 T@U) (arg3@@19 Bool) ) (! (= (type (|lambda#6| arg0@@193 arg1@@93 arg2@@41 arg3@@19)) (MapType4Type refType boolType))
  :qid |funType:lambda#6|
  :pattern ( (|lambda#6| arg0@@193 arg1@@93 arg2@@41 arg3@@19))
 )))
-(assert (forall ((|l#0@@5| T@U) (|l#1@@5| T@U) (|l#2@@5| T@U) (|l#3@@5| Bool) ($o@@17 T@U) ($f@@5 T@U) ) (! (let ((alpha@@12 (FieldTypeInv0 (type $f@@5))))
- (=> (and (and (and (and (= (type |l#0@@5|) refType) (= (type |l#1@@5|) (MapType0Type refType MapType1Type))) (= (type |l#2@@5|) (FieldType boolType))) (= (type $o@@17) refType)) (= (type $f@@5) (FieldType alpha@@12))) (= (U_2_bool (MapType4Select (|lambda#6| |l#0@@5| |l#1@@5| |l#2@@5| |l#3@@5|) $o@@17 $f@@5))  (=> (and (not (= $o@@17 |l#0@@5|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@5| $o@@17) |l#2@@5|))) |l#3@@5|))))
+(assert (forall ((|l#0@@5| T@U) (|l#1@@5| T@U) (|l#2@@5| T@U) (|l#3@@5| Bool) ($o@@19 T@U) ($f@@5 T@U) ) (! (let ((alpha@@12 (FieldTypeInv0 (type $f@@5))))
+ (=> (and (and (and (and (= (type |l#0@@5|) refType) (= (type |l#1@@5|) (MapType0Type refType MapType1Type))) (= (type |l#2@@5|) (FieldType boolType))) (= (type $o@@19) refType)) (= (type $f@@5) (FieldType alpha@@12))) (= (U_2_bool (MapType4Select (|lambda#6| |l#0@@5| |l#1@@5| |l#2@@5| |l#3@@5|) $o@@19 $f@@5))  (=> (and (not (= $o@@19 |l#0@@5|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@5| $o@@19) |l#2@@5|))) |l#3@@5|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1044|
- :pattern ( (MapType4Select (|lambda#6| |l#0@@5| |l#1@@5| |l#2@@5| |l#3@@5|) $o@@17 $f@@5))
+ :pattern ( (MapType4Select (|lambda#6| |l#0@@5| |l#1@@5| |l#2@@5| |l#3@@5|) $o@@19 $f@@5))
 )))
 (assert (forall ((arg0@@194 T@U) (arg1@@94 T@U) (arg2@@42 T@U) (arg3@@20 Bool) ) (! (= (type (|lambda#7| arg0@@194 arg1@@94 arg2@@42 arg3@@20)) (MapType4Type refType boolType))
  :qid |funType:lambda#7|
  :pattern ( (|lambda#7| arg0@@194 arg1@@94 arg2@@42 arg3@@20))
 )))
-(assert (forall ((|l#0@@6| T@U) (|l#1@@6| T@U) (|l#2@@6| T@U) (|l#3@@6| Bool) ($o@@18 T@U) ($f@@6 T@U) ) (! (let ((alpha@@13 (FieldTypeInv0 (type $f@@6))))
- (=> (and (and (and (and (= (type |l#0@@6|) refType) (= (type |l#1@@6|) (MapType0Type refType MapType1Type))) (= (type |l#2@@6|) (FieldType boolType))) (= (type $o@@18) refType)) (= (type $f@@6) (FieldType alpha@@13))) (= (U_2_bool (MapType4Select (|lambda#7| |l#0@@6| |l#1@@6| |l#2@@6| |l#3@@6|) $o@@18 $f@@6))  (=> (and (not (= $o@@18 |l#0@@6|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@6| $o@@18) |l#2@@6|))) |l#3@@6|))))
+(assert (forall ((|l#0@@6| T@U) (|l#1@@6| T@U) (|l#2@@6| T@U) (|l#3@@6| Bool) ($o@@20 T@U) ($f@@6 T@U) ) (! (let ((alpha@@13 (FieldTypeInv0 (type $f@@6))))
+ (=> (and (and (and (and (= (type |l#0@@6|) refType) (= (type |l#1@@6|) (MapType0Type refType MapType1Type))) (= (type |l#2@@6|) (FieldType boolType))) (= (type $o@@20) refType)) (= (type $f@@6) (FieldType alpha@@13))) (= (U_2_bool (MapType4Select (|lambda#7| |l#0@@6| |l#1@@6| |l#2@@6| |l#3@@6|) $o@@20 $f@@6))  (=> (and (not (= $o@@20 |l#0@@6|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@6| $o@@20) |l#2@@6|))) |l#3@@6|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1045|
- :pattern ( (MapType4Select (|lambda#7| |l#0@@6| |l#1@@6| |l#2@@6| |l#3@@6|) $o@@18 $f@@6))
+ :pattern ( (MapType4Select (|lambda#7| |l#0@@6| |l#1@@6| |l#2@@6| |l#3@@6|) $o@@20 $f@@6))
 )))
 (assert (forall ((arg0@@195 T@U) (arg1@@95 T@U) (arg2@@43 T@U) (arg3@@21 Bool) ) (! (= (type (|lambda#8| arg0@@195 arg1@@95 arg2@@43 arg3@@21)) (MapType4Type refType boolType))
  :qid |funType:lambda#8|
  :pattern ( (|lambda#8| arg0@@195 arg1@@95 arg2@@43 arg3@@21))
 )))
-(assert (forall ((|l#0@@7| T@U) (|l#1@@7| T@U) (|l#2@@7| T@U) (|l#3@@7| Bool) ($o@@19 T@U) ($f@@7 T@U) ) (! (let ((alpha@@14 (FieldTypeInv0 (type $f@@7))))
- (=> (and (and (and (and (= (type |l#0@@7|) refType) (= (type |l#1@@7|) (MapType0Type refType MapType1Type))) (= (type |l#2@@7|) (FieldType boolType))) (= (type $o@@19) refType)) (= (type $f@@7) (FieldType alpha@@14))) (= (U_2_bool (MapType4Select (|lambda#8| |l#0@@7| |l#1@@7| |l#2@@7| |l#3@@7|) $o@@19 $f@@7))  (=> (and (not (= $o@@19 |l#0@@7|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@7| $o@@19) |l#2@@7|))) |l#3@@7|))))
+(assert (forall ((|l#0@@7| T@U) (|l#1@@7| T@U) (|l#2@@7| T@U) (|l#3@@7| Bool) ($o@@21 T@U) ($f@@7 T@U) ) (! (let ((alpha@@14 (FieldTypeInv0 (type $f@@7))))
+ (=> (and (and (and (and (= (type |l#0@@7|) refType) (= (type |l#1@@7|) (MapType0Type refType MapType1Type))) (= (type |l#2@@7|) (FieldType boolType))) (= (type $o@@21) refType)) (= (type $f@@7) (FieldType alpha@@14))) (= (U_2_bool (MapType4Select (|lambda#8| |l#0@@7| |l#1@@7| |l#2@@7| |l#3@@7|) $o@@21 $f@@7))  (=> (and (not (= $o@@21 |l#0@@7|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@7| $o@@21) |l#2@@7|))) |l#3@@7|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1046|
- :pattern ( (MapType4Select (|lambda#8| |l#0@@7| |l#1@@7| |l#2@@7| |l#3@@7|) $o@@19 $f@@7))
+ :pattern ( (MapType4Select (|lambda#8| |l#0@@7| |l#1@@7| |l#2@@7| |l#3@@7|) $o@@21 $f@@7))
 )))
 (assert (forall ((arg0@@196 T@U) (arg1@@96 T@U) (arg2@@44 T@U) (arg3@@22 Bool) ) (! (= (type (|lambda#9| arg0@@196 arg1@@96 arg2@@44 arg3@@22)) (MapType4Type refType boolType))
  :qid |funType:lambda#9|
  :pattern ( (|lambda#9| arg0@@196 arg1@@96 arg2@@44 arg3@@22))
 )))
-(assert (forall ((|l#0@@8| T@U) (|l#1@@8| T@U) (|l#2@@8| T@U) (|l#3@@8| Bool) ($o@@20 T@U) ($f@@8 T@U) ) (! (let ((alpha@@15 (FieldTypeInv0 (type $f@@8))))
- (=> (and (and (and (and (= (type |l#0@@8|) refType) (= (type |l#1@@8|) (MapType0Type refType MapType1Type))) (= (type |l#2@@8|) (FieldType boolType))) (= (type $o@@20) refType)) (= (type $f@@8) (FieldType alpha@@15))) (= (U_2_bool (MapType4Select (|lambda#9| |l#0@@8| |l#1@@8| |l#2@@8| |l#3@@8|) $o@@20 $f@@8))  (=> (and (not (= $o@@20 |l#0@@8|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@8| $o@@20) |l#2@@8|))) |l#3@@8|))))
+(assert (forall ((|l#0@@8| T@U) (|l#1@@8| T@U) (|l#2@@8| T@U) (|l#3@@8| Bool) ($o@@22 T@U) ($f@@8 T@U) ) (! (let ((alpha@@15 (FieldTypeInv0 (type $f@@8))))
+ (=> (and (and (and (and (= (type |l#0@@8|) refType) (= (type |l#1@@8|) (MapType0Type refType MapType1Type))) (= (type |l#2@@8|) (FieldType boolType))) (= (type $o@@22) refType)) (= (type $f@@8) (FieldType alpha@@15))) (= (U_2_bool (MapType4Select (|lambda#9| |l#0@@8| |l#1@@8| |l#2@@8| |l#3@@8|) $o@@22 $f@@8))  (=> (and (not (= $o@@22 |l#0@@8|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@8| $o@@22) |l#2@@8|))) |l#3@@8|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1047|
- :pattern ( (MapType4Select (|lambda#9| |l#0@@8| |l#1@@8| |l#2@@8| |l#3@@8|) $o@@20 $f@@8))
+ :pattern ( (MapType4Select (|lambda#9| |l#0@@8| |l#1@@8| |l#2@@8| |l#3@@8|) $o@@22 $f@@8))
 )))
 (assert (forall ((arg0@@197 T@U) (arg1@@97 T@U) (arg2@@45 T@U) (arg3@@23 Bool) ) (! (= (type (|lambda#10| arg0@@197 arg1@@97 arg2@@45 arg3@@23)) (MapType4Type refType boolType))
  :qid |funType:lambda#10|
  :pattern ( (|lambda#10| arg0@@197 arg1@@97 arg2@@45 arg3@@23))
 )))
-(assert (forall ((|l#0@@9| T@U) (|l#1@@9| T@U) (|l#2@@9| T@U) (|l#3@@9| Bool) ($o@@21 T@U) ($f@@9 T@U) ) (! (let ((alpha@@16 (FieldTypeInv0 (type $f@@9))))
- (=> (and (and (and (and (= (type |l#0@@9|) refType) (= (type |l#1@@9|) (MapType0Type refType MapType1Type))) (= (type |l#2@@9|) (FieldType boolType))) (= (type $o@@21) refType)) (= (type $f@@9) (FieldType alpha@@16))) (= (U_2_bool (MapType4Select (|lambda#10| |l#0@@9| |l#1@@9| |l#2@@9| |l#3@@9|) $o@@21 $f@@9))  (=> (and (not (= $o@@21 |l#0@@9|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@9| $o@@21) |l#2@@9|))) |l#3@@9|))))
+(assert (forall ((|l#0@@9| T@U) (|l#1@@9| T@U) (|l#2@@9| T@U) (|l#3@@9| Bool) ($o@@23 T@U) ($f@@9 T@U) ) (! (let ((alpha@@16 (FieldTypeInv0 (type $f@@9))))
+ (=> (and (and (and (and (= (type |l#0@@9|) refType) (= (type |l#1@@9|) (MapType0Type refType MapType1Type))) (= (type |l#2@@9|) (FieldType boolType))) (= (type $o@@23) refType)) (= (type $f@@9) (FieldType alpha@@16))) (= (U_2_bool (MapType4Select (|lambda#10| |l#0@@9| |l#1@@9| |l#2@@9| |l#3@@9|) $o@@23 $f@@9))  (=> (and (not (= $o@@23 |l#0@@9|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@9| $o@@23) |l#2@@9|))) |l#3@@9|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1048|
- :pattern ( (MapType4Select (|lambda#10| |l#0@@9| |l#1@@9| |l#2@@9| |l#3@@9|) $o@@21 $f@@9))
+ :pattern ( (MapType4Select (|lambda#10| |l#0@@9| |l#1@@9| |l#2@@9| |l#3@@9|) $o@@23 $f@@9))
 )))
 (assert (forall ((arg0@@198 T@U) (arg1@@98 T@U) (arg2@@46 T@U) (arg3@@24 Bool) ) (! (= (type (|lambda#11| arg0@@198 arg1@@98 arg2@@46 arg3@@24)) (MapType4Type refType boolType))
  :qid |funType:lambda#11|
  :pattern ( (|lambda#11| arg0@@198 arg1@@98 arg2@@46 arg3@@24))
 )))
-(assert (forall ((|l#0@@10| T@U) (|l#1@@10| T@U) (|l#2@@10| T@U) (|l#3@@10| Bool) ($o@@22 T@U) ($f@@10 T@U) ) (! (let ((alpha@@17 (FieldTypeInv0 (type $f@@10))))
- (=> (and (and (and (and (= (type |l#0@@10|) refType) (= (type |l#1@@10|) (MapType0Type refType MapType1Type))) (= (type |l#2@@10|) (FieldType boolType))) (= (type $o@@22) refType)) (= (type $f@@10) (FieldType alpha@@17))) (= (U_2_bool (MapType4Select (|lambda#11| |l#0@@10| |l#1@@10| |l#2@@10| |l#3@@10|) $o@@22 $f@@10))  (=> (and (not (= $o@@22 |l#0@@10|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@10| $o@@22) |l#2@@10|))) |l#3@@10|))))
+(assert (forall ((|l#0@@10| T@U) (|l#1@@10| T@U) (|l#2@@10| T@U) (|l#3@@10| Bool) ($o@@24 T@U) ($f@@10 T@U) ) (! (let ((alpha@@17 (FieldTypeInv0 (type $f@@10))))
+ (=> (and (and (and (and (= (type |l#0@@10|) refType) (= (type |l#1@@10|) (MapType0Type refType MapType1Type))) (= (type |l#2@@10|) (FieldType boolType))) (= (type $o@@24) refType)) (= (type $f@@10) (FieldType alpha@@17))) (= (U_2_bool (MapType4Select (|lambda#11| |l#0@@10| |l#1@@10| |l#2@@10| |l#3@@10|) $o@@24 $f@@10))  (=> (and (not (= $o@@24 |l#0@@10|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@10| $o@@24) |l#2@@10|))) |l#3@@10|))))
  :qid |DafnyPreludebpl.129:1|
  :skolemid |1049|
- :pattern ( (MapType4Select (|lambda#11| |l#0@@10| |l#1@@10| |l#2@@10| |l#3@@10|) $o@@22 $f@@10))
-)))
-(assert (forall ((arg0@@199 T@U) (arg1@@99 T@U) (arg2@@47 T@U) (arg3@@25 Bool) ) (! (= (type (|lambda#12| arg0@@199 arg1@@99 arg2@@47 arg3@@25)) (MapType4Type refType boolType))
- :qid |funType:lambda#12|
- :pattern ( (|lambda#12| arg0@@199 arg1@@99 arg2@@47 arg3@@25))
-)))
-(assert (forall ((|l#0@@11| T@U) (|l#1@@11| T@U) (|l#2@@11| T@U) (|l#3@@11| Bool) ($o@@23 T@U) ($f@@11 T@U) ) (! (let ((alpha@@18 (FieldTypeInv0 (type $f@@11))))
- (=> (and (and (and (and (= (type |l#0@@11|) refType) (= (type |l#1@@11|) (MapType0Type refType MapType1Type))) (= (type |l#2@@11|) (FieldType boolType))) (= (type $o@@23) refType)) (= (type $f@@11) (FieldType alpha@@18))) (= (U_2_bool (MapType4Select (|lambda#12| |l#0@@11| |l#1@@11| |l#2@@11| |l#3@@11|) $o@@23 $f@@11))  (=> (and (not (= $o@@23 |l#0@@11|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@11| $o@@23) |l#2@@11|))) |l#3@@11|))))
- :qid |DafnyPreludebpl.129:1|
- :skolemid |1050|
- :pattern ( (MapType4Select (|lambda#12| |l#0@@11| |l#1@@11| |l#2@@11| |l#3@@11|) $o@@23 $f@@11))
-)))
-(assert (forall ((arg0@@200 T@U) (arg1@@100 T@U) (arg2@@48 T@U) (arg3@@26 Bool) ) (! (= (type (|lambda#13| arg0@@200 arg1@@100 arg2@@48 arg3@@26)) (MapType4Type refType boolType))
- :qid |funType:lambda#13|
- :pattern ( (|lambda#13| arg0@@200 arg1@@100 arg2@@48 arg3@@26))
-)))
-(assert (forall ((|l#0@@12| T@U) (|l#1@@12| T@U) (|l#2@@12| T@U) (|l#3@@12| Bool) ($o@@24 T@U) ($f@@12 T@U) ) (! (let ((alpha@@19 (FieldTypeInv0 (type $f@@12))))
- (=> (and (and (and (and (= (type |l#0@@12|) refType) (= (type |l#1@@12|) (MapType0Type refType MapType1Type))) (= (type |l#2@@12|) (FieldType boolType))) (= (type $o@@24) refType)) (= (type $f@@12) (FieldType alpha@@19))) (= (U_2_bool (MapType4Select (|lambda#13| |l#0@@12| |l#1@@12| |l#2@@12| |l#3@@12|) $o@@24 $f@@12))  (=> (and (not (= $o@@24 |l#0@@12|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@12| $o@@24) |l#2@@12|))) |l#3@@12|))))
- :qid |DafnyPreludebpl.129:1|
- :skolemid |1051|
- :pattern ( (MapType4Select (|lambda#13| |l#0@@12| |l#1@@12| |l#2@@12| |l#3@@12|) $o@@24 $f@@12))
-)))
-(assert (forall ((arg0@@201 T@U) (arg1@@101 T@U) (arg2@@49 T@U) (arg3@@27 Bool) ) (! (= (type (|lambda#14| arg0@@201 arg1@@101 arg2@@49 arg3@@27)) (MapType4Type refType boolType))
- :qid |funType:lambda#14|
- :pattern ( (|lambda#14| arg0@@201 arg1@@101 arg2@@49 arg3@@27))
-)))
-(assert (forall ((|l#0@@13| T@U) (|l#1@@13| T@U) (|l#2@@13| T@U) (|l#3@@13| Bool) ($o@@25 T@U) ($f@@13 T@U) ) (! (let ((alpha@@20 (FieldTypeInv0 (type $f@@13))))
- (=> (and (and (and (and (= (type |l#0@@13|) refType) (= (type |l#1@@13|) (MapType0Type refType MapType1Type))) (= (type |l#2@@13|) (FieldType boolType))) (= (type $o@@25) refType)) (= (type $f@@13) (FieldType alpha@@20))) (= (U_2_bool (MapType4Select (|lambda#14| |l#0@@13| |l#1@@13| |l#2@@13| |l#3@@13|) $o@@25 $f@@13))  (=> (and (not (= $o@@25 |l#0@@13|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@13| $o@@25) |l#2@@13|))) |l#3@@13|))))
- :qid |DafnyPreludebpl.129:1|
- :skolemid |1052|
- :pattern ( (MapType4Select (|lambda#14| |l#0@@13| |l#1@@13| |l#2@@13| |l#3@@13|) $o@@25 $f@@13))
-)))
-(assert (forall ((arg0@@202 T@U) (arg1@@102 T@U) (arg2@@50 T@U) (arg3@@28 Bool) ) (! (= (type (|lambda#15| arg0@@202 arg1@@102 arg2@@50 arg3@@28)) (MapType4Type refType boolType))
- :qid |funType:lambda#15|
- :pattern ( (|lambda#15| arg0@@202 arg1@@102 arg2@@50 arg3@@28))
-)))
-(assert (forall ((|l#0@@14| T@U) (|l#1@@14| T@U) (|l#2@@14| T@U) (|l#3@@14| Bool) ($o@@26 T@U) ($f@@14 T@U) ) (! (let ((alpha@@21 (FieldTypeInv0 (type $f@@14))))
- (=> (and (and (and (and (= (type |l#0@@14|) refType) (= (type |l#1@@14|) (MapType0Type refType MapType1Type))) (= (type |l#2@@14|) (FieldType boolType))) (= (type $o@@26) refType)) (= (type $f@@14) (FieldType alpha@@21))) (= (U_2_bool (MapType4Select (|lambda#15| |l#0@@14| |l#1@@14| |l#2@@14| |l#3@@14|) $o@@26 $f@@14))  (=> (and (not (= $o@@26 |l#0@@14|)) (U_2_bool (MapType1Select (MapType0Select |l#1@@14| $o@@26) |l#2@@14|))) |l#3@@14|))))
- :qid |DafnyPreludebpl.129:1|
- :skolemid |1053|
- :pattern ( (MapType4Select (|lambda#15| |l#0@@14| |l#1@@14| |l#2@@14| |l#3@@14|) $o@@26 $f@@14))
+ :pattern ( (MapType4Select (|lambda#11| |l#0@@10| |l#1@@10| |l#2@@10| |l#3@@10|) $o@@24 $f@@10))
 )))
 (declare-fun ControlFlow (Int Int) Int)
 (declare-fun $_Frame@0 () T@U)
@@ -5228,40 +5205,40 @@
 (set-option :timeout 0)
 (set-option :rlimit 16350000)
 (assert (not
- (=> (= (ControlFlow 0 0) 57605) (let ((anon4_Else_correct  (=> (and (= $_Frame@0 (|lambda#13| null $Heap alloc false)) (Test.QueryReceipt.QueryReceipt_q this@@27)) (and (=> (= (ControlFlow 0 39527) (- 0 57810)) (and (<= 0 |i#0@@9|) (< |i#0@@9| (|Seq#Length| (Test.QueryReceipt.lines this@@27))))) (=> (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))) (and (=> (= (ControlFlow 0 39527) (- 0 57842)) (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (=> (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))) (=> (and ($IsAlloc (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))) Tclass.Test.ChildMap $Heap) (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) (=> (and (and (Test.QueryReceipt.QueryReceipt_q this@@27) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))) (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) (and (=> (= (ControlFlow 0 39527) (- 0 57938)) (=> (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (or (Test.ChildMap.WF ($LS $LZ) (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (=> (|Test.__default.Total#canCall| (|IMap#Domain| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))))) (or (Test.__default.Total (|IMap#Domain| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))))) (forall ((|k#0@@3| T@U) ) (!  (=> (= (type |k#0@@3|) (SeqType BoxType)) (=> (and ($Is |k#0@@3| Tclass.Test.Key) (Test.__default.AnyKey |k#0@@3|)) (U_2_bool (MapType0Select (|IMap#Domain| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) ($Box |k#0@@3|)))))
- :qid |Testidfy.11:12|
- :skolemid |1015|
+ (=> (= (ControlFlow 0 0) 56368) (let ((anon4_Else_correct  (=> (and (= $_Frame@0 (|lambda#11| null $Heap alloc false)) (Test.QueryReceipt.QueryReceipt_q this@@27)) (and (=> (= (ControlFlow 0 39147) (- 0 56573)) (and (<= 0 |i#0@@9|) (< |i#0@@9| (|Seq#Length| (Test.QueryReceipt.lines this@@27))))) (=> (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))) (and (=> (= (ControlFlow 0 39147) (- 0 56605)) (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (=> (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))) (=> (and ($IsAlloc (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))) Tclass.Test.ChildMap $Heap) (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) (=> (and (and (Test.QueryReceipt.QueryReceipt_q this@@27) (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))) (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) (and (=> (= (ControlFlow 0 39147) (- 0 56701)) (=> (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (or (Test.ChildMap.WF ($LS $LZ) (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (=> (|Common.__default.TotalSet#canCall| (|IMap#Domain| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))))) (or (Common.__default.TotalSet (|IMap#Domain| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))))) (forall ((|k#0@@3| T@U) ) (!  (=> (= (type |k#0@@3|) (SeqType BoxType)) (=> (and ($Is |k#0@@3| Tclass.Common.Key) (Common.__default.AnyKey |k#0@@3|)) (U_2_bool (MapType0Select (|IMap#Domain| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) ($Box |k#0@@3|)))))
+ :qid |Commonidfy.11:12|
+ :skolemid |1010|
  :pattern ( (MapType0Select (|IMap#Domain| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) ($Box |k#0@@3|)))
- :pattern ( (Test.__default.AnyKey |k#0@@3|))
-))))))) (and (=> (= (ControlFlow 0 39527) (- 0 58106)) (=> (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (or (Test.ChildMap.WF ($LS $LZ) (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (forall ((|k#1@@3| T@U) ) (!  (=> (= (type |k#1@@3|) (SeqType BoxType)) (=> (and ($Is |k#1@@3| Tclass.Test.Key) (Test.__default.AnyKey |k#1@@3|)) (Test.BetreeNode.WF ($LS ($LS $LZ)) ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) ($Box |k#1@@3|))))))
- :qid |Testidfy.17:20|
- :skolemid |1017|
+ :pattern ( (Common.__default.AnyKey |k#0@@3|))
+))))))) (and (=> (= (ControlFlow 0 39147) (- 0 56869)) (=> (|Test.ChildMap.WF#canCall| (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (or (Test.ChildMap.WF ($LS $LZ) (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (forall ((|k#1@@3| T@U) ) (!  (=> (= (type |k#1@@3|) (SeqType BoxType)) (=> (and ($Is |k#1@@3| Tclass.Common.Key) (Common.__default.AnyKey |k#1@@3|)) (Test.BetreeNode.WF ($LS ($LS $LZ)) ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) ($Box |k#1@@3|))))))
+ :qid |Testidfy.9:20|
+ :skolemid |1012|
  :pattern ( ($Unbox DatatypeTypeType (MapType0Select (|IMap#Elements| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) ($Box |k#1@@3|))))
- :pattern ( (Test.__default.AnyKey |k#1@@3|))
-))))) (=> (and (Test.ChildMap.WF ($LS ($LS $LZ)) (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (Test.QueryReceipt.QueryReceipt_q this@@27)) (and (=> (= (ControlFlow 0 39527) (- 0 58270)) (and (<= 0 |i#0@@9|) (< |i#0@@9| (|Seq#Length| (Test.QueryReceipt.lines this@@27))))) (=> (and (<= 0 |i#0@@9|) (< |i#0@@9| (|Seq#Length| (Test.QueryReceipt.lines this@@27)))) (=> (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))) (and (=> (= (ControlFlow 0 39527) (- 0 58302)) (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (=> (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))) (=> (Test.ChildMap.ChildMap_q (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (=> (and (Test.QueryReceipt.QueryReceipt_q this@@27) (= (ControlFlow 0 39527) (- 0 58340))) (U_2_bool (MapType0Select (|IMap#Domain| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) ($Box (Test.QueryReceipt.key this@@27)))))))))))))))))))))))
+ :pattern ( (Common.__default.AnyKey |k#1@@3|))
+))))) (=> (and (Test.ChildMap.WF ($LS ($LS $LZ)) (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (Test.QueryReceipt.QueryReceipt_q this@@27)) (and (=> (= (ControlFlow 0 39147) (- 0 57033)) (and (<= 0 |i#0@@9|) (< |i#0@@9| (|Seq#Length| (Test.QueryReceipt.lines this@@27))))) (=> (and (<= 0 |i#0@@9|) (< |i#0@@9| (|Seq#Length| (Test.QueryReceipt.lines this@@27)))) (=> (Test.QueryReceiptLine.QueryReceiptLine_q ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))) (and (=> (= (ControlFlow 0 39147) (- 0 57065)) (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (=> (Test.BetreeNode.BetreeNode_q (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))) (=> (Test.ChildMap.ChildMap_q (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|))))) (=> (and (Test.QueryReceipt.QueryReceipt_q this@@27) (= (ControlFlow 0 39147) (- 0 57103))) (U_2_bool (MapType0Select (|IMap#Domain| (Test.ChildMap.mapp (Test.BetreeNode.children (Test.QueryReceiptLine.node ($Unbox DatatypeTypeType (|Seq#Index| (Test.QueryReceipt.lines this@@27) |i#0@@9|)))))) ($Box (Test.QueryReceipt.key this@@27)))))))))))))))))))))))
 (let ((anon4_Then_correct true))
-(let ((anon0_correct  (=> (= $_Frame@0@@0 (|lambda#12| null $Heap alloc false)) (=> (and ($IsAlloc this@@27 Tclass.Test.QueryReceipt $Heap) (= |b$reqreads#0@0| (forall (($o@@27 T@U) ($f@@15 T@U) ) (! (let ((alpha@@22 (FieldTypeInv0 (type $f@@15))))
- (=> (and (and (= (type $o@@27) refType) (= (type $f@@15) (FieldType alpha@@22))) false) (U_2_bool (MapType4Select $_Frame@0@@0 $o@@27 $f@@15))))
- :qid |Testidfy.49:16|
- :skolemid |1013|
- :no-pattern (type $o@@27)
- :no-pattern (type $f@@15)
- :no-pattern (U_2_int $o@@27)
- :no-pattern (U_2_bool $o@@27)
- :no-pattern (U_2_int $f@@15)
- :no-pattern (U_2_bool $f@@15)
-)))) (=> (and (and (and (|Test.QueryReceipt.AllLinesWF#canCall| this@@27) (Test.QueryReceipt.AllLinesWF this@@27)) (and ($IsAlloc this@@27 Tclass.Test.QueryReceipt $Heap) (= |b$reqreads#1@0| (forall (($o@@28 T@U) ($f@@16 T@U) ) (! (let ((alpha@@23 (FieldTypeInv0 (type $f@@16))))
- (=> (and (and (= (type $o@@28) refType) (= (type $f@@16) (FieldType alpha@@23))) false) (U_2_bool (MapType4Select $_Frame@0@@0 $o@@28 $f@@16))))
- :qid |Testidfy.50:16|
- :skolemid |1014|
- :no-pattern (type $o@@28)
- :no-pattern (type $f@@16)
- :no-pattern (U_2_int $o@@28)
- :no-pattern (U_2_bool $o@@28)
- :no-pattern (U_2_int $f@@16)
- :no-pattern (U_2_bool $f@@16)
-))))) (and (and (|Test.QueryReceipt.Structure#canCall| this@@27) (Test.QueryReceipt.Structure this@@27)) (and (Test.QueryReceipt.QueryReceipt_q this@@27) (INTERNAL_lt_boogie |i#0@@9| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@27)) 1))))) (and (=> (= (ControlFlow 0 39521) (- 0 57776)) |b$reqreads#0@0|) (=> |b$reqreads#0@0| (and (=> (= (ControlFlow 0 39521) (- 0 57777)) |b$reqreads#1@0|) (=> |b$reqreads#1@0| (and (=> (= (ControlFlow 0 39521) 39525) anon4_Then_correct) (=> (= (ControlFlow 0 39521) 39527) anon4_Else_correct)))))))))))
-(let ((PreconditionGeneratedEntry_correct  (=> (and ($IsGoodHeap $Heap) ($IsHeapAnchor $Heap)) (=> (and (and (and ($Is this@@27 Tclass.Test.QueryReceipt) ($IsAlloc this@@27 Tclass.Test.QueryReceipt $Heap)) (INTERNAL_le_boogie 0 |i#0@@9|)) (and (= 12 $FunctionContextHeight) (= (ControlFlow 0 57605) 39521))) anon0_correct))))
+(let ((anon0_correct  (=> (= $_Frame@0@@0 (|lambda#10| null $Heap alloc false)) (=> (and ($IsAlloc this@@27 Tclass.Test.QueryReceipt $Heap) (= |b$reqreads#0@0| (forall (($o@@25 T@U) ($f@@11 T@U) ) (! (let ((alpha@@18 (FieldTypeInv0 (type $f@@11))))
+ (=> (and (and (= (type $o@@25) refType) (= (type $f@@11) (FieldType alpha@@18))) false) (U_2_bool (MapType4Select $_Frame@0@@0 $o@@25 $f@@11))))
+ :qid |Testidfy.41:16|
+ :skolemid |1008|
+ :no-pattern (type $o@@25)
+ :no-pattern (type $f@@11)
+ :no-pattern (U_2_int $o@@25)
+ :no-pattern (U_2_bool $o@@25)
+ :no-pattern (U_2_int $f@@11)
+ :no-pattern (U_2_bool $f@@11)
+)))) (=> (and (and (and (|Test.QueryReceipt.AllLinesWF#canCall| this@@27) (Test.QueryReceipt.AllLinesWF this@@27)) (and ($IsAlloc this@@27 Tclass.Test.QueryReceipt $Heap) (= |b$reqreads#1@0| (forall (($o@@26 T@U) ($f@@12 T@U) ) (! (let ((alpha@@19 (FieldTypeInv0 (type $f@@12))))
+ (=> (and (and (= (type $o@@26) refType) (= (type $f@@12) (FieldType alpha@@19))) false) (U_2_bool (MapType4Select $_Frame@0@@0 $o@@26 $f@@12))))
+ :qid |Testidfy.42:16|
+ :skolemid |1009|
+ :no-pattern (type $o@@26)
+ :no-pattern (type $f@@12)
+ :no-pattern (U_2_int $o@@26)
+ :no-pattern (U_2_bool $o@@26)
+ :no-pattern (U_2_int $f@@12)
+ :no-pattern (U_2_bool $f@@12)
+))))) (and (and (|Test.QueryReceipt.Structure#canCall| this@@27) (Test.QueryReceipt.Structure this@@27)) (and (Test.QueryReceipt.QueryReceipt_q this@@27) (INTERNAL_lt_boogie |i#0@@9| (INTERNAL_sub_boogie (|Seq#Length| (Test.QueryReceipt.lines this@@27)) 1))))) (and (=> (= (ControlFlow 0 39141) (- 0 56539)) |b$reqreads#0@0|) (=> |b$reqreads#0@0| (and (=> (= (ControlFlow 0 39141) (- 0 56540)) |b$reqreads#1@0|) (=> |b$reqreads#1@0| (and (=> (= (ControlFlow 0 39141) 39145) anon4_Then_correct) (=> (= (ControlFlow 0 39141) 39147) anon4_Else_correct)))))))))))
+(let ((PreconditionGeneratedEntry_correct  (=> (and ($IsGoodHeap $Heap) ($IsHeapAnchor $Heap)) (=> (and (and (and ($Is this@@27 Tclass.Test.QueryReceipt) ($IsAlloc this@@27 Tclass.Test.QueryReceipt $Heap)) (INTERNAL_le_boogie 0 |i#0@@9|)) (and (= 9 $FunctionContextHeight) (= (ControlFlow 0 56368) 39141))) anon0_correct))))
 PreconditionGeneratedEntry_correct)))))
 ))
 (check-sat)
