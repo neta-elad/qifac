@@ -57,7 +57,7 @@ class Instantiation:
             yield term
 
     def as_dict(self) -> Dict[str, Term]:
-        pass
+        return {var: term for var, term in self.assignment}
 
 
 @dataclass
@@ -73,7 +73,7 @@ class InstantiationSet:
         return cls(instantiations)
 
     def by_qid(self) -> Dict[str, Set[Instantiation]]:
-        result = {}
+        result: Dict[str, Set[Instantiation]] = {}
         for instantiation in self.instantiations:
             result.setdefault(instantiation.qid, set()).add(instantiation)
 
