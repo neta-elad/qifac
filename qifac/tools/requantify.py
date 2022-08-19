@@ -39,15 +39,23 @@ def run(args: Namespace) -> None:
     smt_parser = SmtLibParser()
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        input_path = Path(tmpdir) / 'input.smt2'
+        input_path = Path(tmpdir) / "input.smt2"
         input_path.write_text(args.input.read())
 
         core_script = smt_parser.get_script_fname(str(input_path))
 
-        core = '\n'.join([line for line in input_path.read_text().splitlines()
-                if "declare-fun" not in line])
+        core = "\n".join(
+            [
+                line
+                for line in input_path.read_text().splitlines()
+                if "declare-fun" not in line
+            ]
+        )
 
     source_script = smt_parser.get_script(args.source)
+
+    if args.uglify is not None:
+        source_script.serialize(args.uglify, daggify=False)
 
     core_asserts = list(core_script.filter_by_command_name("assert"))
 
@@ -62,7 +70,6 @@ def run(args: Namespace) -> None:
         elif not checker.encountered_qid and command not in core_asserts:
             source_script.commands.remove(command)
 
-
     source_script.serialize(args.output, daggify=False)
 
 
@@ -74,6 +81,12 @@ def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:
         required=True,
         type=FileType("r"),
         help="Source of instantiated core",
+    )
+    parser.add_argument(
+        "-u",
+        "--uglify",
+        type=FileType("w"),
+        help="Produce uglified version of source of instantiated core",
     )
     return parser
 

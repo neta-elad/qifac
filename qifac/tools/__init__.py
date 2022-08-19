@@ -12,5 +12,6 @@ from . import unique_qids
 from . import remove_unwanted
 from . import uglify
 from . import requantify
+from . import compact
 
 from .analyze import __main__ as analyze

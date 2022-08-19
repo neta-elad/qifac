@@ -37,6 +37,7 @@ def prettify(args: Namespace) -> None:
 
 def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:
     stdio_args(parser)
+
     return parser
 
 

@@ -1,5 +1,7 @@
 from argparse import ArgumentParser, Namespace
 
+from qifac.tools import compact
+
 from . import tools
 
 
@@ -73,6 +75,10 @@ def build_parser(
     uglify = sub_parsers.add_parser("uglify")
     tools.uglify.build_parser(uglify)
     uglify.set_defaults(fun=tools.uglify.run)
+
+    compact = sub_parsers.add_parser("compact")
+    tools.compact.build_parser(compact)
+    compact.set_defaults(fun=tools.compact.run)
 
     return parser
 
