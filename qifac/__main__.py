@@ -66,6 +66,14 @@ def build_parser(
     tools.analyze.build_parser(analyze)
     analyze.set_defaults(fun=tools.analyze.run)
 
+    requantify = sub_parsers.add_parser("requantify")
+    tools.requantify.build_parser(requantify)
+    requantify.set_defaults(fun=tools.requantify.run)
+
+    uglify = sub_parsers.add_parser("uglify")
+    tools.uglify.build_parser(uglify)
+    uglify.set_defaults(fun=tools.uglify.run)
+
     return parser
 
 

@@ -11,5 +11,6 @@ from . import terms
 from . import unique_qids
 from . import remove_unwanted
 from . import uglify
+from . import requantify
 
 from .analyze import __main__ as analyze
