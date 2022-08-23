@@ -12,7 +12,7 @@ from pysmt.operators import ALL_TYPES, FORALL
 
 from ..pysmt_helpers import AbstractForallWalker, parse_term
 from ..instantiation_tree import Forest, Node
-from .helpers import stdio_args
+from .helpers import stdio_args, normalize
 
 
 all_types_but_forall = list(ALL_TYPES)
@@ -36,7 +36,7 @@ class QuantifierCollector(AbstractForallWalker):
         body = formula.args()[0]
         if body in self.annotations and "qid" in self.annotations[body]:
             for qid in self.annotations[body]["qid"]:
-                self.quantifiers[_normalize(qid)] = formula
+                self.quantifiers[normalize(qid)] = formula
 
         yield body
 
@@ -84,7 +84,7 @@ def _instantiate(
         print(f"{node.qid} has cycles!")
         exit(-1)
 
-    qid = _normalize(node.qid)
+    qid = normalize(node.qid)
 
     quantifier = quantifiers[qid]
 
@@ -95,7 +95,7 @@ def _instantiate(
 
     if node.parent is not None:
         parent_qid = node.forest.nodes[node.parent].qid
-        parent_quantifier = quantifiers[_normalize(parent_qid)]
+        parent_quantifier = quantifiers[normalize(parent_qid)]
         free_variables |= _str_dict(get_free_variables(parent_quantifier.args()[0]))
 
     try:
@@ -120,7 +120,7 @@ def _instantiate(
         f"{var}={term}" for var, term in all_substitutes.items()
     )
 
-    name = _normalize(f"{node.qid}[{substitutes_string}]")
+    name = normalize(f"{node.qid}[{substitutes_string}]")
 
     script.annotations.add(result, "named", name)
 
@@ -146,9 +146,9 @@ def _build_substitutions(
     substitutes: Mapping[str, str],
 ) -> Mapping[Var, Term]:
     return {
-        free_variables[_normalize(var)]: parse_term(parser, term)
+        free_variables[normalize(var)]: parse_term(parser, term)
         for var, term in substitutes.items()
-        if _normalize(var) in free_variables
+        if normalize(var) in free_variables
     }
 
 
@@ -161,20 +161,20 @@ def _copy_qid(annotations: Annotations, source: Term, target: Term) -> None:
             annotations.add(target.args()[0], "qid", qid)
 
 
-def _normalize(symbol: str) -> str:
-    return symbol.replace("|", "").replace("'", "").replace("\\", "")
-    if (symbol.startswith("|") and symbol.endswith("|")) or (
-        symbol.startswith("'") and symbol.endswith("'")
-    ):
-        return symbol[1:-1]
-    return symbol
+# def _normalize(symbol: str) -> str:
+#     return symbol.replace("|", "").replace("'", "").replace("\\", "")
+#     if (symbol.startswith("|") and symbol.endswith("|")) or (
+#         symbol.startswith("'") and symbol.endswith("'")
+#     ):
+#         return symbol[1:-1]
+#     return symbol
 
 
 T = TypeVar("T")
 
 
 def _str_dict(a_set: Set[T]) -> Dict[str, T]:
-    return {_normalize(str(value)): value for value in a_set}
+    return {normalize(str(value)): value for value in a_set}
 
 
 def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:

@@ -100,3 +100,7 @@ class RangeType:
         result = range(int(str(start), 10), int(str(end), 10) + 1)
 
         return result
+
+
+def normalize(symbol: str) -> str:
+    return symbol.replace("|", "").replace("'", "").replace("\\", "")

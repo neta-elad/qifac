@@ -13,5 +13,7 @@ from . import remove_unwanted
 from . import uglify
 from . import requantify
 from . import compact
+from . import cegar
+from . import compare
 
 from .analyze import __main__ as analyze

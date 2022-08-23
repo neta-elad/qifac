@@ -36,6 +36,10 @@ def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:
     analyze.terms.build_parser(max_depth)
     max_depth.set_defaults(analyzer=analyze.terms.run)
 
+    terms_distance = sub_parsers.add_parser("terms-distance")
+    analyze.terms_distance.build_parser(terms_distance)
+    terms_distance.set_defaults(analyzer=analyze.terms_distance.run)
+
     qids = sub_parsers.add_parser("qids")
     analyze.qids.build_parser(qids)
     qids.set_defaults(analyzer=analyze.qids.run)

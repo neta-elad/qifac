@@ -80,6 +80,14 @@ def build_parser(
     tools.compact.build_parser(compact)
     compact.set_defaults(fun=tools.compact.run)
 
+    cegar = sub_parsers.add_parser("cegar")
+    tools.cegar.build_parser(cegar)
+    cegar.set_defaults(fun=tools.cegar.run)
+
+    compare = sub_parsers.add_parser("compare")
+    tools.compare.build_parser(compare)
+    compare.set_defaults(fun=tools.compare.run)
+
     return parser
 
 
