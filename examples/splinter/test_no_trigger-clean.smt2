@@ -9,7 +9,7 @@
 (set-option :smt.delay_units true)
 (set-option :smt.arith.solver 2)
 (set-option :smt.arith.nl false)
-(set-option :smt.mbqi true)
+(set-option :smt.mbqi false)
 (set-option :model.compact false)
 (set-option :model.v2 true)
 (set-option :pp.bv_literals false)

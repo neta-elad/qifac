@@ -23,11 +23,11 @@ def find_proof(args: Namespace) -> None:
             uglify,
             remove_unwanted,
             unique_qids,
-            find_unsat_core,
+            # find_unsat_core,
             skolemize,
             add_proof,
-            booleanize_quantifiers,
-            find_unsat_core,
+            # booleanize_quantifiers,
+            # find_unsat_core,
         )
     else:
         chain_stdio(

@@ -15,5 +15,8 @@ from . import requantify
 from . import compact
 from . import cegar
 from . import compare
+from . import restrict
+from . import find_instances
+from . import compare_instances
 
 from .analyze import __main__ as analyze

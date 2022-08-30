@@ -1,4 +1,4 @@
-from typing import TextIO, Optional, Callable, Iterable
+from typing import TextIO, Optional, Callable, Iterable, Any
 from argparse import ArgumentParser, FileType, Namespace, ArgumentTypeError
 import sys
 import io
@@ -102,5 +102,5 @@ class RangeType:
         return result
 
 
-def normalize(symbol: str) -> str:
-    return symbol.replace("|", "").replace("'", "").replace("\\", "")
+def normalize(symbol: Any) -> str:
+    return str(symbol).replace("|", "").replace("'", "").replace("\\", "")

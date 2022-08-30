@@ -88,6 +88,18 @@ def build_parser(
     tools.compare.build_parser(compare)
     compare.set_defaults(fun=tools.compare.run)
 
+    restrict = sub_parsers.add_parser("restrict")
+    tools.restrict.build_parser(restrict)
+    restrict.set_defaults(fun=tools.restrict.run)
+
+    find_instances = sub_parsers.add_parser("find-instances")
+    tools.find_instances.build_parser(find_instances)
+    find_instances.set_defaults(fun=tools.find_instances.run)
+
+    compare_instances = sub_parsers.add_parser("compare-instances")
+    tools.compare_instances.build_parser(compare_instances)
+    compare_instances.set_defaults(fun=tools.compare_instances.run)
+
     return parser
 
 
