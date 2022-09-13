@@ -1,6 +1,6 @@
 import string
 from dataclasses import dataclass, field
-from typing import Dict, List, Mapping, Optional, Set
+from typing import Dict, List, Mapping, Optional, Set, TextIO
 
 from pyparsing import Opt, Suppress, Word, delimited_list, printables
 
@@ -69,6 +69,15 @@ class Node:
     def __hash__(self) -> int:
         return hash(self.id)
 
+    def __str__(self) -> str:
+        parent = ""
+        if self.parent is not None:
+            parent = f" {self.parent}"
+
+        substitutes = ",".join(f"{var}={term}" for var, term in self.substitues.items())
+
+        return f"{self.id} {self.qid} [{substitutes}]{parent}"
+
 
 @dataclass
 class Forest:
@@ -86,3 +95,10 @@ class Forest:
             forest.nodes[node.id] = node
 
         return forest
+
+    @classmethod
+    def parse_file(cls, file: TextIO) -> "Forest":
+        return cls.parse(file.readlines())
+
+    def __str__(self) -> str:
+        return "\n".join(str(node) for node in self.nodes.values()) + "\n"

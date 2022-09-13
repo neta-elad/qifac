@@ -4,7 +4,7 @@ import re
 import sys
 from argparse import ArgumentParser, ArgumentTypeError, FileType, Namespace
 from dataclasses import dataclass, field
-from typing import Any, Callable, Iterable, Optional, TextIO
+from typing import Any, Callable, Dict, Iterable, Optional, Set, TextIO, TypeVar
 
 
 def stdio_args(
@@ -104,3 +104,10 @@ class RangeType:
 
 def normalize(symbol: Any) -> str:
     return str(symbol).replace("|", "").replace("'", "").replace("\\", "")
+
+
+T = TypeVar("T")
+
+
+def set_to_str_dict(a_set: Set[T]) -> Dict[str, T]:
+    return {normalize(str(value)): value for value in a_set}

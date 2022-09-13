@@ -9,7 +9,7 @@ from pysmt.smtlib.script import SmtLibScript
 from pysmt.walkers import TreeWalker, handles
 
 from ..tools.helpers import normalize
-from . import TypeInfo
+from .types import TypeInfo
 from .utils import (
     check_ground_and_update,
     is_uninterpreted,
