@@ -11,7 +11,9 @@ from ..instances import show
 from ..instances.instantiate import instantiate
 from ..metadata import Metadata
 from ..smt import filter_names, name, skolemize
+from ..smt.booleanize import booleanize
 from ..smt.cleaner import clean_errors
+from ..z3_utils import run_z3
 
 
 def find(smt_file: TextIO) -> TextIO:
@@ -41,14 +43,24 @@ def instances(smt_file: TextIO) -> TextIO:
     # assume skolemized?
 
     skolemized = skolemize(smt_file)
-    all_instances = show(skolemized)
 
-    skolemized.seek(0)
+    core_skolemized = find(skolemized)
 
-    instantiated = instantiate(skolemized, all_instances)
+    all_instances = show(core_skolemized)
+
+    core_skolemized.seek(0)
+
+    instantiated = instantiate(core_skolemized, all_instances)
 
     cleaned = clean_errors(instantiated)
 
-    core_instantiated = find(cleaned)
+    booleanized = booleanize(cleaned)
+
+    if run_z3(booleanized) != "unsat":
+        return io.StringIO('(error "sat")')
+
+    booleanized.seek(0)
+
+    core_instantiated = find(booleanized)
 
     return core_instantiated

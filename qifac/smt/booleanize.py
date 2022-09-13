@@ -27,7 +27,7 @@ class BooleanizeQuantifiersGetter(AbstractForallWalker):
         if boolean is not None:
             self.booleans.add(boolean)
 
-    def booleanize(self, formula: Any) -> str:
+    def booleanize(self, formula: FNode) -> str:
         if formula not in self.ids:
             self.id += 1
 

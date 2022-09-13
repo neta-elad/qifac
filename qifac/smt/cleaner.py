@@ -38,6 +38,9 @@ def clean_errors(smt_file: TextIO) -> TextIO:
         if line_number in lines_to_remove:
             continue
 
+        if "model-del" in line:
+            continue
+
         buffer.write(line)
 
     buffer.seek(0)

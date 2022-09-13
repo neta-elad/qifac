@@ -21,6 +21,7 @@ def show(smt_file: TextIO) -> Forest:
             [
                 Metadata.default().z3,
                 "trace=true",
+                "proof=true",
                 f"trace_file_name={log_path}",
                 str(input_path),
             ],

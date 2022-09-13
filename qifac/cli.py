@@ -14,9 +14,11 @@ from .instantiation_tree import Forest
 from .smt import filter_names as do_filter_names
 from .smt import name as do_name
 from .smt import skolemize as do_skolemize
+from .smt import uglify as do_uglify
 from .smt.booleanize import booleanize as do_booleanize
 from .smt.cleaner import clean_errors
 from .typeinfo.parser import parse_script
+from .z3_utils import run_z3 as do_run_z3
 
 
 class ForestType(click.ParamType):
@@ -38,9 +40,22 @@ def run() -> None:
     pass
 
 
+@run.command(name="z3")
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+def run_z3(smt_file: TextIO) -> None:
+    print(do_run_z3(smt_file))
+
+
 @run.group
 def smt() -> None:
     pass
+
+
+@smt.command
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def uglify(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(do_uglify(smt_file), output)
 
 
 @smt.command
@@ -126,6 +141,15 @@ def compare(unsat_file: Forest, unknown_file: Forest, output: TextIO) -> None:
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def instantiate(smt_file: TextIO, instances_file: Forest, output: TextIO) -> None:
     shutil.copyfileobj(do_instantiate(smt_file, instances_file), output)
+
+
+@instances.command
+@click.argument("smt_file", type=click.File("r"))
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def auto(smt_file: TextIO, output: TextIO) -> None:
+    forest = do_show(smt_file)
+    smt_file.seek(0)
+    shutil.copyfileobj(do_instantiate(smt_file, forest), output)
 
 
 @run.group

@@ -7,6 +7,8 @@ from typing import List, TextIO
 import z3
 from pysmt.smtlib.parser import SmtLibParser
 
+from ..smt.cleaner import clean_errors
+
 
 def skolemize(smt_file: TextIO) -> TextIO:
     buffer = io.StringIO()
@@ -39,7 +41,7 @@ def skolemize(smt_file: TextIO) -> TextIO:
 
     buffer.seek(0)
 
-    return buffer
+    return clean_errors(uglify(buffer))
 
 
 def name(smt_file: TextIO) -> TextIO:
@@ -98,4 +100,16 @@ def filter_names(smt_file: TextIO, names: List[str]) -> TextIO:
 
     buffer.seek(0)
 
+    return buffer
+
+
+def uglify(smt_file: TextIO) -> TextIO:
+    buffer = io.StringIO()
+    while line := smt_file.readline():
+        stripped = line.rstrip()
+        if line.startswith("("):
+            buffer.write("\n")
+        buffer.write(stripped)
+
+    buffer.seek(0)
     return buffer
