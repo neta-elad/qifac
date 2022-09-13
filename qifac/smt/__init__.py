@@ -33,6 +33,7 @@ def skolemize(smt_file: TextIO) -> TextIO:
         solver.check()
 
         buffer.write(solver.sexpr())
+        buffer.write("\n")
 
     buffer.write("(check-sat)\n")
 

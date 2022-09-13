@@ -41,13 +41,17 @@ def instantiate(smt_file: TextIO, instantiations: Forest) -> TextIO:
     smt_parser = SmtLibParser()
     script = smt_parser.get_script(smt_file)
 
+    # remove all patterns
+    for formula in script.annotations.all_annotated_formulae("pattern"):
+        script.annotations.remove_annotation(formula, "pattern")
+    for formula in script.annotations.all_annotated_formulae("no-pattern"):
+        script.annotations.remove_annotation(formula, "no-pattern")
+
     (check_sat,) = script.filter_by_command_name("check-sat")
     script.commands.remove(check_sat)
 
     collector = QuantifierCollector(script.annotations)
-
-    for cmd in script.filter_by_command_name("assert"):
-        collector.walk(cmd.args[0])
+    collector.walk_script(script)
 
     quantifiers = collector.quantifiers
 

@@ -7,8 +7,11 @@ from typing import TextIO
 
 from pysmt.smtlib.parser import Tokenizer
 
+from ..instances import show
+from ..instances.instantiate import instantiate
 from ..metadata import Metadata
-from ..smt import filter_names, name
+from ..smt import filter_names, name, skolemize
+from ..smt.cleaner import clean_errors
 
 
 def find(smt_file: TextIO) -> TextIO:
@@ -32,3 +35,20 @@ def find(smt_file: TextIO) -> TextIO:
 
         with open(named_path, "r") as named_smt:
             return filter_names(named_smt, names)
+
+
+def instances(smt_file: TextIO) -> TextIO:
+    # assume skolemized?
+
+    skolemized = skolemize(smt_file)
+    all_instances = show(skolemized)
+
+    skolemized.seek(0)
+
+    instantiated = instantiate(skolemized, all_instances)
+
+    cleaned = clean_errors(instantiated)
+
+    core_instantiated = find(cleaned)
+
+    return core_instantiated
