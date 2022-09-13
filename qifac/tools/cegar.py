@@ -1,17 +1,17 @@
-import z3
-import tempfile
-from pathlib import Path
-import shutil
 import io
 import re
-from typing import Set, List, Mapping, Dict
-from dataclasses import dataclass, field
-
-from pysmt.smtlib.parser import SmtLibParser
-from pysmt.smtlib.script import SmtLibScript, SmtLibCommand
-
+import shutil
+import tempfile
 from argparse import ArgumentParser, Namespace
-from .helpers import stdio_args, normalize
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Mapping, Set
+
+import z3
+from pysmt.smtlib.parser import SmtLibParser
+from pysmt.smtlib.script import SmtLibCommand, SmtLibScript
+
+from .helpers import normalize, stdio_args
 
 
 @dataclass

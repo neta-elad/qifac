@@ -1,19 +1,8 @@
-from typing import Dict, Mapping, Optional, Set, List
+import string
 from dataclasses import dataclass, field
+from typing import Dict, List, Mapping, Optional, Set
 
-from pyparsing import (
-    Word,
-    Suppress,
-    Combine,
-    OneOrMore,
-    Opt,
-    delimited_list,
-    printables,
-    hexnums,
-    string,
-    delimited_list,
-)
-
+from pyparsing import Opt, Suppress, Word, delimited_list, printables
 
 IDENT_PARSER = Word(printables)("id")
 QID_PARSER = Word(printables)("qid")

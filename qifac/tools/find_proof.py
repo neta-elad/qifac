@@ -1,15 +1,15 @@
-from typing import List, Mapping, Dict, TextIO
-from argparse import Namespace, ArgumentParser, FileType
 import io
+from argparse import ArgumentParser, Namespace
+from typing import Dict, List, Mapping, TextIO
 
-from .helpers import stdio_args, log_args, chain_stdio
 from .add_proof import add_proof
 from .booleanize_quantifiers import booleanize_quantifiers
-from .unsat_core import find_unsat_core
-from .skolemize import skolemize
-from .unique_qids import unique_qids
+from .helpers import chain_stdio, log_args, stdio_args
 from .remove_unwanted import remove_unwanted
+from .skolemize import skolemize
 from .uglify import run as uglify
+from .unique_qids import unique_qids
+from .unsat_core import find_unsat_core
 
 
 def find_proof(args: Namespace) -> None:

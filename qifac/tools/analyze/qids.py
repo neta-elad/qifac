@@ -1,8 +1,8 @@
-from typing import Dict, Set
-from argparse import ArgumentParser, Namespace
 import statistics
+from argparse import ArgumentParser, Namespace
+from typing import Dict, Set
 
-from ...instantiation_set import InstantiationSet, Instantiation, Term
+from ...instantiation_set import InstantiationSet
 
 
 def run(args: Namespace) -> None:

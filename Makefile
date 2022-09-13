@@ -1,22 +1,39 @@
-.PHONMY: lint
-lint: format type
+.PHONY: all
+all: format lint type test
 
+.PHONY: lint
+lint:
+	isort . -q
+	autoflake . --recursive \
+				--exclude .env \
+				--remove-unused-variables \
+				--remove-all-unused-imports \
+				--expand-star-imports \
+				--in-place
 
 .PHONY: format
-format: check-env
-	black qifac
-
+format:
+	black .
 
 .PHONY: type
-type: check-env
-	mypy qifac
+type:
+	mypy --strict qifac
+
+
+.PHONY: test
+test:
+	pytest -q
+
+
+.PHONY: env
+env:
+	! [ -d .env ] && python3 -m venv .env || true
 
 .PHONY: install
-install: check-env
-	pip install -r requirements.txt
+install:
+	yes | pip uninstall qifac
+	pip install -e .[test]
 
-.PHONY: check-env
-check-env:
-ifndef VIRTUAL_ENV
-	$(error Please activate virtual environment: source .env/bin/activate)
-endif
+.PHONY: clean
+clean:
+	rm -r .env

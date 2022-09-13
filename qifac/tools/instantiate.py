@@ -1,19 +1,14 @@
-import tempfile
-from typing import Set, Dict, Any, TypeVar, Mapping, Optional, TextIO
-from argparse import ArgumentParser, Namespace, FileType
-from pathlib import Path
-import io
+from argparse import ArgumentParser, FileType, Namespace
+from typing import Any, Dict, Mapping, Optional, Set, TextIO, TypeVar
 
-from pysmt.smtlib.parser import SmtLibParser, SmtLibScript, Annotations
-from pysmt.shortcuts import get_free_variables, Implies
-
-from pysmt.walkers import TreeWalker, handles
 from pysmt.operators import ALL_TYPES, FORALL
+from pysmt.shortcuts import Implies, get_free_variables
+from pysmt.smtlib.parser import Annotations, SmtLibParser, SmtLibScript
+from pysmt.walkers import TreeWalker
 
-from ..pysmt_helpers import AbstractForallWalker, parse_term
 from ..instantiation_tree import Forest, Node
-from .helpers import stdio_args, normalize
-
+from ..pysmt_helpers import AbstractForallWalker, parse_term
+from .helpers import normalize, stdio_args
 
 all_types_but_forall = list(ALL_TYPES)
 all_types_but_forall.remove(FORALL)

@@ -1,7 +1,7 @@
-from argparse import ArgumentParser, Namespace, FileType
+import shutil
 import subprocess
 import tempfile
-import shutil
+from argparse import ArgumentParser, FileType, Namespace
 from pathlib import Path
 
 from .helpers import stdio_args

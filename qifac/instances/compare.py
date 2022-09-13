@@ -1,7 +1,5 @@
-import sys
-from argparse import ArgumentParser, FileType, Namespace
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Set, Tuple
 
 from ..instantiation_tree import Forest, Ident
 
@@ -49,12 +47,6 @@ class Comparator:
             if left_value != right_value:
                 return self.set_compare(left, right, False)
 
-        # if left_node.qid == '|funType:bool_2_U|' and right_node.qid == '|funType:bool_2_U|':
-        #     if left_node.substitues.get('arg0@@4', '') == 'true':
-        #         print('!')
-        #         print(right_node.substitues)
-        #         print('!')
-
         return self.set_compare(left, right, True)
 
     def set_compare(self, left: Ident, right: Ident, comparison: bool) -> bool:
@@ -64,40 +56,19 @@ class Comparator:
         return comparison
 
 
-def run(args: Namespace) -> None:
-    left_forest = Forest.parse(args.left.readlines())
-    right_forest = Forest.parse(args.right.readlines())
+def compare(unsat_forest: Forest, unknown_file: Forest) -> Set[str]:
+    result = set()
 
-    compare = Comparator(left_forest, right_forest)
+    comparator = Comparator(unsat_forest, unknown_file)
 
-    for left in left_forest.nodes:
+    for unsat_node in unsat_forest.nodes:
         found = False
-        for right in right_forest.nodes:
-            if compare.compare(left, right):
+        for unknown_node in unknown_file.nodes:
+            if comparator.compare(unsat_node, unknown_node):
                 found = True
                 break
 
         if not found:
-            print(f"{left}")
+            result.add(unsat_node)
 
-
-def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:
-    parser.add_argument(
-        "left",
-        type=FileType("r"),
-        help="Input left to compare",
-    )
-
-    parser.add_argument(
-        "right",
-        nargs="?",
-        type=FileType("r"),
-        default=sys.stdin,
-        help="Input right to compare",
-    )
-
-    return parser
-
-
-if __name__ == "__main__":
-    run(build_parser().parse_args())
+    return result

@@ -1,8 +1,7 @@
-from typing import Dict, Set
-from argparse import ArgumentParser, Namespace
 import statistics
-import sys
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
+from typing import Dict, Set
 
 
 def run(args: Namespace) -> None:

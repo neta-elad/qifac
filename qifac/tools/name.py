@@ -1,5 +1,5 @@
-from argparse import ArgumentParser, Namespace
 import io
+from argparse import ArgumentParser, Namespace
 
 from pysmt.smtlib.parser import SmtLibParser
 

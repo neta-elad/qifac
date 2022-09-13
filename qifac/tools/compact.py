@@ -1,5 +1,4 @@
-from typing import Set, Dict, Any
-from argparse import ArgumentParser, Namespace, FileType
+from argparse import ArgumentParser, FileType, Namespace
 
 from pysmt.smtlib.parser import SmtLibParser
 

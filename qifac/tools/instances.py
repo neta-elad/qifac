@@ -4,6 +4,7 @@ import tempfile
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
+from ..metadata import Metadata
 from .helpers import stdio_args
 
 
@@ -16,11 +17,10 @@ def run(args: Namespace) -> None:
             shutil.copyfileobj(args.input, input_file)
 
         log_path = dir_path / "z3.log"
-        subprocess.run(
+        result = subprocess.run(
             [
-                args.executable,
+                Metadata.default().z3,
                 "trace=true",
-                "proof=true",
                 f"trace_file_name={log_path}",
                 str(input_path),
             ],
@@ -32,7 +32,7 @@ def run(args: Namespace) -> None:
 
         subprocess.run(
             [
-                args.tracer,
+                Metadata.default().z3tracer,
                 "--skip-z3-version-check",
                 "--instantiation-tree",
                 str(instances_path),
@@ -50,14 +50,6 @@ def build_parser(
     parser: ArgumentParser = ArgumentParser(),
 ) -> ArgumentParser:
     stdio_args(parser)
-
-    parser.add_argument(
-        "-e", "--executable", required=True, help="Z3 executable to use"
-    )
-
-    parser.add_argument(
-        "-t", "--tracer", required=True, help="Z3Tracer executable to use"
-    )
 
     return parser
 

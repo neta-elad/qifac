@@ -1,11 +1,10 @@
-from typing import Set
-from argparse import ArgumentParser, Namespace
 import shutil
 import tempfile
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
-from pysmt.smtlib.parser import SmtLibParser
 import z3
+from pysmt.smtlib.parser import SmtLibParser
 
 from .helpers import stdio_args
 

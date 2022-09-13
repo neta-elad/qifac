@@ -1,10 +1,10 @@
-from typing import Any
 import io
+from typing import Any
 
+from pysmt.operators import ALL_TYPES, FORALL
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.script import SmtLibScript
 from pysmt.walkers import TreeWalker, handles
-from pysmt.operators import ALL_TYPES, FORALL
 
 Term = Any
 

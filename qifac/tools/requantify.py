@@ -1,14 +1,12 @@
-from typing import Set, Dict, Any
-from argparse import ArgumentParser, Namespace, FileType
-import shutil
 import tempfile
+from argparse import ArgumentParser, FileType, Namespace
 from pathlib import Path
+from typing import Any
 
-from pysmt.smtlib.parser import SmtLibParser, Annotations
-import z3
+from pysmt.smtlib.parser import Annotations, SmtLibParser
 
-from .helpers import stdio_args
 from ..pysmt_helpers import AbstractForallWalker
+from .helpers import stdio_args
 
 
 class QidsChecker(AbstractForallWalker):

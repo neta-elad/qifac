@@ -1,10 +1,10 @@
-from typing import TextIO, Optional, Callable, Iterable, Any
-from argparse import ArgumentParser, FileType, Namespace, ArgumentTypeError
-import sys
-import io
 import copy
+import io
 import re
+import sys
+from argparse import ArgumentParser, ArgumentTypeError, FileType, Namespace
 from dataclasses import dataclass, field
+from typing import Any, Callable, Iterable, Optional, TextIO
 
 
 def stdio_args(

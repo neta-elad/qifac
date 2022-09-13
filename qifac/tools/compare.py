@@ -1,14 +1,11 @@
-from ast import parse
-from typing import Set, Dict, Any, TextIO
-from argparse import ArgumentParser, Namespace, FileType
-import sys
 import io
+import sys
+from argparse import ArgumentParser, FileType, Namespace
+from typing import Set, TextIO
 
+from pysmt.fnode import FNode
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.printers import SmtPrinter
-from pysmt.fnode import FNode
-
-from .helpers import stdio_args
 
 
 def run(args: Namespace) -> None:

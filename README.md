@@ -1,4 +1,4 @@
-# qifac: Quantifier Instantiations Finder and Cleaner
+# QIFaC: Quantifier Instantiations Finder and Cleaner
 
 ## Find Unsat-core
 ```bash

@@ -1,17 +1,17 @@
-from typing import TextIO, List, Optional
-from argparse import Namespace, ArgumentParser, FileType
-import tempfile
-import subprocess
 import io
 import shutil
+import subprocess
+import tempfile
+from argparse import ArgumentParser, FileType, Namespace
 from pathlib import Path
+from typing import Optional, TextIO
 
 import z3
 from pysmt.smtlib.parser import Tokenizer
 
-from .helpers import stdio_args, log_args, log_output
-from .name import name
 from .filter_named import filter_named
+from .helpers import log_args, stdio_args
+from .name import name
 
 
 def find_unsat_core(args: Namespace) -> None:

@@ -1,6 +1,6 @@
-from argparse import ArgumentParser, Namespace, FileType
-import tempfile
 import shutil
+import tempfile
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
 from pysmt.smtlib.parser import SmtLibParser

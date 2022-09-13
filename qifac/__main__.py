@@ -1,7 +1,5 @@
 from argparse import ArgumentParser, Namespace
 
-from qifac.tools import compact
-
 from . import tools
 
 
@@ -99,6 +97,10 @@ def build_parser(
     compare_instances = sub_parsers.add_parser("compare-instances")
     tools.compare_instances.build_parser(compare_instances)
     compare_instances.set_defaults(fun=tools.compare_instances.run)
+
+    instances = sub_parsers.add_parser("insts")
+    tools.instances.build_parser(instances)
+    instances.set_defaults(fun=tools.instances.run)
 
     return parser
 

@@ -1,45 +1,72 @@
-from ast import parse
-import tempfile
-from typing import Set, Dict, Any, TextIO, Iterable
-from argparse import ArgumentParser, Namespace, FileType
-import sys
 import io
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
-
-from pysmt.smtlib.parser import SmtLibParser
-from pysmt.smtlib.script import SmtLibScript
-from pysmt.smtlib.printers import SmtPrinter
-from pysmt.walkers import TreeWalker, handles
-from pysmt.operators import ALL_TYPES, SYMBOL, FUNCTION, FORALL
-from pysmt.fnode import FNode
+from typing import Any, Dict, Optional, Set, Tuple
 
 import z3
+from pysmt.fnode import FNode
+from pysmt.operators import ALL_TYPES, FUNCTION
+from pysmt.smtlib.parser import SmtLibParser
+from pysmt.walkers import TreeWalker, handles
+
+from .helpers import normalize, stdio_args
 
 
-from .helpers import stdio_args, normalize
+def get_antecedent(term: FNode) -> FNode:
+    if term.is_implies():
+        return term.arg(0)
+
+    if term.is_or() and term.arg(0).is_not():
+        return term.arg(0).arg(0)
+
+    return None
+
+
+def is_type_level(term: FNode) -> bool:
+    if not term.is_quantifier():
+        return False
+
+    return all(str(var.symbol_type()) == "T@T" for var in term.quantifier_vars())
+
+
+def is_uninterpreted(term: FNode) -> bool:
+    if not term.is_quantifier():
+        return False
+
+    if all(
+        str(var.symbol_type()) not in {"T@U", "T@T"} for var in term.quantifier_vars()
+    ):
+        return False
+
+    return True
+
 
 def function_name(term: FNode) -> str:
     if term.is_function_application():
         return str(term.function_name())
 
-    return ''
+    return ""
 
-def is_type_check(term: FNode) -> bool:
+
+def pares_type_check(term: FNode) -> Optional[Tuple[FNode, FNode]]:
     if not term.is_equals():
-        return False
+        return None
 
     left, right = term.args()
 
     if not left.is_function_application() and not right.is_function_application():
-        return False
+        return None
 
-    if left.is_function_application() and str(left.function_name()) == 'type':
-        return True
+    if left.is_function_application() and str(left.function_name()) == "type":
+        var = left.arg(0)
+        return (var, right)
 
-    if right.is_function_application() and str(right.function_name()) == 'type':
-        return True
+    if right.is_function_application() and str(right.function_name()) == "type":
+        var = right.arg(0)
+        return (var, left)
 
-    return False
+    return None
+
 
 def is_ground(term: FNode, consts: Set[FNode]) -> bool:
     if term in consts:
@@ -54,12 +81,13 @@ def is_ground(term: FNode, consts: Set[FNode]) -> bool:
 
     return True
 
+
 def to_z3(term: FNode, funs: Dict[str, Any]) -> z3.ExprRef:
     if term.node_type() == FUNCTION:
         z3_fun = funs[normalize(term.function_name())]
         args = [to_z3(sub_term, funs) for sub_term in term.args()]
         return z3_fun(*args)
-    
+
     symbol_name = str(term.symbol_name())
     symbol_type = term.symbol_type()
     return z3.Const(symbol_name, to_z3_sort(str(symbol_type)))
@@ -70,12 +98,10 @@ class Restricter(TreeWalker):
     throw: bool
     grounds: Set[FNode]
 
-
     def __init__(self, grounds: Set[FNode]) -> None:
         super().__init__(self)
         self.throw = False
         self.grounds = grounds
-
 
     @handles(ALL_TYPES)
     def walk_any_type(self, formula: FNode) -> Any:
@@ -83,7 +109,7 @@ class Restricter(TreeWalker):
             if is_ground(formula, self.grounds):
                 self.grounds.add(formula)
 
-            if str(formula.get_type()) != 'T@T':
+            if str(formula.get_type()) != "T@T":
                 self.throw = True
         return self.walk_skip(formula)
 
@@ -92,23 +118,57 @@ class Restricter(TreeWalker):
         self.walk(formula)
         return not self.throw
 
+
 def to_z3_sort(sort: Any) -> z3.SortRef:
-    if str(sort) == 'Bool':
+    if str(sort) == "Bool":
         return z3.BoolSort()
     return z3.DeclareSort(str(sort))
+
+
+def get_quantifier_instantiations(formula: FNode) -> int:
+    instantiations = 1
+
+    for var in formula.quantifier_vars():
+        symbol_type = str(var.symbol_type())
+        if symbol_type == "Bool":
+            instantiations *= 2
+        elif symbol_type == "T@U":
+            instantiations *= 8
+        else:
+            return 0
+
+    return instantiations
+
+
+def parse_fun_type(qid: str, body: FNode) -> Optional[Tuple[Any, Any]]:
+    if not qid.startswith("funType:"):
+        return None
+
+    type_check = pares_type_check(body)
+
+    if type_check is None:
+        return None
+
+    var, kind = type_check
+
+    if not var.is_function_application():
+        return None
+
+    return (normalize(var.function_name()), kind)
+
 
 def run(args: Namespace) -> None:
     parser = SmtLibParser()
     script = parser.get_script(args.input)
 
-    t_t = z3.DeclareSort('T@T')
-    t_u = z3.DeclareSort('T@U')
+    t_t = z3.DeclareSort("T@T")
+    t_u = z3.DeclareSort("T@U")
 
     symbols: Dict[str, Set[str]] = {}
     grounds = set()
     funs = {}
 
-    for command in script.filter_by_command_name('declare-fun'):
+    for command in script.filter_by_command_name("declare-fun"):
         symbol: FNode = command.args[0]
 
         symbol_type = to_z3_sort(symbol.symbol_type())
@@ -129,46 +189,117 @@ def run(args: Namespace) -> None:
     restricter = Restricter(grounds)
     asserts = list(script.filter_by_command_name("assert"))
 
-    total_instantiations = 0
+    # Quantifiers:
+    # - Fun type
+    # - Guarded
+    #   - Type info per var
+    # - Only over interpreted infinite sorts (Int and Real)
+    # -
+
+    total_quanitifiers = 0
+    quantifiers = 0
+    type_level_quantifiers = 0
+    value_level_quantifiers = 0
+    finite_quantifiers = 0
+    non_fun_type_quantifiers = 0
+    has_antecedent = 0
+    quantifiers_with_type_info = 0
+    has_full_type_info = 0
+
+    qid_to_type_info = {}
+    fun_to_type_info = {}
+
     for command in asserts:
         formula: FNode = command.args[0]
-        if formula.is_quantifier():
-            instantiations = 1
-            for var in formula.quantifier_vars():
-                symbol_type = str(var.symbol_type())
-                if symbol_type == 'Bool':
-                    instantiations *= 2
-                elif symbol_type == 'T@U':
-                    instantiations *= 8
-                else:
-                    instantiations *= 0
+        if not formula.is_quantifier():
+            continue
+        total_quanitifiers += 1
 
-            
-            total_instantiations += instantiations
+        if not is_uninterpreted(formula):
+            continue
 
-            if instantiations > 0:
+        quantifiers += 1
+        body = formula.arg(0)
+
+        if is_type_level(formula):
+            type_level_quantifiers += 1
+        else:
+            value_level_quantifiers += 1
+
+        qid = None
+        if script.annotations.has_annotation(body, "qid"):
+            qid = list(script.annotations[body]["qid"])[0]
+
+        if qid is None:
+            continue
+
+        qid_to_type_info[qid] = {}
+
+        fun_type = parse_fun_type(qid, body)
+
+        if fun_type is not None:
+            fun, return_type = fun_type
+            fun_to_type_info[fun] = return_type
+            continue
+
+        non_fun_type_quantifiers += 1
+
+        is_finite = get_quantifier_instantiations(formula) > 0
+
+        if not is_finite:
+            continue
+
+        finite_quantifiers += 1
+
+        antecedent = get_antecedent(body)
+
+        if antecedent is None:
+            continue
+
+        has_antecedent += 1
+        antecedent = body.arg(0)
+        if not antecedent.is_and():
+            var_kind = pares_type_check(antecedent)
+            if var_kind is not None:
+                var, kind = var_kind
+                qid_to_type_info[qid][var] = kind
+                quantifiers_with_type_info += 1
+
+                if len(formula.quantifier_vars()) == 1:
+                    has_full_type_info += 1
+
+            continue
+
+        for check in antecedent.args():
+            var_kind = pares_type_check(check)
+
+            if var_kind is None:
                 continue
-            body = formula.arg(0)
-            if not body.is_implies():
-                continue
-            antecedent = body.arg(0)
-            if not antecedent.is_and():
-                continue
 
-            if not all(is_type_check(check) for check in antecedent.args()):
-                continue
+            var, kind = var_kind
 
-            print(f'type check {antecedent}')
+            qid_to_type_info[qid][var] = kind
 
-    print(f"Total is {total_instantiations}")
-    exit(-1)
+        type_info = qid_to_type_info[qid]
+        if len(type_info) > 0:
+            quantifiers_with_type_info += 1
+
+            if len(type_info) == len(formula.quantifier_vars()):
+                has_full_type_info += 1
+
+        if len(qid_to_type_info[qid]) == 0:
+            print(qid)
+
+    print(
+        f"{has_full_type_info}/{quantifiers_with_type_info}/{has_antecedent}/{finite_quantifiers}/{non_fun_type_quantifiers}/{value_level_quantifiers}/{quantifiers}/{total_quanitifiers}"
+    )
+    print(f"{type_level_quantifiers}/{quantifiers}/{total_quanitifiers}")
+    print(f"{len(fun_to_type_info)}/{quantifiers}/{total_quanitifiers}")
 
     for command in asserts:
-        # if not restricter.check(command.args[0]):
-        #     script.commands.remove(command)
-        restricter.check(command.args[0])
-
-    exit(-1)
+        if not restricter.check(command.args[0]):
+            script.commands.remove(command)
+        # restricter.check(command.args[0])
 
     buffer = io.StringIO()
 
@@ -176,27 +307,51 @@ def run(args: Namespace) -> None:
 
     solver = z3.Solver()
 
+    Path("test.smt2").write_text(buffer.getvalue())
+
     solver.from_string(buffer.getvalue())
 
     assert solver.check() != z3.unsat
 
-    const_to_sort = {}
-    sort_to_consts = {}
+    t_t = z3.DeclareSort("T@T")
+    t_u = z3.DeclareSort("T@U")
 
-    t_t = z3.DeclareSort('T@T')
-    t_u = z3.DeclareSort('T@U')
-
-    type_fun = z3.Function('type', t_u, t_t)
+    type_fun = z3.Function("type", t_u, t_t)
 
     grounds = restricter.grounds
 
     print(f"{len([g for g in grounds if to_z3_sort(g.get_type()) == t_u])} T@Us")
     print(f"{len([g for g in grounds if to_z3_sort(g.get_type()) == t_t])} T@Ts")
 
+    const_to_sort = {}
+    sort_to_consts = {}
+
+    grounds_t_u = 0
+    grounds_understood_from_z3 = 0
+    grounds_understood_from_fun_type = 0
+
     for ground_u in grounds:
         if to_z3_sort(ground_u.get_type()) != t_u:
             continue
+
+        grounds_t_u += 1
+
         const = to_z3(ground_u, funs)
+
+        if ground_u.is_function_application():
+            fun = normalize(ground_u.function_name())
+
+            if fun in fun_to_type_info:
+                kind = to_z3(fun_to_type_info[fun], funs)
+
+                const_to_sort[const] = kind
+                sort_to_consts.setdefault(kind, set())
+                sort_to_consts[kind].add(const)
+                grounds_understood_from_fun_type += 1
+
+                continue
+
+        understood = False
         for ground_t in restricter.grounds:
             if to_z3_sort(ground_t.get_type()) != t_t:
                 continue
@@ -208,10 +363,19 @@ def run(args: Namespace) -> None:
                 const_to_sort[const] = kind
                 sort_to_consts.setdefault(kind, set())
                 sort_to_consts[kind].add(const)
+                grounds_understood_from_z3 += 1
+                understood = True
                 break
 
-    for kind, consts in sort_to_consts.items():
-        print(f"{kind} has {len(consts)}")
+        if not understood:
+            print(ground_u)
+
+    # for kind, consts in sort_to_consts.items():
+    #     print(f"{kind} has {len(consts)}")
+
+    print(
+        f"{grounds_understood_from_fun_type} + {grounds_understood_from_z3}/{grounds_t_u}"
+    )
 
     # interpreting $Is
     # is_fun = z3.Function('$Is', t_u, t_u, z3.BoolSort())
@@ -242,17 +406,15 @@ def run(args: Namespace) -> None:
 
             ground_as_z3 = to_z3(ground_t, funs)
 
-            if ground_as_z3 not in const_to_sort or \
-                const_to_sort[ground_as_z3] != ty_type:
+            if (
+                ground_as_z3 not in const_to_sort
+                or const_to_sort[ground_as_z3] != ty_type
+            ):
                 continue
 
             if solver.check(formula) == z3.unsat:
                 const_to_sort[const] = kind
                 break
-
-
-
-
 
 
 def build_parser(parser: ArgumentParser = ArgumentParser()) -> ArgumentParser:

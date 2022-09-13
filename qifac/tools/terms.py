@@ -1,17 +1,14 @@
-from typing import Set, TextIO, Dict, Tuple, Optional
-from argparse import ArgumentParser, Namespace
+import itertools
 import shutil
 import tempfile
-import itertools
-import copy
-from pathlib import Path
+from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Dict, Set, TextIO, Tuple
 
-from pysmt.smtlib.parser import SmtLibParser
-from pysmt.shortcuts import Solver
 import z3
 
-from .helpers import stdio_args, RangeType
+from .helpers import stdio_args
 
 cache = {}
 

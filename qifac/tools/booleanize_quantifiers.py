@@ -1,11 +1,11 @@
-from typing import TextIO, List, Set, Any, Mapping, cast
 import argparse
+from typing import Any, List, Mapping, Set, TextIO, cast
 
+from pysmt.operators import ALL_TYPES, FORALL
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.printers import SmtPrinter
-from pysmt.walkers import TreeWalker, handles
 from pysmt.utils import quote
-from pysmt.operators import ALL_TYPES, FORALL
+from pysmt.walkers import TreeWalker, handles
 
 from .helpers import stdio_args
 

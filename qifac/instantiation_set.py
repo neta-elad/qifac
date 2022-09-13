@@ -1,5 +1,5 @@
-from typing import Any, Tuple, TextIO, Optional, Set, Dict, List, Iterable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from typing import Any, Dict, Iterable, List, Optional, Set, TextIO, Tuple
 
 from pysmt.smtlib.parser import SmtLibParser
 

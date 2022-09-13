@@ -1,7 +1,4 @@
-from typing import Set, TextIO
 from argparse import ArgumentParser, Namespace
-from pathlib import Path
-
 
 from .helpers import stdio_args
 

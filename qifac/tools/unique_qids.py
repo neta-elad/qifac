@@ -1,7 +1,7 @@
-from typing import Dict, Any, Iterable
 from argparse import ArgumentParser, Namespace
+from typing import Any, Dict, Iterable
 
-from pysmt.smtlib.parser import SmtLibParser, Annotations
+from pysmt.smtlib.parser import Annotations, SmtLibParser
 
 from ..pysmt_helpers import AbstractForallWalker
 from .helpers import stdio_args

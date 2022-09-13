@@ -1,16 +1,14 @@
-from typing import Dict, Any, Set, List, Optional, Tuple
-from argparse import ArgumentParser, Namespace, FileType
-import statistics
-import sys
+from argparse import ArgumentParser, FileType, Namespace
+from typing import Any, Dict, List, Set, Tuple
 
-from pysmt.smtlib.parser import SmtLibParser
-from pysmt.smtlib.script import SmtLibScript
-from pysmt.smtlib.printers import SmtPrinter
-from pysmt.walkers import TreeWalker, handles
-from pysmt.operators import ALL_TYPES
 from pysmt.fnode import FNode
+from pysmt.operators import ALL_TYPES
+from pysmt.smtlib.parser import SmtLibParser
+from pysmt.smtlib.printers import SmtPrinter
+from pysmt.smtlib.script import SmtLibScript
+from pysmt.walkers import TreeWalker, handles
 
-from ...instantiation_set import InstantiationSet, Instantiation, Term
+from ...instantiation_set import InstantiationSet
 
 
 class Tracker(TreeWalker):
