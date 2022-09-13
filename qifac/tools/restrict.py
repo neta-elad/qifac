@@ -9,6 +9,8 @@ from pysmt.operators import ALL_TYPES, FUNCTION
 from pysmt.smtlib.parser import SmtLibParser
 from pysmt.walkers import TreeWalker, handles
 
+import qifac.typeinfo.utils
+
 from .helpers import normalize, stdio_args
 
 
@@ -57,11 +59,17 @@ def pares_type_check(term: FNode) -> Optional[Tuple[FNode, FNode]]:
     if not left.is_function_application() and not right.is_function_application():
         return None
 
-    if left.is_function_application() and str(left.function_name()) == "type":
+    if (
+        left.is_function_application()
+        and str(qifac.typeinfo.utils.function_name()) == "type"
+    ):
         var = left.arg(0)
         return (var, right)
 
-    if right.is_function_application() and str(right.function_name()) == "type":
+    if (
+        right.is_function_application()
+        and str(qifac.typeinfo.utils.function_name()) == "type"
+    ):
         var = right.arg(0)
         return (var, left)
 

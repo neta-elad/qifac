@@ -2,7 +2,8 @@ from typing import TextIO
 
 import click
 
-from .parser import TypeInfo, parse_script
+from .parser import parse_script
+from .types import TypeInfo
 
 
 @click.group
