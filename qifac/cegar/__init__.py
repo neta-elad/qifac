@@ -68,27 +68,50 @@ def cegar_from_solver(solver: z3.Solver) -> List[z3.BoolRef]:
     return current_asserts
 
 
-def eval_quantifier(model, formula):
+def eval_quantifier(model: z3.ModelRef, formula: z3.BoolRef) -> z3.CheckSatResult:
     unqantified_formula, free_variables = remove_quantifiers(formula)
+
+    # for variable in free_variables:
+    #     if (
+    #         uninterpreted_sort(variable.decl().range())
+    #         and model.get_universe(variable.decl().range()) is None
+    #     ):
+    #         raise RuntimeError(
+    #             f"""
+    #         Missing sort {variable.decl().range()} for {variable}
+    #         while evaluating
+    #             {unqantified_formula.sexpr()}
+    #         under {model}
+    #         """
+    #         )
+
     universe_constraint = z3.And(
         *[
             z3.Or(
                 *[
                     variable == element
-                    for element in model.get_universe(
-                        variable.decl().range()
-                    )
+                    for element in get_universe(model, variable.decl().range())
                 ]
             )
             for variable in free_variables
+            if uninterpreted_sort(variable.decl().range())
         ]
     )
-    constrained_formula = z3.And(
-        z3.Not(unqantified_formula), universe_constraint
-    )
+    constrained_formula = z3.And(z3.Not(unqantified_formula), universe_constraint)
     model_solver = z3.Solver()
-    check = model_solver.check(constrained_formula)
-    return check
+    return model_solver.check(constrained_formula)
+
+
+def uninterpreted_sort(sort: z3.SortRef) -> bool:
+    return sort not in {z3.BoolSort(), z3.IntSort(), z3.RoundTowardZero().sort()}
+
+
+def get_universe(model: z3.ModelRef, sort: z3.SortRef) -> List[z3.Const]:
+    result = model.get_universe(sort)
+    if result is None:
+        return [z3.Const(f"{sort}!0", sort)]
+
+    return result
 
 
 def remove_quantifiers(formula: AnyExprRef) -> Tuple[AnyExprRef, Set[z3.Const]]:
@@ -119,6 +142,15 @@ def remove_quantifiers(formula: AnyExprRef) -> Tuple[AnyExprRef, Set[z3.Const]]:
             args.append(arg)
             consts.update(arg_consts)
 
-        return cast(AnyExprRef, formula.decl()(*args)), consts
+        result: z3.ExprRef
+
+        if z3.is_and(formula):
+            result = z3.And(*cast(List[z3.BoolRef], args))
+        elif z3.is_or(formula):
+            result = z3.Or(*cast(List[z3.BoolRef], args))
+        else:
+            result = formula.decl()(*args)
+
+        return cast(AnyExprRef, result), consts
 
     raise RuntimeError(f"Unexpected formula type: {formula}")
