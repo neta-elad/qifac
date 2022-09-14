@@ -55,28 +55,7 @@ def cegar_from_solver(solver: z3.Solver) -> List[z3.BoolRef]:
                 added = True
                 break
             else:
-                unqantified_formula, free_variables = remove_quantifiers(model_eval)
-
-                universe_constraint = z3.And(
-                    *[
-                        z3.Or(
-                            *[
-                                variable == element
-                                for element in model.get_universe(
-                                    variable.decl().range()
-                                )
-                            ]
-                        )
-                        for variable in free_variables
-                    ]
-                )
-
-                constrained_formula = z3.And(
-                    z3.Not(unqantified_formula), universe_constraint
-                )
-
-                model_solver = z3.Solver()
-                if model_solver.check(constrained_formula) == z3.sat:
+                if eval_quantifier(model, model_eval) == z3.sat:
                     current_asserts.append(formula)
                     asserts.remove(formula)
                     solver.add(formula)
@@ -87,6 +66,29 @@ def cegar_from_solver(solver: z3.Solver) -> List[z3.BoolRef]:
             raise RuntimeError("CEGAR cannot make progress")
 
     return current_asserts
+
+
+def eval_quantifier(model, formula):
+    unqantified_formula, free_variables = remove_quantifiers(formula)
+    universe_constraint = z3.And(
+        *[
+            z3.Or(
+                *[
+                    variable == element
+                    for element in model.get_universe(
+                        variable.decl().range()
+                    )
+                ]
+            )
+            for variable in free_variables
+        ]
+    )
+    constrained_formula = z3.And(
+        z3.Not(unqantified_formula), universe_constraint
+    )
+    model_solver = z3.Solver()
+    check = model_solver.check(constrained_formula)
+    return check
 
 
 def remove_quantifiers(formula: AnyExprRef) -> Tuple[AnyExprRef, Set[z3.Const]]:
