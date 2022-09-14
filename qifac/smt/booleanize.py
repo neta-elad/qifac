@@ -13,7 +13,7 @@ from qifac.pysmt_helpers import AbstractForallWalker
 class BooleanizeQuantifiersGetter(AbstractForallWalker):
     booleans: Set[str]
     id: int
-    ids: Dict[str, str]
+    ids: Dict[FNode, str]
 
     def __init__(self, annotations: Annotations):
         AbstractForallWalker.__init__(self)
@@ -47,7 +47,7 @@ class BooleanizeQuantifiersPrinter(SmtPrinter):
     getter: BooleanizeQuantifiersGetter
 
     def __init__(self, stream: TextIO, getter: BooleanizeQuantifiersGetter):
-        SmtPrinter.__init__(self, stream, getter.annotations)
+        super().__init__(stream, getter.annotations)
         self.getter = getter
 
     def walk_forall(self, formula: Any) -> Any:

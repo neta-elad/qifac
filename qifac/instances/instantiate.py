@@ -3,12 +3,14 @@ from typing import Any, Dict, Mapping, TextIO
 
 from pysmt.operators import ALL_TYPES, FORALL
 from pysmt.shortcuts import Implies, get_free_variables
-from pysmt.smtlib.parser import Annotations, SmtLibParser, SmtLibScript
+from pysmt.smtlib.annotations import Annotations
+from pysmt.smtlib.parser import SmtLibParser
+from pysmt.smtlib.script import SmtLibScript
 from pysmt.walkers import TreeWalker
 
 from ..instantiation_tree import Forest, Node
 from ..pysmt_helpers import AbstractForallWalker, parse_term
-from ..tools.helpers import normalize, set_to_str_dict
+from ..tools.helpers import normalize, to_str_dict
 
 all_types_but_forall = list(ALL_TYPES)
 all_types_but_forall.remove(FORALL)
@@ -79,7 +81,7 @@ def instantiate_node(
 
     quantifier = quantifiers[qid]
 
-    free_variables = set_to_str_dict(get_free_variables(quantifier.args()[0]))
+    free_variables = to_str_dict(get_free_variables(quantifier.args()[0]))
 
     all_substitutes = node.all_substitutes()
     parent_substitutes = node.parent_substitutes()
@@ -87,9 +89,7 @@ def instantiate_node(
     if node.parent is not None:
         parent_qid = node.forest.nodes[node.parent].qid
         parent_quantifier = quantifiers[normalize(parent_qid)]
-        free_variables |= set_to_str_dict(
-            get_free_variables(parent_quantifier.args()[0])
-        )
+        free_variables |= to_str_dict(get_free_variables(parent_quantifier.args()[0]))
 
     try:
         substitutions = build_substitutions(parser, free_variables, all_substitutes)

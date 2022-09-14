@@ -22,7 +22,7 @@ class TypeSystemFormulaChecker(TreeWalker):
     keep: bool
 
     def __init__(self) -> None:
-        super().__init__(self)
+        super().__init__()
         self.keep = True
 
     @handles(ALL_TYPES)
@@ -43,7 +43,7 @@ class GroundTermsFinder(TreeWalker):
     grounds: Set[FNode]
 
     def __init__(self, consts: Set[FNode]) -> None:
-        super().__init__(self)
+        super().__init__()
         self.grounds = consts
 
     @handles(ALL_TYPES)
