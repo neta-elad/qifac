@@ -110,7 +110,7 @@ def instantiate_node(
         f"{var}={term}" for var, term in all_substitutes.items()
     )
 
-    name = normalize(f"{node.qid}[{substitutes_string}]")
+    name = normalize(f"{node.id}-{node.qid}[{substitutes_string}]")
 
     script.annotations.add(result, "named", name)
 

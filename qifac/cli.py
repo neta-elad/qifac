@@ -1,5 +1,7 @@
 import shutil
+import subprocess
 import sys
+from pathlib import Path
 from typing import Any, List, Optional, TextIO
 
 import click
@@ -18,6 +20,7 @@ from .smt import uglify as do_uglify
 from .smt.booleanize import booleanize as do_booleanize
 from .smt.cleaner import clean_errors
 from .typeinfo.parser import parse_script
+from .utils import TimeoutException, time_limit
 from .z3_utils import run_z3 as do_run_z3
 
 
@@ -44,6 +47,26 @@ def run() -> None:
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 def run_z3(smt_file: TextIO) -> None:
     print(do_run_z3(smt_file))
+
+
+@run.command
+@click.argument(
+    "batch_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+def batch(batch_dir: Path) -> None:
+    for path in batch_dir.iterdir():
+        print(f"Trying {path.name}")
+        try:
+            with time_limit(60 * 5):
+                subprocess.run(
+                    ["qifac", "core", "instances", str(path), str(path.name)],
+                    capture_output=True,
+                    text=True,
+                )
+        except TimeoutException:
+            print("Timed out!")
+        except Exception as e:
+            print(f"Error {e}")
 
 
 @run.group
@@ -110,7 +133,7 @@ def find(smt_file: TextIO, output: TextIO) -> None:
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def core_instances(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(do_instances(smt_file), output)
+    output.write(str(do_instances(smt_file)))
 
 
 @run.group

@@ -42,6 +42,12 @@ class Node:
         substitues = dict(zip(result["var"], result["term"]))
         return cls(result["id"], result["qid"], substitues, parent, forest)
 
+    def get_parent(self) -> Optional["Node"]:
+        if self.parent is None:
+            return None
+
+        return self.forest.nodes[self.parent]
+
     def all_substitutes(self) -> Mapping[str, str]:
         current = dict(self.substitues)
 
@@ -51,8 +57,9 @@ class Node:
         return current
 
     def parent_substitutes(self) -> Mapping[str, str]:
-        if self.parent is not None and self.parent in self.forest.nodes:
-            return self.forest.nodes[self.parent].all_substitutes()
+        parent = self.get_parent()
+        if parent is not None:
+            return parent.all_substitutes()
         else:
             return {}
 
@@ -60,11 +67,20 @@ class Node:
         if self.id in seen:
             return True
 
-        if self.parent is None:
+        parent = self.get_parent()
+        if parent is None:
             return False
 
         seen.add(self.id)
-        return self.forest.nodes[self.parent].has_cycles(seen)
+        return parent.has_cycles(seen)
+
+    def ancestry(self) -> Set[Ident]:
+        ancestry = {self.id}
+        parent = self.get_parent()
+        if parent is not None:
+            ancestry.update(parent.ancestry())
+
+        return ancestry
 
     def __hash__(self) -> int:
         return hash(self.id)
@@ -99,6 +115,19 @@ class Forest:
     @classmethod
     def parse_file(cls, file: TextIO) -> "Forest":
         return cls.parse(file.readlines())
+
+    def filter(self, nodes: Set[Ident]) -> "Forest":
+        all_nodes = set(nodes)
+
+        for node in nodes:
+            all_nodes.update(self.nodes[node].ancestry())
+
+        new_roots = {root for root in self.roots if root in all_nodes}
+        new_nodes = {
+            ident: node for ident, node in self.nodes.items() if ident in all_nodes
+        }
+
+        return Forest(new_roots, new_nodes)
 
     def __str__(self) -> str:
         return "\n".join(str(node) for node in self.nodes.values()) + "\n"
