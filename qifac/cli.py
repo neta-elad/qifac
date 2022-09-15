@@ -10,6 +10,7 @@ from click import Context, Parameter
 from .cegar import cegar as do_cegar
 from .core import find as do_find
 from .core import instances as do_instances
+from .instances import count_qids
 from .instances import show as do_show
 from .instances.compare import compare as do_compare
 from .instances.instantiate import instantiate as do_instantiate
@@ -147,6 +148,14 @@ def instances() -> None:
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def show(smt_file: TextIO, output: TextIO) -> None:
     output.write(str(do_show(smt_file)))
+
+
+@instances.command
+@click.argument("instances_file", type=ForestType(), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def qids(instances_file: Forest, output: TextIO) -> None:
+    for qid, count in count_qids(instances_file):
+        print(f"{qid} {count}", file=output)
 
 
 @instances.command

@@ -2,7 +2,7 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import TextIO
+from typing import Dict, List, TextIO, Tuple
 
 from ..instantiation_tree import Forest
 from ..metadata import Metadata
@@ -44,3 +44,12 @@ def show(smt_file: TextIO) -> Forest:
         )
 
         return Forest.parse(instances_path.read_text().splitlines())
+
+
+def count_qids(instances: Forest) -> List[Tuple[str, int]]:
+    qids: Dict[str, int] = {}
+    for node in instances.nodes.values():
+        qids.setdefault(node.qid, 0)
+        qids[node.qid] += 1
+
+    return sorted(qids.items(), key=lambda item: item[1])
