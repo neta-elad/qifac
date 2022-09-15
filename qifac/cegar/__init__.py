@@ -55,7 +55,7 @@ def cegar_from_solver(solver: z3.Solver) -> List[z3.BoolRef]:
                 added = True
                 break
             else:
-                if eval_quantifier(model, model_eval) == z3.sat:
+                if not eval_quantifier(model, model_eval):
                     current_asserts.append(formula)
                     asserts.remove(formula)
                     solver.add(formula)
@@ -68,7 +68,7 @@ def cegar_from_solver(solver: z3.Solver) -> List[z3.BoolRef]:
     return current_asserts
 
 
-def eval_quantifier(model: z3.ModelRef, formula: z3.BoolRef) -> z3.CheckSatResult:
+def eval_quantifier(model: z3.ModelRef, formula: z3.BoolRef) -> bool:
     unqantified_formula, free_variables = remove_quantifiers(formula)
 
     # for variable in free_variables:
@@ -99,7 +99,7 @@ def eval_quantifier(model: z3.ModelRef, formula: z3.BoolRef) -> z3.CheckSatResul
     )
     constrained_formula = z3.And(z3.Not(unqantified_formula), universe_constraint)
     model_solver = z3.Solver()
-    return model_solver.check(constrained_formula)
+    return model_solver.check(constrained_formula) != z3.sat
 
 
 def uninterpreted_sort(sort: z3.SortRef) -> bool:
@@ -107,11 +107,7 @@ def uninterpreted_sort(sort: z3.SortRef) -> bool:
 
 
 def get_universe(model: z3.ModelRef, sort: z3.SortRef) -> List[z3.Const]:
-    result = model.get_universe(sort)
-    if result is None:
-        return [z3.Const(f"{sort}!0", sort)]
-
-    return result
+    return model.get_universe(sort) or [z3.Const(f"{sort}!0", sort)]
 
 
 def remove_quantifiers(formula: AnyExprRef) -> Tuple[AnyExprRef, Set[z3.Const]]:
