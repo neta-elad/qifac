@@ -1,2 +1,2 @@
 z3 = "/Users/neta.e/Code/other/z3-versions/4.10.2/bin/z3"
-z3tracer = "/Users/neta.e/Code/vmware/smt2utils/target/debug/z3tracer"
+z3tracer = "/Users/neta.e/Code/vmware/smt2utils/target/release/z3tracer"

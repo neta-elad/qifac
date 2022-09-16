@@ -29,12 +29,15 @@ def show(smt_file: TextIO) -> Forest:
             text=True,
         )
 
+        shutil.copyfile(log_path, "myz3.log")
+
         instances_path = dir_path / "instances.txt"
 
         subprocess.run(
             [
                 Metadata.default().z3tracer,
                 "--skip-z3-version-check",
+                "--skip-log-consistency-checks",
                 "--instantiation-tree",
                 str(instances_path),
                 str(log_path),

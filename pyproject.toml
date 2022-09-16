@@ -13,6 +13,7 @@ dependencies = [
     "toml==0.10.2",
     "pyparsing==3.0.9",
     "pysmt==0.9.5",
+    "tqdm==4.64.1",
 ]
 dynamic = ["version"]
 
@@ -20,6 +21,7 @@ dynamic = ["version"]
 test = [
     "mypy==0.971",
     "types-toml==0.10.2",
+    "types-tqdm==4.64.6",
     "black==22.6.0",
     "isort==5.10.1",
     "autoflake==1.4",
