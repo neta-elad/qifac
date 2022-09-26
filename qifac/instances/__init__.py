@@ -8,7 +8,7 @@ from ..instantiation_tree import Forest
 from ..metadata import Metadata
 
 
-def show(smt_file: TextIO) -> Forest:
+def show(smt_file: TextIO, *, with_proof: bool) -> Forest:
     with tempfile.TemporaryDirectory() as tmpdir:
         dir_path = Path(tmpdir)
         input_path = dir_path / "input.smt2"
@@ -17,14 +17,18 @@ def show(smt_file: TextIO) -> Forest:
             shutil.copyfileobj(smt_file, input_file)
 
         log_path = dir_path / "z3.log"
+        args = [
+            Metadata.default().z3,
+            "trace=true",
+            "proof=true",
+            f"trace_file_name={log_path}",
+            str(input_path),
+        ]
+        if not with_proof:
+            args.remove("proof=true")
+
         subprocess.run(
-            [
-                Metadata.default().z3,
-                "trace=true",
-                "proof=true",
-                f"trace_file_name={log_path}",
-                str(input_path),
-            ],
+            args,
             capture_output=True,
             text=True,
         )

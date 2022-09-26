@@ -54,7 +54,7 @@ def instances(smt_file: TextIO) -> Forest:
 
     core_skolemized = find(skolemized)
 
-    all_instances = show(core_skolemized)
+    all_instances = show(core_skolemized, with_proof=True)
 
     core_skolemized.seek(0)
 
@@ -72,11 +72,14 @@ def instances(smt_file: TextIO) -> Forest:
 
     nodes = set()
 
-    with core_names(booleanized) as (_path, names):
+    with core_names(booleanized) as (path, names):
         for clause in names:
             match = re.match(r"(0x[^-]+)-", clause)
             if match is not None:
                 ident = match[1]
                 nodes.add(ident)
+
+        with open("fully-instantiated.smt2", "w") as file, open(path, "r") as the_input:
+            shutil.copyfileobj(the_input, file)
 
     return all_instances.filter(nodes)

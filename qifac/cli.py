@@ -7,6 +7,7 @@ from typing import Any, List, Optional, TextIO
 import click
 from click import Context, Parameter
 
+from .analyze import compare_files as do_compare_files
 from .cegar import cegar as do_cegar
 from .core import find as do_find
 from .core import instances as do_instances
@@ -146,8 +147,9 @@ def instances() -> None:
 @instances.command
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 @click.argument("output", type=click.File("w"), default=sys.stdout)
-def show(smt_file: TextIO, output: TextIO) -> None:
-    output.write(str(do_show(smt_file)))
+@click.option('--proof/--no-proof', default=True)
+def show(smt_file: TextIO, output: TextIO, proof: bool) -> None:
+    output.write(str(do_show(smt_file, with_proof=proof)))
 
 
 @instances.command
@@ -179,8 +181,9 @@ def instantiate(smt_file: TextIO, instances_file: Forest, output: TextIO) -> Non
 @instances.command
 @click.argument("smt_file", type=click.File("r"))
 @click.argument("output", type=click.File("w"), default=sys.stdout)
-def auto(smt_file: TextIO, output: TextIO) -> None:
-    forest = do_show(smt_file)
+@click.option('--proof/--no-proof', default=True)
+def auto(smt_file: TextIO, output: TextIO, proof: bool) -> None:
+    forest = do_show(smt_file, with_proof=proof)
     smt_file.seek(0)
     shutil.copyfileobj(do_instantiate(smt_file, forest), output)
 
@@ -211,6 +214,21 @@ def cegar(smt_file: TextIO, output: TextIO) -> None:
 
     # for assertion in asserts:
     #     output.write(f"{assertion.sexpr()}\n")
+
+
+@run.group
+def analyze() -> None:
+    pass
+
+
+@analyze.command(name="compare")
+@click.argument("unsat_smt_file", type=click.File("r"))
+@click.argument("unknown_smt_file", type=click.File("r"))
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def compare_files(
+    unsat_smt_file: TextIO, unknown_smt_file: TextIO, output: TextIO
+) -> None:
+    shutil.copyfileobj(do_compare_files(unsat_smt_file, unknown_smt_file), output)
 
 
 if __name__ == "__main__":
