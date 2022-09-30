@@ -9,11 +9,12 @@ from typing import Iterator, List, TextIO, Tuple
 
 from pysmt.smtlib.parser import Tokenizer
 
+from qifac.parsing.instantiation_tree import Forest
+
 from ..instances import show
 from ..instances.instantiate import instantiate
-from ..instantiation_tree import Forest
 from ..metadata import Metadata
-from ..smt import filter_names, name, skolemize
+from ..smt import dedup, filter_names, name, pysmt_prettify, skolemize
 from ..smt.booleanize import booleanize
 from ..z3_utils import run_z3
 
@@ -35,6 +36,10 @@ def core_names(smt_file: TextIO) -> Iterator[Tuple[Path, List[str]]]:
             [Metadata.default().z3, named_path], capture_output=True, text=True
         ).stdout
 
+        if "unsat" not in result.splitlines()[0]:
+            print("Not unsat")
+            exit(-1)
+
         names_buffer = io.StringIO(result.splitlines()[-1])
         names = list(Tokenizer(names_buffer).generator)[1:-1]
 
@@ -51,8 +56,10 @@ def instances(smt_file: TextIO) -> Forest:
     # assume skolemized?
 
     skolemized = skolemize(smt_file)
+    pretty = pysmt_prettify(skolemized)
+    deduped = dedup(pretty)
 
-    core_skolemized = find(skolemized)
+    core_skolemized = find(deduped)
 
     all_instances = show(core_skolemized, with_proof=True)
 
@@ -66,6 +73,7 @@ def instances(smt_file: TextIO) -> Forest:
     booleanized = booleanize(instantiated)
 
     if run_z3(booleanized) != "unsat":
+        print("Booleanized is not unsat")
         return Forest()
 
     booleanized.seek(0)
@@ -79,7 +87,7 @@ def instances(smt_file: TextIO) -> Forest:
                 ident = match[1]
                 nodes.add(ident)
 
-        with open("fully-instantiated.smt2", "w") as file, open(path, "r") as the_input:
-            shutil.copyfileobj(the_input, file)
+        # with open("fully-instantiated.smt2", "w") as file, open(path, "r") as the_input:
+        #     shutil.copyfileobj(the_input, file)
 
     return all_instances.filter(nodes)

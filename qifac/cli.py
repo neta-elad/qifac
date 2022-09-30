@@ -6,8 +6,13 @@ from typing import Any, List, Optional, TextIO
 
 import click
 from click import Context, Parameter
+from tqdm import tqdm
 
+from qifac.parsing.instantiation_tree import Forest
+
+from .analyze import compare_directories as do_compare_directories
 from .analyze import compare_files as do_compare_files
+from .analyze import compare_instances, sanity
 from .cegar import cegar as do_cegar
 from .core import find as do_find
 from .core import instances as do_instances
@@ -15,13 +20,16 @@ from .instances import count_qids
 from .instances import show as do_show
 from .instances.compare import compare as do_compare
 from .instances.instantiate import instantiate as do_instantiate
-from .instantiation_tree import Forest
+from .smt import dedup as do_dedup
 from .smt import filter_names as do_filter_names
 from .smt import name as do_name
+from .smt import pysmt_prettify
 from .smt import skolemize as do_skolemize
 from .smt import uglify as do_uglify
+from .smt import unname as do_unname
+from .smt import z3_prettify
 from .smt.booleanize import booleanize as do_booleanize
-from .smt.cleaner import clean_errors
+from .smt.cleaner import clean_errors, cleanup
 from .typeinfo.parser import parse_script
 from .utils import TimeoutException, time_limit
 from .z3_utils import run_z3 as do_run_z3
@@ -52,11 +60,47 @@ def run_z3(smt_file: TextIO) -> None:
     print(do_run_z3(smt_file))
 
 
-@run.command
+@run.group
+def batch() -> None:
+    pass
+
+
+@batch.command(name="partition")
 @click.argument(
     "batch_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
 )
-def batch(batch_dir: Path) -> None:
+@click.argument(
+    "unsat_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+@click.argument(
+    "unknown_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+def batch_partition(batch_dir: Path, unsat_dir: Path, unknown_dir: Path) -> None:
+    for file in tqdm(batch_dir.iterdir()):
+        if not file.is_file() or file.suffix != ".smt":
+            continue
+
+        with open(file, "r") as text_io:
+            cleaned = cleanup(text_io)
+            if "unknown" in do_run_z3(cleaned):
+                cleaned.seek(0)
+                with open(
+                    unknown_dir / file.with_suffix(".smt2").name, "w"
+                ) as unknown_file:
+                    shutil.copyfileobj(cleaned, unknown_file)
+            else:
+                cleaned.seek(0)
+                with open(
+                    unsat_dir / file.with_suffix(".smt2").name, "w"
+                ) as unknown_file:
+                    shutil.copyfileobj(cleaned, unknown_file)
+
+
+@batch.command(name="instances")
+@click.argument(
+    "batch_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+def batch_instances(batch_dir: Path) -> None:
     for path in batch_dir.iterdir():
         print(f"Trying {path.name}")
         try:
@@ -82,6 +126,41 @@ def smt() -> None:
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def uglify(smt_file: TextIO, output: TextIO) -> None:
     shutil.copyfileobj(do_uglify(smt_file), output)
+
+
+@smt.command
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def prettify(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(pysmt_prettify(smt_file), output)
+
+
+@smt.command("z3-prettify")
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def do_z3_prettify(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(z3_prettify(smt_file), output)
+
+
+@smt.command(name="cleanup")
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def do_cleanup(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(cleanup(smt_file), output)
+
+
+@smt.command
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def dedup(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(do_dedup(smt_file), output)
+
+
+@smt.command
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def unname(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(do_unname(smt_file), output)
 
 
 @smt.command
@@ -147,7 +226,7 @@ def instances() -> None:
 @instances.command
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 @click.argument("output", type=click.File("w"), default=sys.stdout)
-@click.option('--proof/--no-proof', default=True)
+@click.option("--proof/--no-proof", default=True)
 def show(smt_file: TextIO, output: TextIO, proof: bool) -> None:
     output.write(str(do_show(smt_file, with_proof=proof)))
 
@@ -181,7 +260,7 @@ def instantiate(smt_file: TextIO, instances_file: Forest, output: TextIO) -> Non
 @instances.command
 @click.argument("smt_file", type=click.File("r"))
 @click.argument("output", type=click.File("w"), default=sys.stdout)
-@click.option('--proof/--no-proof', default=True)
+@click.option("--proof/--no-proof", default=True)
 def auto(smt_file: TextIO, output: TextIO, proof: bool) -> None:
     forest = do_show(smt_file, with_proof=proof)
     smt_file.seek(0)
@@ -229,6 +308,41 @@ def compare_files(
     unsat_smt_file: TextIO, unknown_smt_file: TextIO, output: TextIO
 ) -> None:
     shutil.copyfileobj(do_compare_files(unsat_smt_file, unknown_smt_file), output)
+
+
+@analyze.command(name="instances")
+@click.argument("unsat_smt_file", type=click.File("r"))
+@click.argument("unknown_smt_file", type=click.File("r"))
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def do_compare_instances(
+    unsat_smt_file: TextIO, unknown_smt_file: TextIO, output: TextIO
+) -> None:
+    shutil.copyfileobj(compare_instances(unsat_smt_file, unknown_smt_file), output)
+
+
+@analyze.command(name="sanity")
+@click.argument("unsat_smt_file", type=click.File("r"))
+def do_sanity(unsat_smt_file: TextIO) -> None:
+    sanity(unsat_smt_file)
+
+
+@analyze.command(name="dirs")
+@click.argument(
+    "unsat_files", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+@click.argument(
+    "unknown_files", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+@click.argument(
+    "output_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def compare_directories(
+    unsat_files: Path, unknown_files: Path, output_dir: Path, output: TextIO
+) -> None:
+    shutil.copyfileobj(
+        do_compare_directories(unsat_files, unknown_files, output_dir), output
+    )
 
 
 if __name__ == "__main__":

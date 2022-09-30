@@ -5,7 +5,8 @@ from pathlib import Path
 
 from pysmt.smtlib.parser import SmtLibParser
 
-from ...instantiation_set import InstantiationSet
+from qifac.parsing.instantiation_set import InstantiationSet
+
 from .. import analyze
 from ..helpers import stdio_args
 

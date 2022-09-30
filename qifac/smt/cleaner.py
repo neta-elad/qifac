@@ -9,6 +9,25 @@ from typing import Optional, TextIO
 from ..metadata import Metadata
 
 
+def cleanup(smt_file: TextIO) -> TextIO:
+    buffer = io.StringIO()
+
+    for line in smt_file.readlines():
+
+        stripped = line.strip()
+        if "(push " in stripped or "(pop" in stripped:
+            continue
+
+        buffer.write(line)
+
+        if "(check-sat)" in stripped:
+            break
+
+    buffer.seek(0)
+
+    return buffer
+
+
 def clean_errors(smt_file: TextIO) -> TextIO:
     buffer = io.StringIO()
 

@@ -2,7 +2,7 @@ import statistics
 from argparse import ArgumentParser, Namespace
 from typing import Dict
 
-from ...instantiation_set import InstantiationSet, Term
+from qifac.parsing.instantiation_set import InstantiationSet, Term
 
 
 def run(args: Namespace) -> None:

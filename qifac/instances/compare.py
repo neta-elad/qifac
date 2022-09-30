@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, Optional, Set, Tuple
 
-from ..instantiation_tree import Forest, Ident
+from qifac.parsing.instantiation_tree import Forest, Ident
 
 
 @dataclass

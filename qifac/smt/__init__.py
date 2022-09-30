@@ -53,6 +53,7 @@ def name(smt_file: TextIO) -> TextIO:
 
     for i, cmd in enumerate(script.filter_by_command_name("assert")):
         formula = cmd.args[0]
+
         if formula not in annotations or "named" not in annotations[formula]:
             annotations.add(formula, "named", f"N{i}")
 
@@ -61,6 +62,75 @@ def name(smt_file: TextIO) -> TextIO:
     script.serialize(buffer, daggify=False)
     buffer.write("(get-unsat-core)\n")
 
+    buffer.seek(0)
+
+    return buffer
+
+
+def unname(smt_file: TextIO) -> TextIO:
+    buffer = io.StringIO()
+
+    smt_parser = SmtLibParser()
+    script = smt_parser.get_script(smt_file)
+    annotations = script.annotations
+
+    for i, cmd in enumerate(script.filter_by_command_name("assert")):
+        formula = cmd.args[0]
+
+        annotations.remove_annotation(formula, "named")
+
+    buffer.write("(set-option :produce-unsat-cores true)\n")
+    buffer.write("(set-option :smt.core.minimize true)\n")
+    script.serialize(buffer, daggify=False)
+
+    buffer.seek(0)
+
+    return buffer
+
+
+def z3_prettify(smt_file: TextIO) -> TextIO:
+    buffer = io.StringIO()
+
+    solver = z3.Solver()
+    solver.from_string(smt_file.read())
+
+    buffer.write(solver.sexpr())
+
+    buffer.seek(0)
+
+    return buffer
+
+
+def pysmt_prettify(smt_file: TextIO) -> TextIO:
+    buffer = io.StringIO()
+
+    smt_parser = SmtLibParser()
+    script = smt_parser.get_script(smt_file)
+    script.serialize(buffer, daggify=False)
+    buffer.seek(0)
+
+    return buffer
+
+
+def dedup(smt_file: TextIO) -> TextIO:
+    buffer = io.StringIO()
+
+    smt_parser = SmtLibParser()
+    script = smt_parser.get_script(smt_file)
+
+    asserts = list(script.filter_by_command_name("assert"))
+
+    top_levels = set()
+
+    for cmd in asserts:
+        formula = cmd.args[0]
+
+        if formula in top_levels:
+            script.commands.remove(cmd)
+
+        top_levels.add(formula)
+
+    script.serialize(buffer, daggify=False)
     buffer.seek(0)
 
     return buffer

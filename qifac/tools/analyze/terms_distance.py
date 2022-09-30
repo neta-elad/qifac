@@ -8,7 +8,7 @@ from pysmt.smtlib.printers import SmtPrinter
 from pysmt.smtlib.script import SmtLibScript
 from pysmt.walkers import TreeWalker, handles
 
-from ...instantiation_set import InstantiationSet
+from qifac.parsing.instantiation_set import InstantiationSet
 
 
 class Tracker(TreeWalker):

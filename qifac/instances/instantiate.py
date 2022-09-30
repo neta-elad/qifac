@@ -1,5 +1,5 @@
 import io
-from typing import Any, Dict, Mapping, TextIO
+from typing import Any, Dict, List, Mapping, TextIO
 
 from pysmt.operators import ALL_TYPES, FORALL
 from pysmt.shortcuts import Implies, get_free_variables
@@ -8,7 +8,8 @@ from pysmt.smtlib.parser import SmtLibParser
 from pysmt.smtlib.script import SmtLibScript
 from pysmt.walkers import TreeWalker
 
-from ..instantiation_tree import Forest, Node
+from qifac.parsing.instantiation_tree import Forest, Node
+
 from ..pysmt_helpers import AbstractForallWalker, parse_term
 from ..tools.helpers import normalize, to_str_dict
 
@@ -23,19 +24,29 @@ Var = Any
 class QuantifierCollector(AbstractForallWalker):
     annotations: Annotations
     quantifiers: Dict[str, Any]
+    parents: Dict[str, str]
+    ancestors: List[str]
 
     def __init__(self, annotations: Annotations):
         TreeWalker.__init__(self)
         self.annotations = annotations
         self.quantifiers = {}
+        self.parents = {}
+        self.ancestors = []
 
     def walk_forall(self, formula: Any) -> Any:
         body = formula.args()[0]
+        normalized = "unnamed"
         if body in self.annotations and "qid" in self.annotations[body]:
             for qid in self.annotations[body]["qid"]:
-                self.quantifiers[normalize(qid)] = formula
+                normalized = normalize(qid)
+                self.quantifiers[normalized] = formula
+                if len(self.ancestors) > 0:
+                    self.parents[normalized] = self.ancestors[-1]
 
+        self.ancestors.append(normalized)
         yield body
+        self.ancestors.pop()
 
 
 def instantiate(smt_file: TextIO, instantiations: Forest) -> TextIO:
@@ -54,6 +65,18 @@ def instantiate(smt_file: TextIO, instantiations: Forest) -> TextIO:
     formulas = set()
 
     for node in instantiations.nodes.values():
+        # if "DafnyPreludebpl.235:11" not in node.qid:
+        #     continue
+
+        normalized_qid = normalize(node.qid)
+        if normalized_qid in collector.parents:
+            parent = node.get_parent()
+            if (
+                parent is None
+                or normalize(parent.qid) != collector.parents[normalized_qid]
+            ):
+                print(f"Bad/missing parent for {node}")
+                continue
         formulas.add(instantiate_node(smt_parser, quantifiers, script, node))
 
     for formula in formulas:
@@ -113,6 +136,9 @@ def instantiate_node(
     name = normalize(f"{node.id}-{node.qid}[{substitutes_string}]")
 
     script.annotations.add(result, "named", name)
+
+    if "v@@17" in set(to_str_dict(get_free_variables(result)).keys()):
+        print("Missing parent?")
 
     return result
 

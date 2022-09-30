@@ -6,7 +6,8 @@ from pysmt.shortcuts import Implies, get_free_variables
 from pysmt.smtlib.parser import Annotations, SmtLibParser, SmtLibScript
 from pysmt.walkers import TreeWalker
 
-from ..instantiation_tree import Forest, Node
+from qifac.parsing.instantiation_tree import Forest, Node
+
 from ..pysmt_helpers import AbstractForallWalker, parse_term
 from .helpers import normalize, stdio_args
 

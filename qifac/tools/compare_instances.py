@@ -3,7 +3,7 @@ from argparse import ArgumentParser, FileType, Namespace
 from dataclasses import dataclass, field
 from typing import Dict, Optional, Tuple
 
-from ..instantiation_tree import Forest, Ident
+from qifac.parsing.instantiation_tree import Forest, Ident
 
 
 @dataclass

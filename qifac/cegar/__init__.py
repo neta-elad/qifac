@@ -13,6 +13,10 @@ from .hitter import Hitter
 
 AnyExprRef = TypeVar("AnyExprRef", bound=z3.ExprRef)
 
+MODEL_EXTENSION_TIMEOUT = 5
+MODEL_EVAL_TIMEOUT = 0
+DEFAULT_TIMEOUT = 0
+
 
 # for every model: calculate set of unsat asserts
 # add all clauses as b -> clause
@@ -21,6 +25,15 @@ AnyExprRef = TypeVar("AnyExprRef", bound=z3.ExprRef)
 
 # when trying a model, try adding as much asserts as possible
 # check unknowns everywhere
+
+
+# cache remove quantifier ahead
+# formula with a function that the model doesn't interpret is automatically rejected
+# cache universe constraints per model
+
+# or universe constraints with universal quantifier
+
+# pruning/approximate needed assertions according to last assert
 
 
 @dataclass(eq=True, frozen=True)
@@ -35,9 +48,25 @@ class ConditionalAssert:
         cls.flag_number += 1
         return cls(z3.Bool(f"bf{cls.flag_number}"), formula)
 
-    @property
+    @cached_property
     def conditional(self) -> z3.BoolRef:
         return z3.Implies(self.flag, self.formula)
+
+    @cached_property
+    def quantifier_free_with_variables(self) -> Tuple[z3.BoolRef, Set[z3.Const]]:
+        return remove_quantifiers(self.formula)
+
+    @cached_property
+    def quantifier_free(self) -> z3.BoolRef:
+        return self.quantifier_free_with_variables[0]
+
+    @cached_property
+    def variables(self) -> Set[z3.Const]:
+        return self.quantifier_free_with_variables[1]
+
+    @cached_property
+    def uninterpreted_symbols(self) -> Set[z3.FuncDeclRef]:
+        return uninterpreted_symbols(self.quantifier_free)
 
     def as_tuple(self) -> Tuple[z3.BoolRef, "ConditionalAssert"]:
         return (self.flag, self)
@@ -46,13 +75,34 @@ class ConditionalAssert:
 @dataclass
 class Cegar:
     assertions: Set[z3.BoolRef]
+    preamble: Set[z3.BoolRef] = field(default_factory=set)
     current: Set[z3.BoolRef] = field(default_factory=lambda: {z3.BoolVal(True)})
     debug: bool = field(default=False)
+
+    @classmethod
+    def from_solver(cls, solver: z3.Solver) -> "Cegar":
+        assertions = list(solver.assertions())
+        last_assertion = assertions.pop()
+        return cls(set(assertions), {last_assertion})
+
+    @cached_property
+    def quantifier_free(self) -> Set[z3.BoolRef]:
+        return {
+            assertion for assertion in self.assertions if is_quantifier_free(assertion)
+        }
+
+    @cached_property
+    def quantified(self) -> Set[z3.BoolRef]:
+        return {
+            assertion
+            for assertion in self.assertions
+            if not is_quantifier_free(assertion)
+        }
 
     @cached_property
     def conditionals(self) -> Dict[z3.BoolRef, ConditionalAssert]:
         return dict(
-            ConditionalAssert.auto(formula).as_tuple() for formula in self.assertions
+            ConditionalAssert.auto(formula).as_tuple() for formula in self.quantified
         )
 
     @cached_property
@@ -66,36 +116,64 @@ class Cegar:
     @cached_property
     def solver(self) -> z3.Solver:
         solver = z3.Solver()
-        for conditional in self.conditionals.values():
-            solver.add(conditional.conditional)
+
+        solver.set("mbqi", False)
+
+        for formula in self.quantifier_free:
+            solver.add(formula)
+
+        for formula in self.quantified:
+            solver.add(formula)
+
+        # for formula in self.preamble:
+        #     solver.add(formula)
+
+        # for conditional in self.conditionals.values():
+        #     solver.add(conditional.conditional)
 
         return solver
 
     def run(self) -> Set[z3.BoolRef]:
         while self.solver.check(self.current) != z3.unsat:
+            model = self.solver.model()
+            rejects = self.rejects(model)
+            print(f"Got {len(rejects)} rejects")
+            for reject in rejects:
+                print(f"> {reject.formula.sexpr()}")
+            exit(0)
+
+        print(self.solver.check(self.quantified))
+        print(self.solver.model().decls())
+        exit(0)
+
+        while self.solver.check(self.current) != z3.unsat:
             self.run_step()
 
-        print(self.solver.check())
-        return {self.conditionals[flag].formula for flag in self.current}
+        # print(self.solver.check())
+        return self.current | self.quantifier_free
 
     def run_step(self) -> bool:
         print(f"Checking {len(self.current)} assert(s)")
+
+        for assertion in self.current:
+            print(f"> {assertion.sexpr()}")
+
         model = self.get_model()
 
         rejects = self.rejects(model)
 
         print(f"Got {len(rejects)} reject(s)")
 
-        self.hitter.add(rejects)
+        self.hitter.add({reject.flag for reject in rejects})
 
-        self.current = self.hitter.minimum()
+        self.current = {self.conditional(flag) for flag in self.hitter.minimum()}
 
         return True
 
     def get_model(self) -> z3.ModelRef:
-        self.solver.set("timeout", 15 * 1_000)
+        self.solver.set(timeout=MODEL_EXTENSION_TIMEOUT)
 
-        potentials = self.flags - self.current
+        potentials = self.quantified - self.current
 
         query = set(self.current)
 
@@ -106,7 +184,7 @@ class Cegar:
             if self.solver.check(query) != z3.sat:
                 query.remove(potential)
 
-        self.solver.set("timeout", 0)
+        self.solver.set(timeout=DEFAULT_TIMEOUT)
 
         assert self.solver.check(query) != z3.unsat
 
@@ -114,26 +192,43 @@ class Cegar:
 
         return self.solver.model()
 
-    def rejects(self, model: z3.ModelRef) -> Set[z3.BoolRef]:
+    def rejects(self, model: z3.ModelRef) -> Set[ConditionalAssert]:
         print("Calculating rejects...")
 
         return {
-            conditional.flag
+            conditional
             for conditional in tqdm(self.conditionals.values())
             if self.reject(model, conditional)
         }
 
     def reject(self, model: z3.ModelRef, conditional: ConditionalAssert) -> bool:
-        model_eval = model.eval(conditional.formula, model_completion=False)
+        model_eval = model.eval(conditional.quantifier_free, model_completion=False)
 
         # print(f"Checking {conditional.flag}, got {model_eval}")
 
         if z3.is_false(model_eval):
             return True
-        elif not eval_quantifier(model, model_eval):
+        elif not eval_quantifier(model, model_eval, conditional):
+            if conditional.formula in self.current:
+                print("---")
+                print({f.sexpr() for f in self.current})
+                print("---")
+                print(conditional.formula.sexpr())
+                print("---")
+                print(model_eval.sexpr())
+                print("---")
+                print(model.decls())
+                print("---")
+                print(conditional.uninterpreted_symbols)
+                print("---")
+                print(conditional.uninterpreted_symbols - set(model.decls()))
+                exit(0)
             return True
 
         return False
+
+    def conditional(self, flag: z3.BoolRef) -> z3.BoolRef:
+        return self.conditionals[flag].formula
 
 
 def cegar(smt_file: TextIO) -> Set[z3.BoolRef]:
@@ -152,40 +247,71 @@ def cegar(smt_file: TextIO) -> Set[z3.BoolRef]:
     solver = z3.Solver()
     solver.from_string(sexpr)
 
-    return cegar_from_assertions(set(solver.assertions()))
+    return Cegar.from_solver(solver).run()
 
 
 def cegar_from_assertions(asserts: Set[z3.BoolRef]) -> Set[z3.BoolRef]:
     return Cegar(asserts).run()
 
 
-def eval_quantifier(model: z3.ModelRef, formula: z3.BoolRef) -> bool:
-    unqantified_formula, free_variables = remove_quantifiers(formula)
-    interpreted_formula = interpret_functions(
-        model, unqantified_formula, free_variables
-    )
+def eval_quantifier(
+    model: z3.ModelRef, formula: z3.BoolRef, source: ConditionalAssert
+) -> bool:
 
-    universe_constraint = z3.And(
-        *[
+    if not source.uninterpreted_symbols <= set(model.decls()):
+        return True
+    # else:
+    #     return True
+    # unqantified_formula, free_variables = remove_quantifiers(formula)
+    # return True
+    # interpreted_formula = interpret_functions(
+    #     model, unqantified_formula, free_variables
+    # )
+
+    # model_solver = z3.SolverFor("ALL")
+    # model_solver.set('mbqi', True)
+    model_solver = z3.Solver()
+    model_solver.set("mbqi", False)
+    # model_solver.set(timeout=MODEL_EVAL_TIMEOUT)
+    model_solver.add(z3.Not(formula))
+
+    # for i in range(model.num_sorts()):
+    #     sort = model.get_sort(i)
+    #     x = z3.FreshConst(sort)
+    #     model_solver.add(z3.ForAll(x, z3.Or(
+    #             *[
+    #                 x == z3.Const(f"my-{element}", sort)
+    #                 for element in get_universe(model, sort)
+    #             ]
+    #         )))
+
+    for variable in source.variables:
+        if not uninterpreted_sort(variable.decl().range()):
+            continue
+
+        model_solver.add(
             z3.Or(
                 *[
                     variable == element
                     for element in get_universe(model, variable.decl().range())
                 ]
             )
-            for variable in free_variables
-            if uninterpreted_sort(variable.decl().range())
-        ]
-    )
-    constrained_formula = z3.And(z3.Not(interpreted_formula), universe_constraint)
-    model_solver = z3.Solver()
-    model_solver.set(timeout=30 * 1_000)
-    model_solver.add(constrained_formula)
+        )
+
     # unknown -> ???
 
-    # interpret functions to return the first element from the universe
+    result = model_solver.check()
 
-    return model_solver.check() != z3.sat
+    if result == z3.unknown:
+        print(source.uninterpreted_symbols)
+        print(model.decls())
+        print(model_solver.sexpr())
+        print(model_solver.reason_unknown())
+        exit(-1)
+
+    return result == z3.unsat
+
+    # return True
 
 
 def uninterpreted_sort(sort: z3.SortRef) -> bool:
@@ -194,6 +320,19 @@ def uninterpreted_sort(sort: z3.SortRef) -> bool:
 
 def get_universe(model: z3.ModelRef, sort: z3.SortRef) -> List[z3.Const]:
     return model.get_universe(sort) or [z3.Const(f"{sort}!0", sort)]
+
+
+def is_quantifier_free(formula: z3.ExprRef) -> bool:
+    if z3.is_quantifier(formula):
+        return False
+    elif z3.is_app(formula):
+        for i in range(formula.num_args()):
+            if not is_quantifier_free(formula.arg(i)):
+                return False
+
+        return True
+
+    raise RuntimeError(f"Unexpected formula type: {formula}")
 
 
 def remove_quantifiers(formula: AnyExprRef) -> Tuple[AnyExprRef, Set[z3.Const]]:
@@ -260,3 +399,24 @@ def clone_formula(formula: AnyExprRef, args: List[z3.ExprRef]) -> AnyExprRef:
         return cast(AnyExprRef, z3.Sum(*cast(List[z3.IntNumRef], args)))
     else:
         return cast(AnyExprRef, formula.decl()(*args))
+
+
+def uninterpreted_symbols(formula: z3.ExprRef) -> Set[z3.FuncDeclRef]:
+    symbols: Set[z3.FuncDeclRef] = set()
+    accumulate_uninterpreted_symbols(formula, symbols)
+    return symbols
+
+
+def accumulate_uninterpreted_symbols(
+    formula: z3.ExprRef, symbols: Set[z3.FuncDeclRef]
+) -> None:
+    if not z3.is_app(formula):
+        raise RuntimeError(f"Unexpected formula type {formula}")
+
+    decl = formula.decl()
+
+    if decl.kind() == z3.Z3_OP_UNINTERPRETED:
+        symbols.add(decl)
+
+    for i in range(formula.num_args()):
+        accumulate_uninterpreted_symbols(formula.arg(i), symbols)
