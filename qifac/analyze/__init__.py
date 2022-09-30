@@ -1,14 +1,18 @@
+import re
 import shutil
 import subprocess
 import tempfile
 from io import StringIO
 from pathlib import Path
-from typing import TextIO
+from typing import Dict, TextIO
+
+from tqdm import tqdm
 
 from ..core import instances as core_instances
 from ..instances import show as all_instances
 from ..instances import simple
 from ..instances.compare import compare
+from ..parsing.flat import Category
 
 
 def sanity(unsat_file: TextIO) -> None:
@@ -143,8 +147,8 @@ def compare_instances(unsat_file: TextIO, unknown_file: TextIO) -> TextIO:
         file=buffer,
     )
 
-    per_qid = {}
-    per_category = {}
+    per_qid: Dict[str, int] = {}
+    per_category: Dict[Category, int] = {}
 
     for flat in missing:
         per_qid.setdefault(flat.qid, 0)
@@ -167,3 +171,27 @@ def compare_instances(unsat_file: TextIO, unknown_file: TextIO) -> TextIO:
     buffer.seek(0)
 
     return buffer
+
+
+def compare_directory_instances(
+    unsat_dir: Path, unknown_dir: Path, analysis_dir: Path
+) -> None:
+    for file in tqdm(unknown_dir.iterdir()):
+        if not file.is_file() or not file.suffix == ".smt2":
+            continue
+
+        matching = matching_file(file, unsat_dir)
+
+        if not matching.is_file() or not matching.suffix == ".smt2":
+            continue
+
+        analysis_path = analysis_dir / file.with_suffix(".analysis.txt").name
+
+        with open(file, "r") as unknown, open(matching, "r") as unsat, open(
+            analysis_path, "w"
+        ) as analysis:
+            shutil.copyfileobj(compare_instances(unsat, unknown), analysis)
+
+
+def matching_file(unknown: Path, unsat_directory: Path) -> Path:
+    return unsat_directory / re.sub(r"\.broken(\d+)?", "", unknown.name)
