@@ -1,13 +1,13 @@
-from pathlib import Path
-from typing import TextIO
 import io
+from pathlib import Path
+from typing import Dict, TextIO
 
 from tqdm import tqdm
 
 
 def aggregate_qids(analysis_directory: Path) -> TextIO:
     buffer = io.StringIO()
-    per_qid = {}
+    per_qid: Dict[str, int] = {}
     for file in tqdm(analysis_directory.iterdir()):
         with open(file, "r") as analysis:
             in_section = False
@@ -23,9 +23,9 @@ def aggregate_qids(analysis_directory: Path) -> TextIO:
                 if stripped.startswith("["):
                     break
 
-                qid, amount = stripped.split(" ")
+                qid, str_amount = stripped.split(" ")
                 qid = qid[:-1]
-                amount = int(amount)
+                amount = int(str_amount)
 
                 per_qid.setdefault(qid, 0)
                 per_qid[qid] += amount
@@ -37,9 +37,10 @@ def aggregate_qids(analysis_directory: Path) -> TextIO:
 
     return buffer
 
+
 def aggregate_categories(analysis_directory: Path) -> TextIO:
     buffer = io.StringIO()
-    per_category = {}
+    per_category: Dict[str, int] = {}
     for file in tqdm(analysis_directory.iterdir()):
         with open(file, "r") as analysis:
             in_section = False
@@ -55,9 +56,9 @@ def aggregate_categories(analysis_directory: Path) -> TextIO:
                 if stripped.startswith("["):
                     break
 
-                category, amount = stripped.split(" ")
+                category, str_amount = stripped.split(" ")
                 category = category[:-1]
-                amount = int(amount)
+                amount = int(str_amount)
 
                 per_category.setdefault(category, 0)
                 per_category[category] += amount

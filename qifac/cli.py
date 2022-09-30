@@ -8,7 +8,7 @@ import click
 from click import Context, Parameter
 from tqdm import tqdm
 
-from qifac.aggregate import aggregate_qids, aggregate_categories
+from qifac.aggregate import aggregate_categories, aggregate_qids
 from qifac.parsing.instantiation_tree import Forest
 
 from .analyze import compare_directories as do_compare_directories
@@ -44,7 +44,7 @@ class ForestType(click.ParamType):
         self.file = click.File("r")
 
     def convert(
-            self, value: Any, param: Optional[Parameter], ctx: Optional[Context]
+        self, value: Any, param: Optional[Parameter], ctx: Optional[Context]
     ) -> Forest:
         file = self.file.convert(value, param, ctx)
 
@@ -87,13 +87,13 @@ def batch_partition(batch_dir: Path, unsat_dir: Path, unknown_dir: Path) -> None
             if "unknown" in do_run_z3(cleaned):
                 cleaned.seek(0)
                 with open(
-                        unknown_dir / file.with_suffix(".smt2").name, "w"
+                    unknown_dir / file.with_suffix(".smt2").name, "w"
                 ) as unknown_file:
                     shutil.copyfileobj(cleaned, unknown_file)
             else:
                 cleaned.seek(0)
                 with open(
-                        unsat_dir / file.with_suffix(".smt2").name, "w"
+                    unsat_dir / file.with_suffix(".smt2").name, "w"
                 ) as unknown_file:
                     shutil.copyfileobj(cleaned, unknown_file)
 
@@ -307,7 +307,7 @@ def analyze() -> None:
 @click.argument("unknown_smt_file", type=click.File("r"))
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def compare_files(
-        unsat_smt_file: TextIO, unknown_smt_file: TextIO, output: TextIO
+    unsat_smt_file: TextIO, unknown_smt_file: TextIO, output: TextIO
 ) -> None:
     shutil.copyfileobj(do_compare_files(unsat_smt_file, unknown_smt_file), output)
 
@@ -317,7 +317,7 @@ def compare_files(
 @click.argument("unknown_smt_file", type=click.File("r"))
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def do_compare_instances(
-        unsat_smt_file: TextIO, unknown_smt_file: TextIO, output: TextIO
+    unsat_smt_file: TextIO, unknown_smt_file: TextIO, output: TextIO
 ) -> None:
     shutil.copyfileobj(compare_instances(unsat_smt_file, unknown_smt_file), output)
 
@@ -340,7 +340,7 @@ def do_sanity(unsat_smt_file: TextIO) -> None:
 )
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def compare_directories(
-        unsat_files: Path, unknown_files: Path, output_dir: Path, output: TextIO
+    unsat_files: Path, unknown_files: Path, output_dir: Path, output: TextIO
 ) -> None:
     shutil.copyfileobj(
         do_compare_directories(unsat_files, unknown_files, output_dir), output
@@ -358,7 +358,7 @@ def compare_directories(
     "output_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
 )
 def do_compare_directory_instances(
-        unsat_files: Path, unknown_files: Path, output_dir: Path
+    unsat_files: Path, unknown_files: Path, output_dir: Path
 ) -> None:
     compare_directory_instances(unsat_files, unknown_files, output_dir)
 
@@ -373,20 +373,16 @@ def aggregate() -> None:
     "analysis_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
 )
 @click.argument("output", type=click.File("w"), default=sys.stdout)
-def do_aggregate_qids(
-        analysis_dir: Path,
-        output: TextIO
-) -> None:
+def do_aggregate_qids(analysis_dir: Path, output: TextIO) -> None:
     shutil.copyfileobj(aggregate_qids(analysis_dir), output)
+
+
 @aggregate.command(name="categories")
 @click.argument(
     "analysis_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
 )
 @click.argument("output", type=click.File("w"), default=sys.stdout)
-def do_aggregate_categories(
-        analysis_dir: Path,
-        output: TextIO
-) -> None:
+def do_aggregate_categories(analysis_dir: Path, output: TextIO) -> None:
     shutil.copyfileobj(aggregate_categories(analysis_dir), output)
 
 
