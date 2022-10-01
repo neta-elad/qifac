@@ -9,8 +9,7 @@ from qifac.parsing.instantiation_tree import Forest
 from ..metadata import Metadata
 from ..parsing.flat import Flat, parse_flat
 
-
-def simple(smt_file: TextIO) -> Set[Flat]:
+def simple_instances(smt_file: TextIO) -> str:
     with tempfile.TemporaryDirectory() as tmpdir:
         dir_path = Path(tmpdir)
         input_path = dir_path / "input.smt2"
@@ -26,7 +25,7 @@ def simple(smt_file: TextIO) -> Set[Flat]:
             str(input_path),
         ]
 
-        subprocess.run(
+        result = subprocess.run(
             args,
             capture_output=True,
             text=True,
@@ -47,7 +46,11 @@ def simple(smt_file: TextIO) -> Set[Flat]:
             text=True,
         )
 
-        return parse_flat(instances_path.read_text())
+        return instances_path.read_text()
+
+
+def simple(smt_file: TextIO) -> Set[Flat]:
+    return parse_flat(simple_instances(smt_file))
 
 
 def show(smt_file: TextIO, *, with_proof: bool) -> Forest:
