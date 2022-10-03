@@ -9,6 +9,7 @@ from qifac.parsing.instantiation_tree import Forest
 from ..metadata import Metadata
 from ..parsing.flat import Flat, parse_flat
 
+
 def simple_instances(smt_file: TextIO) -> str:
     with tempfile.TemporaryDirectory() as tmpdir:
         dir_path = Path(tmpdir)

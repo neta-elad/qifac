@@ -12,7 +12,7 @@ from ..core import instances as core_instances
 from ..instances import show as all_instances
 from ..instances import simple
 from ..instances.compare import compare
-from ..parsing.flat import Category
+from .categorize import Category
 
 
 def sanity(unsat_file: TextIO) -> None:
@@ -132,11 +132,14 @@ def compare_directories(
     return buffer
 
 
-def compare_instances(unsat_file: TextIO, unknown_file: TextIO) -> TextIO:
+def compare_instances(unsat_file: Path, unknown_file: Path) -> TextIO:
     buffer = StringIO()
 
-    unsat = simple(unsat_file)
-    unknown = simple(unknown_file)
+    with open(unsat_file, "r") as unsat_textio:
+        unsat = simple(unsat_textio)
+
+    with open(unknown_file, "r") as unknown_textio:
+        unknown = simple(unknown_textio)
 
     missing = unsat - unknown
 
@@ -153,8 +156,9 @@ def compare_instances(unsat_file: TextIO, unknown_file: TextIO) -> TextIO:
     for flat in missing:
         per_qid.setdefault(flat.qid, 0)
         per_qid[flat.qid] += 1
-        per_category.setdefault(flat.category, 0)
-        per_category[flat.category] += 1
+        category = Category.parse(flat.qid, unsat_file.name)
+        per_category.setdefault(category, 0)
+        per_category[category] += 1
 
     print("[per-qid]", file=buffer)
     for qid, amount in per_qid.items():
@@ -187,10 +191,8 @@ def compare_directory_instances(
 
         analysis_path = analysis_dir / file.with_suffix(".analysis.txt").name
 
-        with open(file, "r") as unknown, open(matching, "r") as unsat, open(
-            analysis_path, "w"
-        ) as analysis:
-            shutil.copyfileobj(compare_instances(unsat, unknown), analysis)
+        with open(analysis_path, "w") as analysis:
+            shutil.copyfileobj(compare_instances(matching, file), analysis)
 
 
 def matching_file(unknown: Path, unsat_directory: Path) -> Path:

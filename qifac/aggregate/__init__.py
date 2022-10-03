@@ -41,7 +41,8 @@ def aggregate_qids(analysis_directory: Path) -> TextIO:
 def aggregate_categories(analysis_directory: Path) -> TextIO:
     buffer = io.StringIO()
     per_category: Dict[str, int] = {}
-    for file in tqdm(analysis_directory.iterdir()):
+    for file in analysis_directory.iterdir():
+        print(f"Aggregating from {file.name}")
         with open(file, "r") as analysis:
             in_section = False
             for line in analysis:

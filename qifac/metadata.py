@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
+from typing import List
 
 import toml
 
@@ -11,6 +12,7 @@ METADATA_PATH = Path("metadata.toml")
 class Metadata:
     z3: str
     z3tracer: str
+    lib_qids: List[str]
 
     @classmethod
     def from_file(cls, path: Path = METADATA_PATH) -> "Metadata":

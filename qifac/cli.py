@@ -18,8 +18,9 @@ from .analyze import compare_instances, sanity
 from .cegar import cegar as do_cegar
 from .core import find as do_find
 from .core import instances as do_instances
-from .instances import count_qids, simple_instances
+from .instances import count_qids
 from .instances import show as do_show
+from .instances import simple_instances
 from .instances.compare import compare as do_compare
 from .instances.instantiate import instantiate as do_instantiate
 from .smt import dedup as do_dedup
@@ -117,6 +118,7 @@ def batch_instances(batch_dir: Path) -> None:
         except Exception as e:
             print(f"Error {e}")
 
+
 @batch.command(name="simple-instances")
 @click.argument(
     "batch_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
@@ -134,6 +136,7 @@ def batch_simple_instances(batch_dir: Path, output_dir: Path) -> None:
                 output_path.write_text(simple_instances(smt_file))
             except:
                 print(path)
+
 
 @run.group
 def smt() -> None:
@@ -242,13 +245,14 @@ def instances() -> None:
     pass
 
 
-
 @instances.command
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 @click.option("--proof/--no-proof", default=True)
 def show(smt_file: TextIO, output: TextIO, proof: bool) -> None:
     output.write(str(do_show(smt_file, with_proof=proof)))
+
+
 @instances.command("simple")
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 @click.argument("output", type=click.File("w"), default=sys.stdout)
@@ -336,11 +340,15 @@ def compare_files(
 
 
 @analyze.command(name="instances")
-@click.argument("unsat_smt_file", type=click.File("r"))
-@click.argument("unknown_smt_file", type=click.File("r"))
+@click.argument(
+    "unsat_smt_file", type=click.Path(dir_okay=False, exists=True, path_type=Path)
+)
+@click.argument(
+    "unknown_smt_file", type=click.Path(dir_okay=False, exists=True, path_type=Path)
+)
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def do_compare_instances(
-    unsat_smt_file: TextIO, unknown_smt_file: TextIO, output: TextIO
+    unsat_smt_file: Path, unknown_smt_file: Path, output: TextIO
 ) -> None:
     shutil.copyfileobj(compare_instances(unsat_smt_file, unknown_smt_file), output)
 

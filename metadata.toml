@@ -1,2 +1,25 @@
 z3 = "/Users/neta.e/Code/other/z3-versions/4.10.2/bin/z3"
 z3tracer = "/Users/neta.e/Code/vmware/smt2utils/target/release/z3tracer"
+lib_qids = [
+    "Maps",
+    "totalorder",
+    "Message",
+    "SetBijectivity",
+    "Sequences",
+    "Arrays",
+    "SequencesOfMaps",
+    "FloatingSeqTest",
+    "Multisets",
+    "Sets",
+    "orderedmap",
+    "BitsetLemmas",
+    "DebugAccumulator",
+    "mathematics",
+    "map",
+    "MutableVec",
+    "lexical",
+    "MallocAccounting",
+    "LinearOption",
+    "PackedIntsLib",
+]
+
