@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 from qifac.aggregate import aggregate_categories, aggregate_qids
 from qifac.parsing.instantiation_tree import Forest
+from qifac.typeinfo.byz3.parser import parse_smt_file
 
 from .analyze import compare_directories as do_compare_directories
 from .analyze import compare_directory_instances
@@ -306,6 +307,21 @@ def typeinfo() -> None:
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def grounds(smt_file: TextIO, output: TextIO) -> None:
     type_info = parse_script(smt_file)
+
+    for ground in type_info.grounds:
+        kind = type_info.get_type(ground)
+
+        if kind is not None:
+            output.write(f"{ground}: {kind}\n")
+
+
+@typeinfo.command
+@click.argument(
+    "smt_file", type=click.Path(dir_okay=False, exists=True, path_type=Path)
+)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def byz3(smt_file: Path, output: TextIO) -> None:
+    type_info = parse_smt_file(smt_file)
 
     for ground in type_info.grounds:
         kind = type_info.get_type(ground)
