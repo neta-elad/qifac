@@ -1,8 +1,48 @@
+import csv
 import io
 from pathlib import Path
-from typing import Dict, TextIO
+from typing import Dict, List, TextIO, Union
 
 from tqdm import tqdm
+
+from ..analyze.utils import read_csv_as_dict
+
+
+def aggregate_all(analysis_directory: Path, aggregate_directory: Path) -> None:
+    dirs = {"diff", "unknown", "unsat"}
+    files = {"per_category.csv", "per_file.csv", "per_qid.csv"}
+
+    all_data: Dict[str, Dict[str, List[List[Union[str, int]]]]] = {}
+
+    for directory in analysis_directory.iterdir():
+        if not directory.is_dir():
+            continue
+
+        for subdir in dirs:
+            all_data.setdefault(subdir, {})
+            for file in files:
+                all_data[subdir].setdefault(file, [])
+                path = directory / subdir / file
+
+                if not path.exists():
+                    # warn?
+                    continue
+
+                with open(path, "r") as path_csv:
+                    data = read_csv_as_dict(path_csv)
+
+                    for item, value in data.items():
+                        all_data[subdir][file].append([directory.name, item, value])
+
+    for subdir in dirs:
+        for file in files:
+            path = aggregate_directory / subdir / file
+            path.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(path, "w") as path_csv:
+                writer = csv.writer(path_csv)
+                writer.writerow(["source", "item", "amount"])
+                writer.writerows(all_data[subdir][file])
 
 
 def aggregate_qids(analysis_directory: Path) -> TextIO:

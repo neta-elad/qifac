@@ -2,9 +2,11 @@ import re
 import shutil
 import subprocess
 import tempfile
+from dataclasses import dataclass
+from functools import cached_property
 from io import StringIO
 from pathlib import Path
-from typing import Dict, TextIO
+from typing import Dict, Set, TextIO
 
 from tqdm import tqdm
 
@@ -12,7 +14,86 @@ from ..core import instances as core_instances
 from ..instances import show as all_instances
 from ..instances import simple
 from ..instances.compare import compare
+from ..parsing.flat import Flat
 from .categorize import Category
+from .utils import sorted_by_value_len, write_dict
+
+
+@dataclass
+class Analysis:
+    filename: str
+    instances: Set[Flat]
+
+    @cached_property
+    def per_qid(self) -> Dict[str, Set[Flat]]:
+        unordered: Dict[str, Set[Flat]] = {}
+        for flat in self.instances:
+            unordered.setdefault(flat.qid, set())
+            unordered[flat.qid].add(flat)
+
+        return sorted_by_value_len(unordered)
+
+    @cached_property
+    def per_file(self) -> Dict[str, Set[Flat]]:
+        unordered: Dict[str, Set[Flat]] = {}
+
+        for flat in self.instances:
+            filename = Category.parse_filename(flat.qid)
+            unordered.setdefault(filename, set())
+            unordered[filename].add(flat)
+
+        return sorted_by_value_len(unordered)
+
+    @cached_property
+    def per_category(self) -> Dict[Category, Set[Flat]]:
+        unordered: Dict[Category, Set[Flat]] = {}
+
+        for flat in self.instances:
+            category = Category.parse(flat.qid, self.filename)
+            unordered.setdefault(category, set())
+            unordered[category].add(flat)
+
+        return sorted_by_value_len(unordered)
+
+    def write(self, path: Path) -> None:
+        path.mkdir(parents=True, exist_ok=True)
+
+        with open(path / "instances.txt", "w") as instances:
+            for instance in self.instances:
+                instances.write(f"{instance}\n")
+
+        with open(path / "per_qid.csv", "w") as per_qid:
+            write_dict(self.per_qid, per_qid)
+
+        with open(path / "per_file.csv", "w") as per_file:
+            write_dict(self.per_file, per_file)
+
+        with open(path / "per_category.csv", "w") as per_category:
+            write_dict(self.per_category, per_category)
+
+
+@dataclass
+class Comparison:
+    unsat_analysis: Analysis
+    unknown_analysis: Analysis
+
+    @cached_property
+    def diff_analysis(self) -> Analysis:
+        return Analysis(
+            self.unsat_analysis.filename,
+            self.unsat_analysis.instances - self.unknown_analysis.instances,
+        )
+
+    @cached_property
+    def missing_ratio(self) -> float:
+        return len(self.diff_analysis.instances) / len(self.unsat_analysis.instances)
+
+    def write(self, parent: Path) -> None:
+        self.unsat_analysis.write(parent / "unsat")
+        self.unknown_analysis.write(parent / "unknown")
+        self.diff_analysis.write(parent / "diff")
+        with open(parent / f"{self.unknown_analysis.filename}-ratio.txt", "w") as ratio:
+            ratio.write(f"{self.missing_ratio}\n")
 
 
 def sanity(unsat_file: TextIO) -> None:
@@ -132,8 +213,8 @@ def compare_directories(
     return buffer
 
 
-def compare_instances(unsat_file: Path, unknown_file: Path) -> TextIO:
-    buffer = StringIO()
+def compare_instances(unsat_file: Path, unknown_file: Path) -> Comparison:
+    StringIO()
 
     with open(unsat_file, "r") as unsat_textio:
         unsat = simple(unsat_textio)
@@ -141,40 +222,9 @@ def compare_instances(unsat_file: Path, unknown_file: Path) -> TextIO:
     with open(unknown_file, "r") as unknown_textio:
         unknown = simple(unknown_textio)
 
-    missing = unsat - unknown
-
-    print("[summary]", file=buffer)
-
-    print(
-        f"Missing {int(100*len(missing)/len(unsat))}% of instantiations",
-        file=buffer,
+    return Comparison(
+        Analysis(unsat_file.stem, unsat), Analysis(unknown_file.stem, unknown)
     )
-
-    per_qid: Dict[str, int] = {}
-    per_category: Dict[Category, int] = {}
-
-    for flat in missing:
-        per_qid.setdefault(flat.qid, 0)
-        per_qid[flat.qid] += 1
-        category = Category.parse(flat.qid, unsat_file.name)
-        per_category.setdefault(category, 0)
-        per_category[category] += 1
-
-    print("[per-qid]", file=buffer)
-    for qid, amount in per_qid.items():
-        print(f"{qid}: {amount}", file=buffer)
-
-    print("[per-category]", file=buffer)
-    for category, amount in per_category.items():
-        print(f"{category}: {amount}", file=buffer)
-
-    print("[missing]", file=buffer)
-    for flat in missing:
-        print(f"{flat}", file=buffer)
-
-    buffer.seek(0)
-
-    return buffer
 
 
 def compare_directory_instances(
@@ -189,11 +239,10 @@ def compare_directory_instances(
         if not matching.is_file() or not matching.suffix == ".smt2":
             continue
 
-        analysis_path = analysis_dir / file.with_suffix(".analysis.txt").name
+        analysis_path = analysis_dir / file.stem
 
-        with open(analysis_path, "w") as analysis:
-            shutil.copyfileobj(compare_instances(matching, file), analysis)
+        compare_instances(matching, file).write(analysis_path)
 
 
 def matching_file(unknown: Path, unsat_directory: Path) -> Path:
-    return unsat_directory / re.sub(r"\.broken(\d+)?", "", unknown.name)
+    return unsat_directory / re.sub(r"\.?broken(\d+)?", "", unknown.name)

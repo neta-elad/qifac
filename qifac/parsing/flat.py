@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from typing import Set, Tuple
 
@@ -8,6 +9,10 @@ class Flat:
     body: str
     substitutions: Tuple[str, ...]
 
+    @staticmethod
+    def clean_qid(qid: str) -> str:
+        return re.sub(r"\.?broken(\d+)?", "", qid)
+
     @classmethod
     def parse(cls, text: str) -> "Flat":
         lines = text.splitlines()
@@ -15,6 +20,8 @@ class Flat:
         assert len(lines) >= 2
 
         qid, body, *substitutions = lines
+
+        qid = cls.clean_qid(qid)
 
         return cls(qid, body, tuple(substitutions))
 

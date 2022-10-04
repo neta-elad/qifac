@@ -8,7 +8,7 @@ import click
 from click import Context, Parameter
 from tqdm import tqdm
 
-from qifac.aggregate import aggregate_categories, aggregate_qids
+from qifac.aggregate import aggregate_all, aggregate_categories, aggregate_qids
 from qifac.parsing.instantiation_tree import Forest
 from qifac.typeinfo.byz3.parser import parse_smt_file
 
@@ -362,11 +362,11 @@ def compare_files(
 @click.argument(
     "unknown_smt_file", type=click.Path(dir_okay=False, exists=True, path_type=Path)
 )
-@click.argument("output", type=click.File("w"), default=sys.stdout)
+@click.argument("output", type=click.Path(file_okay=False, path_type=Path))
 def do_compare_instances(
-    unsat_smt_file: Path, unknown_smt_file: Path, output: TextIO
+    unsat_smt_file: Path, unknown_smt_file: Path, output: Path
 ) -> None:
-    shutil.copyfileobj(compare_instances(unsat_smt_file, unknown_smt_file), output)
+    compare_instances(unsat_smt_file, unknown_smt_file).write(output)
 
 
 @analyze.command(name="sanity")
@@ -431,6 +431,17 @@ def do_aggregate_qids(analysis_dir: Path, output: TextIO) -> None:
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def do_aggregate_categories(analysis_dir: Path, output: TextIO) -> None:
     shutil.copyfileobj(aggregate_categories(analysis_dir), output)
+
+
+@aggregate.command(name="all")
+@click.argument(
+    "analysis_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+@click.argument(
+    "aggregate_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+def do_aggregate(analysis_dir: Path, aggregate_dir: Path) -> None:
+    aggregate_all(analysis_dir, aggregate_dir)
 
 
 if __name__ == "__main__":

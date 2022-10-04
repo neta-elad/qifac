@@ -129,3 +129,8 @@ dmypy.json
 .pyre/
 
 .vscode
+
+# Analysis and instances files
+**/*.analysis.txt
+**/*.instances.txt
+**/analysis/**

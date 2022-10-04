@@ -1,0 +1,5 @@
+Category.USER: 46326
+Category.FUN_TYPE: 10394
+Category.UNKNOWN: 8056
+Category.BUILTIN: 1300
+Category.PRELUDE: 14042
