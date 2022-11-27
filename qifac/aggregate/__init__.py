@@ -31,8 +31,10 @@ def aggregate_all(analysis_directory: Path, aggregate_directory: Path) -> None:
                 with open(path, "r") as path_csv:
                     data = read_csv_as_dict(path_csv)
 
-                    for item, value in data.items():
-                        all_data[subdir][file].append([directory.name, item, value])
+                    for index, (item, value) in enumerate(data.items()):
+                        all_data[subdir][file].append(
+                            [directory.name, item, value, index + 1]
+                        )
 
     for subdir in dirs:
         for file in files:
@@ -41,7 +43,7 @@ def aggregate_all(analysis_directory: Path, aggregate_directory: Path) -> None:
 
             with open(path, "w") as path_csv:
                 writer = csv.writer(path_csv)
-                writer.writerow(["source", "item", "amount"])
+                writer.writerow(["source", "item", "amount", "index"])
                 writer.writerows(all_data[subdir][file])
 
 

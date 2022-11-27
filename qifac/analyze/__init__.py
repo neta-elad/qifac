@@ -14,7 +14,7 @@ from ..core import instances as core_instances
 from ..instances import show as all_instances
 from ..instances import simple
 from ..instances.compare import compare
-from ..parsing.flat import Flat
+from ..parsing.flat import Flat, parse_flat
 from .categorize import Category
 from .utils import sorted_by_value_len, write_dict
 
@@ -227,6 +227,23 @@ def compare_instances(unsat_file: Path, unknown_file: Path) -> Comparison:
     )
 
 
+def manual_compare(
+    unsat_instances: Path, unknown_instances: Path, output: Path
+) -> None:
+    unsat = parse_flat(unsat_instances.read_text())
+    unknown = parse_flat(unknown_instances.read_text())
+
+    Comparison(
+        Analysis(unsat_instances.stem, unsat), Analysis(unknown_instances.stem, unknown)
+    ).write(output)
+
+
+def manual(unsat_instances: Path, output: Path) -> None:
+    unsat = parse_flat(unsat_instances.read_text())
+
+    Analysis(unsat_instances.stem, unsat).write(output / "manual")
+
+
 def compare_directory_instances(
     unsat_dir: Path, unknown_dir: Path, analysis_dir: Path
 ) -> None:
@@ -242,6 +259,23 @@ def compare_directory_instances(
         analysis_path = analysis_dir / file.stem
 
         compare_instances(matching, file).write(analysis_path)
+
+
+def pair_up_files(unsat_dir: Path, unknown_dir: Path, output_dir: Path) -> None:
+    for i, file in enumerate(tqdm(unknown_dir.iterdir())):
+        if not file.is_file() or not file.suffix == ".smt2":
+            continue
+
+        matching = matching_file(file, unsat_dir)
+
+        if not matching.is_file() or not matching.suffix == ".smt2":
+            continue
+
+        output_specific_dir = output_dir / f"pair-{i}"
+        output_specific_dir.mkdir(parents=True, exist_ok=True)
+
+        shutil.copy2(file, output_specific_dir / file.name)
+        shutil.copy2(matching, output_specific_dir / matching.name)
 
 
 def matching_file(unknown: Path, unsat_directory: Path) -> Path:

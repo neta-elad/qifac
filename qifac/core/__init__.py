@@ -87,7 +87,7 @@ def instances(smt_file: TextIO) -> Forest:
                 ident = match[1]
                 nodes.add(ident)
 
-        # with open("fully-instantiated.smt2", "w") as file, open(path, "r") as the_input:
-        #     shutil.copyfileobj(the_input, file)
+        with open("fully-instantiated.smt2", "w") as file, open(path, "r") as named_smt:
+            shutil.copyfileobj(filter_names(named_smt, names), file)
 
     return all_instances.filter(nodes)

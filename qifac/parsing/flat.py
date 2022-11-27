@@ -26,8 +26,8 @@ class Flat:
         return cls(qid, body, tuple(substitutions))
 
     def __str__(self) -> str:
-        substitutions = ", ".join(self.substitutions)
-        return f"{self.qid} {self.body} [{substitutions}]"
+        substitutions = "\n".join(self.substitutions)
+        return f"{self.qid}\n{self.body}\n{substitutions}\n[end]"
 
 
 def parse_flat(flat: str) -> Set[Flat]:

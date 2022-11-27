@@ -15,11 +15,11 @@ from qifac.typeinfo.byz3.parser import parse_smt_file
 from .analyze import compare_directories as do_compare_directories
 from .analyze import compare_directory_instances
 from .analyze import compare_files as do_compare_files
-from .analyze import compare_instances, sanity
+from .analyze import compare_instances, manual, manual_compare, pair_up_files, sanity
 from .cegar import cegar as do_cegar
 from .core import find as do_find
 from .core import instances as do_instances
-from .instances import count_qids
+from .instances import count_qids, flatten
 from .instances import show as do_show
 from .instances import simple_instances
 from .instances.compare import compare as do_compare
@@ -269,6 +269,14 @@ def qids(instances_file: Forest, output: TextIO) -> None:
         print(f"{qid} {count}", file=output)
 
 
+@instances.command(name="flatten")
+@click.argument("instances_file", type=ForestType(), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def do_flatten(instances_file: Forest, output: TextIO) -> None:
+    for flat in flatten(instances_file):
+        print(f"{flat}", file=output)
+
+
 @instances.command
 @click.argument("unsat_file", type=ForestType())
 @click.argument("unknown_file", type=ForestType())
@@ -355,6 +363,29 @@ def compare_files(
     shutil.copyfileobj(do_compare_files(unsat_smt_file, unknown_smt_file), output)
 
 
+@analyze.command(name="manual-compare")
+@click.argument(
+    "unsat_instances", type=click.Path(dir_okay=False, exists=True, path_type=Path)
+)
+@click.argument(
+    "unknown_instances", type=click.Path(dir_okay=False, exists=True, path_type=Path)
+)
+@click.argument("output", type=click.Path(file_okay=False, exists=True, path_type=Path))
+def do_manual_compare(
+    unsat_instances: Path, unknown_instances: Path, output: Path
+) -> None:
+    manual_compare(unsat_instances, unknown_instances, output)
+
+
+@analyze.command(name="manual")
+@click.argument(
+    "unsat_instances", type=click.Path(dir_okay=False, exists=True, path_type=Path)
+)
+@click.argument("output", type=click.Path(file_okay=False, exists=True, path_type=Path))
+def do_manual(unsat_instances: Path, output: Path) -> None:
+    manual(unsat_instances, output)
+
+
 @analyze.command(name="instances")
 @click.argument(
     "unsat_smt_file", type=click.Path(dir_okay=False, exists=True, path_type=Path)
@@ -408,6 +439,20 @@ def do_compare_directory_instances(
     unsat_files: Path, unknown_files: Path, output_dir: Path
 ) -> None:
     compare_directory_instances(unsat_files, unknown_files, output_dir)
+
+
+@run.command(name="pair")
+@click.argument(
+    "unsat_files", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+@click.argument(
+    "unknown_files", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+@click.argument(
+    "output_dir", type=click.Path(file_okay=False, exists=True, path_type=Path)
+)
+def do_pair_up_files(unsat_files: Path, unknown_files: Path, output_dir: Path) -> None:
+    pair_up_files(unsat_files, unknown_files, output_dir)
 
 
 @run.group

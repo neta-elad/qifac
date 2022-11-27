@@ -157,9 +157,9 @@ def filter_names(smt_file: TextIO, names: List[str]) -> TextIO:
         ):
             continue
 
-        (name,) = annotations[formula]["named"]
-
-        if name not in names:
+        if all(
+            formula_name not in names for formula_name in annotations[formula]["named"]
+        ):
             script.commands.remove(command)
 
     for command in asserts:

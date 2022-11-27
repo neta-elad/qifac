@@ -1,6 +1,6 @@
 import string
 from dataclasses import dataclass, field
-from typing import Dict, List, Mapping, Optional, Set, TextIO
+from typing import Dict, List, Mapping, Optional, Set, TextIO, Tuple
 
 from pyparsing import Opt, Suppress, Word, delimited_list, printables
 
@@ -81,6 +81,9 @@ class Node:
             ancestry.update(parent.ancestry())
 
         return ancestry
+
+    def substitutes_as_tuple(self) -> Tuple[str, ...]:
+        return tuple(f"{x}={sub}" for x, sub in self.substitues.items())
 
     def __hash__(self) -> int:
         return hash(self.id)

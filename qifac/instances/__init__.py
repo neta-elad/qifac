@@ -106,3 +106,10 @@ def count_qids(instances: Forest) -> List[Tuple[str, int]]:
         qids[node.qid] += 1
 
     return sorted(qids.items(), key=lambda item: item[1])
+
+
+def flatten(instances: Forest) -> Set[Flat]:
+    return {
+        Flat(node.qid, "0", node.substitutes_as_tuple())
+        for node in instances.nodes.values()
+    }
