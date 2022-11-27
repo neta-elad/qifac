@@ -9,6 +9,7 @@ from click import Context, Parameter
 from tqdm import tqdm
 
 from qifac.aggregate import aggregate_all, aggregate_categories, aggregate_qids
+from qifac.model import get_model_size
 from qifac.parsing.instantiation_tree import Forest
 from qifac.typeinfo.byz3.parser import parse_smt_file
 
@@ -487,6 +488,17 @@ def do_aggregate_categories(analysis_dir: Path, output: TextIO) -> None:
 )
 def do_aggregate(analysis_dir: Path, aggregate_dir: Path) -> None:
     aggregate_all(analysis_dir, aggregate_dir)
+
+
+@run.group(name="model")
+def do_model():
+    pass
+
+@do_model.command(name="size")
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+def do_model_size(smt_file: TextIO) -> None:
+    print(get_model_size(smt_file))
+
 
 
 if __name__ == "__main__":
