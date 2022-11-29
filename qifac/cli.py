@@ -33,6 +33,8 @@ from .smt import skolemize as do_skolemize
 from .smt import uglify as do_uglify
 from .smt import unname as do_unname
 from .smt import z3_prettify
+from .smt import keep_quantified
+from .smt import keep_quantifier_free
 from .smt.booleanize import booleanize as do_booleanize
 from .smt.cleaner import clean_errors, cleanup
 from .typeinfo.parser import parse_script
@@ -150,6 +152,16 @@ def smt() -> None:
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def uglify(smt_file: TextIO, output: TextIO) -> None:
     shutil.copyfileobj(do_uglify(smt_file), output)
+@smt.command
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def keepq(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(keep_quantified(smt_file), output)
+@smt.command
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def keepqf(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(keep_quantifier_free(smt_file), output)
 
 
 @smt.command

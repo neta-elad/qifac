@@ -45,13 +45,16 @@ class BooleanizeQuantifiersGetter(AbstractForallWalker):
 
 class BooleanizeQuantifiersPrinter(SmtPrinter):
     getter: BooleanizeQuantifiersGetter
+    booleanized: bool
 
     def __init__(self, stream: TextIO, getter: BooleanizeQuantifiersGetter):
         super().__init__(stream, getter.annotations)
         self.getter = getter
+        self.booleanized = False
 
     def walk_forall(self, formula: Any) -> Any:
         self.write(self.getter.booleanize(formula))
+        self.booleanized = True
 
 
 def booleanize(smt_file: TextIO) -> TextIO:
@@ -69,7 +72,12 @@ def booleanize(smt_file: TextIO) -> TextIO:
     printer = BooleanizeQuantifiersPrinter(buffer, getter)
     for cmd in script.commands:
         if id(cmd) not in script.special_commands:
+            printer.booleanized = False
             cmd.serialize(printer=printer)
+            if printer.booleanized:
+                buffer.write(" ;; !QUANTIFIED!")
+            elif cmd.name == "assert":
+                buffer.write(" ;; !QUANTIFIER-FREE!")
             buffer.write("\n")
 
     # script.serialize(buffer, daggify=False)

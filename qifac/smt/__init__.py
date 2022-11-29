@@ -183,3 +183,27 @@ def uglify(smt_file: TextIO) -> TextIO:
 
     buffer.seek(0)
     return buffer
+
+def keep_quantified(smt_file: TextIO) -> TextIO:
+    buffer = io.StringIO()
+    while line := smt_file.readline():
+        stripped = line.strip()
+        if stripped.endswith("!QUANTIFIER-FREE!"):
+            continue
+
+        buffer.write(line)
+
+    buffer.seek(0)
+    return buffer
+
+def keep_quantifier_free(smt_file: TextIO) -> TextIO:
+    buffer = io.StringIO()
+    while line := smt_file.readline():
+        stripped = line.strip()
+        if stripped.endswith("!QUANTIFIED!"):
+            continue
+
+        buffer.write(line)
+
+    buffer.seek(0)
+    return buffer
