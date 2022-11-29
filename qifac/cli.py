@@ -27,14 +27,13 @@ from .instances.compare import compare as do_compare
 from .instances.instantiate import instantiate as do_instantiate
 from .smt import dedup as do_dedup
 from .smt import filter_names as do_filter_names
+from .smt import keep_quantified, keep_quantifier_free
 from .smt import name as do_name
 from .smt import pysmt_prettify
 from .smt import skolemize as do_skolemize
 from .smt import uglify as do_uglify
 from .smt import unname as do_unname
 from .smt import z3_prettify
-from .smt import keep_quantified
-from .smt import keep_quantifier_free
 from .smt.booleanize import booleanize as do_booleanize
 from .smt.cleaner import clean_errors, cleanup
 from .typeinfo.parser import parse_script
@@ -152,11 +151,15 @@ def smt() -> None:
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def uglify(smt_file: TextIO, output: TextIO) -> None:
     shutil.copyfileobj(do_uglify(smt_file), output)
+
+
 @smt.command
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def keepq(smt_file: TextIO, output: TextIO) -> None:
     shutil.copyfileobj(keep_quantified(smt_file), output)
+
+
 @smt.command
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 @click.argument("output", type=click.File("w"), default=sys.stdout)
@@ -503,14 +506,14 @@ def do_aggregate(analysis_dir: Path, aggregate_dir: Path) -> None:
 
 
 @run.group(name="model")
-def do_model():
+def do_model() -> None:
     pass
+
 
 @do_model.command(name="size")
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 def do_model_size(smt_file: TextIO) -> None:
     print(get_model_size(smt_file))
-
 
 
 if __name__ == "__main__":

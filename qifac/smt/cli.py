@@ -6,9 +6,11 @@ import click
 
 from . import uglify as do_uglify
 
+
 @click.group
-def smt():
+def smt() -> None:
     pass
+
 
 @smt.command
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)

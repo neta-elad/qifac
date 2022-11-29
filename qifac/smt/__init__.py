@@ -184,6 +184,7 @@ def uglify(smt_file: TextIO) -> TextIO:
     buffer.seek(0)
     return buffer
 
+
 def keep_quantified(smt_file: TextIO) -> TextIO:
     buffer = io.StringIO()
     while line := smt_file.readline():
@@ -195,6 +196,7 @@ def keep_quantified(smt_file: TextIO) -> TextIO:
 
     buffer.seek(0)
     return buffer
+
 
 def keep_quantifier_free(smt_file: TextIO) -> TextIO:
     buffer = io.StringIO()

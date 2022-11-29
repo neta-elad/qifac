@@ -5,6 +5,7 @@ from .annotations import Annotations
 from .printers import SmtPrinter
 
 class SmtLibCommand:
+    name: str
     args: List[FNode]
 
     def serialize(self, printer: SmtPrinter) -> None: ...

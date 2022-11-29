@@ -59,7 +59,9 @@ def instances(smt_file: TextIO) -> Forest:
     pretty = pysmt_prettify(skolemized)
     deduped = dedup(pretty)
 
-    core_skolemized = find(deduped)
+    # core_skolemized = find(deduped)
+
+    core_skolemized = deduped
 
     all_instances = show(core_skolemized, with_proof=True)
 
