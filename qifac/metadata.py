@@ -5,6 +5,8 @@ from typing import List
 
 import toml
 
+from qifac.utils import find_in_parent
+
 METADATA_PATH = Path("metadata.toml")
 
 
@@ -16,7 +18,7 @@ class Metadata:
 
     @classmethod
     def from_file(cls, path: Path = METADATA_PATH) -> "Metadata":
-        return cls(**toml.loads(path.read_text()))
+        return cls(**toml.loads(find_in_parent(path).read_text()))
 
     @classmethod
     @cache

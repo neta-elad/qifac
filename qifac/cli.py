@@ -19,6 +19,7 @@ from .analyze import compare_files as do_compare_files
 from .analyze import compare_instances, manual, manual_compare, pair_up_files, sanity
 from .cegar import cegar as do_cegar
 from .core import find as do_find
+from .core import find_core_with_api
 from .core import instances as do_instances
 from .instances import count_qids, flatten
 from .instances import show as do_show
@@ -248,6 +249,13 @@ def core() -> None:
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def find(smt_file: TextIO, output: TextIO) -> None:
     shutil.copyfileobj(do_find(smt_file), output)
+
+
+@core.command
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def new(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(find_core_with_api(smt_file), output)
 
 
 @core.command(name="instances")
