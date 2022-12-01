@@ -7,7 +7,7 @@
     ```
 2. Create a virtual environment (optional but highly recommended):
     ```shell
-   python3 -m venv .env && source .env/bin/activate
+   make env && source .env/bin/activate
     ```
 3. Install qifac:
     ```shell

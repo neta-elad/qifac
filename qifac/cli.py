@@ -36,7 +36,7 @@ from .smt import uglify as do_uglify
 from .smt import unname as do_unname
 from .smt import z3_prettify
 from .smt.booleanize import booleanize as do_booleanize
-from .smt.cleaner import clean_errors, cleanup
+from .smt.cleaner import clean_errors, cleanup, unify_lines
 from .typeinfo.parser import parse_script
 from .utils import TimeoutException, time_limit
 from .z3_utils import run_z3 as do_run_z3
@@ -152,6 +152,13 @@ def smt() -> None:
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 def uglify(smt_file: TextIO, output: TextIO) -> None:
     shutil.copyfileobj(do_uglify(smt_file), output)
+
+
+@smt.command
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+def unify(smt_file: TextIO, output: TextIO) -> None:
+    shutil.copyfileobj(unify_lines(smt_file), output)
 
 
 @smt.command

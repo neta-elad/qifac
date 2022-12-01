@@ -74,3 +74,27 @@ def parse_error_line(line: str) -> Optional[int]:
         return int(match[1])
 
     return None
+
+
+def unify_lines(smt_file: TextIO) -> TextIO:
+    buffer = io.StringIO()
+    lines = [line.strip() for line in smt_file.readlines()]
+    unified_lines = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if line.startswith("(assert ") and line.count("(") != line.count(")"):
+            j = i + 1
+            unified_line = line
+            while j < len(lines) and unified_line.count("(") != unified_line.count(")"):
+                unified_line += " " + lines[j]
+                j += 1
+            assert unified_line.count("(") == unified_line.count(")")
+            unified_lines.append(unified_line)
+            i = j
+        else:
+            unified_lines.append(line)
+            i += 1
+    buffer.write("\n".join(unified_lines))
+    buffer.seek(0)
+    return buffer
