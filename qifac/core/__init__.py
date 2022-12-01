@@ -162,16 +162,16 @@ def find_core_with_api(smt_file: TextIO) -> TextIO:
             # open(fn + '.qifac_unsat_core_to_smt2.smt2', 'w').write(smt2_prelude + s.to_smt2())
             # open(fn + '.qifac_unsat_core.dat', 'w').write(repr(ii))
 
-            unsat_core = set(ii)
+            unsat_core_set = set(ii)
             lines = smt_file_string.splitlines()
             n = -1
             for i in range(len(lines)):
                 if lines[i].startswith("(assert "):
                     n += 1
-                    if n not in unsat_core:
+                    if n not in unsat_core_set:
                         lines[i] = "; not in unsat core; " + lines[i]
             buffer.write("\n".join(lines))
 
             buffer.seek(0)
 
-            return buffer
+    return buffer

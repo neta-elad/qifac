@@ -32,5 +32,3 @@ def find_in_parent(path: Path) -> Path:
         return path
 
     return find_in_parent(resolved.parent / path.name)
-
-
