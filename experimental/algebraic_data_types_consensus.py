@@ -165,7 +165,7 @@ def adt_to_term(t):
 
 t = z3.Const("t", GroundTerm)
 # n_terms_for_instantiation = 1
-n_terms_for_instantiation = 2
+n_terms_for_instantiation = 5
 terms_for_instantiation = [
     z3.Const(f"t_{i}", GroundTerm) for i in range(n_terms_for_instantiation)
 ]
@@ -313,6 +313,8 @@ print(
 )
 for g in ground_instantiations:
     print(f"\n{g}")
+
+exit(-1)
 
 
 print(f"\nTrying to do MBQI:\n")

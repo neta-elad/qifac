@@ -26,6 +26,7 @@ from .instances import show as do_show
 from .instances import simple_instances
 from .instances.compare import compare as do_compare
 from .instances.instantiate import instantiate as do_instantiate
+from .search.cli import search
 from .smt import dedup as do_dedup
 from .smt import filter_names as do_filter_names
 from .smt import keep_quantified, keep_quantifier_free
@@ -59,6 +60,9 @@ class ForestType(click.ParamType):
 @click.group
 def run() -> None:
     pass
+
+
+run.add_command(search)
 
 
 @run.command(name="z3")
