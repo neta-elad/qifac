@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cached_property
 from typing import List
 
@@ -13,6 +13,7 @@ from .utils import to_bool
 class ProblemSolver:
     problem: Problem
     initial_models: List[Model]
+    n_terms: int = field(default=5)
 
     def __post_init__(self) -> None:
         print(f"\nTrying to do MBQI:\n")
@@ -23,7 +24,7 @@ class ProblemSolver:
     def terms_for_instantiation(self) -> List[z3.Const]:
         return [
             z3.Const(f"t_{i}", self.problem.ground_term_adt)
-            for i in range(self.problem.n_terms)
+            for i in range(self.n_terms)
         ]
 
     @cached_property
@@ -198,7 +199,7 @@ class ProblemSolver:
                         self.get_instantiation(new_adt_model, model)
                     )
             elif result == z3.unsat:
-                print(f"Cannot hit all models with {self.problem.n_terms} ground terms")
+                print(f"Cannot hit all models with {self.n_terms} ground terms")
                 break
             else:
                 assert False

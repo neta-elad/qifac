@@ -13,7 +13,6 @@ class Problem:
     functions: Set[z3.FuncDeclRef]
     qf_assertions: List[z3.BoolRef]
     forall_assertions: List[z3.QuantifierRef]
-    n_terms: int = field(default=5)
     context: z3.Context = field(default_factory=z3.Context)
 
     def full_query(self) -> z3.Solver:
