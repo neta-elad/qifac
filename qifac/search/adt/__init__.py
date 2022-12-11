@@ -2,7 +2,7 @@ import z3
 
 from .examples import consensus
 from .model import Model
-from .solver import ProblemSolver
+from .solver import TermSolver
 
 
 def run_adt() -> None:
@@ -15,7 +15,7 @@ def run_adt() -> None:
 
     models = [Model(problem, i, model) for i, model in enumerate(z3_models)]
 
-    ProblemSolver(problem, models)
+    TermSolver(problem, models)
 
 
 def print_and_check(title: str, solver: z3.Solver) -> None:

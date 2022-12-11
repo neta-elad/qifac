@@ -10,7 +10,7 @@ from .utils import to_bool
 
 
 @dataclass
-class ProblemSolver:
+class TermSolver:
     problem: Problem
     initial_models: List[Model]
     n_terms: int = field(default=5)
