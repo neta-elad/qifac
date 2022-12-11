@@ -4,9 +4,9 @@ from typing import List
 
 import z3
 
-from .model import Model
-from .problem import Problem
-from .utils import to_bool
+from ..model import Model
+from ..problem import Problem
+from ..utils import to_bool
 
 
 @dataclass

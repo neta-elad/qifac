@@ -2,7 +2,7 @@ import z3
 
 from .examples import consensus
 from .model import Model
-from .solver import TermSolver
+from .solvers.term import TermSolver
 
 
 def run_adt() -> None:
