@@ -94,11 +94,53 @@ class Model:
                 )
 
         definition = self.elements[0]
-        for e in reversed(entries):
-            definition = z3.If(e[0], e[1], definition)
+        for condition, if_true in reversed(entries):
+            definition = z3.If(condition, if_true, definition)
         z3.RecAddDefinition(interpret, t, definition)
 
         return interpret
+
+    @cached_property
+    def interpret_instantiation(self) -> z3.FuncDeclRef:
+        t = z3.Const("t", self.problem.instantiation_adt)
+        interpret_inst = z3.RecFunction(
+            f"interpret_inst_{self.id}",
+            self.problem.instantiation_adt,
+            z3.BoolSort(ctx=self.problem.context),
+        )
+
+        entries = []
+
+        for qid, quantifier in enumerate(self.problem.forall_assertions):
+            for xs in product(range(len(self.universe)), repeat=quantifier.num_vars()):
+                entries.append(
+                    (
+                        z3.And(
+                            getattr(self.problem.instantiation_adt, f"is_Inst_{qid}")(
+                                t
+                            ),
+                            *(
+                                self.interpret(
+                                    getattr(
+                                        self.problem.instantiation_adt,
+                                        f"Inst_{qid}_{i}",
+                                    )(t)
+                                )
+                                == self.elements[xs[i]]
+                                for i in range(quantifier.num_vars())
+                            ),
+                        ),
+                        cast_bool(self.bodies[qid](*(self.elements[x] for x in xs))),
+                    )
+                )
+
+        definition = z3.BoolVal(True, ctx=self.problem.context)
+
+        for condition, if_true in reversed(entries):
+            definition = z3.If(condition, if_true, definition)
+        z3.RecAddDefinition(interpret_inst, t, definition)
+
+        return interpret_inst
 
     @cached_property
     def bodies(self) -> List[z3.FuncDeclRef]:
@@ -163,6 +205,20 @@ class Model:
                         z3.Or(*(w == self.interpret(t) for t in terms)),
                     )
                 )
+
+    def add_instantiations(
+        self, solver: z3.Solver, instantiations: Iterable[z3.ExprRef]
+    ) -> None:
+        self.add_bodies(solver)
+
+        solver.add(
+            z3.Or(
+                *(
+                    z3.Not(cast_bool(self.interpret_instantiation(instantiation)))
+                    for instantiation in instantiations
+                )
+            )
+        )
 
     def add(self, solver: z3.Solver, terms: Iterable[z3.ExprRef]) -> None:
         self.add_bodies(solver)

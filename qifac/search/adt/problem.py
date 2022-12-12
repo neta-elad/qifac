@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import chain
-from typing import Iterable, List, Mapping, Set, Tuple
+from typing import Iterable, List, Set, Tuple
 
 import z3
 
@@ -94,13 +94,9 @@ class Problem:
         return GroundTerm.create()
 
     @cached_property
-    def quantifiers(self) -> Mapping[int, z3.QuantifierRef]:
-        return {q.get_id(): q for q in self.forall_assertions}
-
-    @cached_property
     def instantiation_adt(self) -> z3.DatatypeRef:
         Instantiation = z3.Datatype("Instantiation", ctx=self.context)
-        for qid, quantifier in self.quantifiers.items():
+        for qid, quantifier in enumerate(self.forall_assertions):
             Instantiation.declare(
                 f"Inst_{qid}",
                 *(
@@ -155,19 +151,25 @@ class Problem:
         extractor = getattr(self.instantiation_adt, f"Inst_{qid}_{i}")
         return self.adt_to_term(z3.simplify(extractor(instantiation)))
 
-    def apply_instantiation(self, instantiation: z3.ExprRef, qid: int) -> z3.BoolRef:
-        quantifier = self.quantifiers[qid]
+    def apply_instantiation(
+        self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
+    ) -> z3.BoolRef:
         return z3.substitute_vars(
             quantifier.body(),
-            *(
-                self.extract_instantiation(instantiation, qid, i)
-                for i in range(quantifier.num_vars())
-            ),
+            *self.instantiation_args(instantiation, qid, quantifier),
         )
 
-    def adt_to_instantiation(self, instantiation: z3.ExprRef) -> z3.BoolRef:
-        for qid in self.quantifiers:
-            if self.match_instantiation(instantiation, qid):
-                return self.apply_instantiation(instantiation, qid)
+    def instantiation_args(
+        self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
+    ) -> List[z3.ExprRef]:
+        return [
+            self.extract_instantiation(instantiation, qid, i)
+            for i in range(quantifier.num_vars())
+        ]
 
-        raise RuntimeError(f"Unmatched term {instantiation}")
+    def adt_to_instantiation(self, instantiation: z3.ExprRef) -> z3.BoolRef:
+        for qid, quantifier in enumerate(self.forall_assertions):
+            if self.match_instantiation(instantiation, qid):
+                return self.apply_instantiation(instantiation, qid, quantifier)
+
+        raise RuntimeError(f"Unmatched instantiation {instantiation}")
