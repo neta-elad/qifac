@@ -1,6 +1,6 @@
 import click
 
-from .adt import run_adt
+from .adt.cli import run_adt
 
 
 @click.group
@@ -13,6 +13,4 @@ def hello() -> None:
     print("Hello")
 
 
-@search.command
-def adt() -> None:
-    run_adt()
+search.add_command(run_adt, "adt")

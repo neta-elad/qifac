@@ -13,8 +13,8 @@ from ..utils import to_bool
 class InstantiationSolver:
     problem: Problem
     initial_models: List[RefModel]
-    n_instantiations: int = field(default=5)
-    desired_size: int = field(default=2)
+    n_instantiations: int = field(default=4)
+    desired_size: int = field(default=1)
 
     def __post_init__(self) -> None:
         print(f"\nTrying to do MBQI:\n")
