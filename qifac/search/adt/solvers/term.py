@@ -4,7 +4,7 @@ from typing import List
 
 import z3
 
-from ..model import Model
+from ..models import RefModel
 from ..problem import Problem
 from ..utils import to_bool
 
@@ -12,7 +12,7 @@ from ..utils import to_bool
 @dataclass
 class TermSolver:
     problem: Problem
-    initial_models: List[Model]
+    initial_models: List[RefModel]
     n_terms: int = field(default=5)
 
     def __post_init__(self) -> None:
@@ -36,7 +36,7 @@ class TermSolver:
         return solver
 
     @cached_property
-    def models(self) -> List[Model]:
+    def models(self) -> List[RefModel]:
         return list(self.initial_models)
 
     @cached_property
@@ -49,13 +49,15 @@ class TermSolver:
         size, new_ref = self.problem.minimize_model(self.problem_solver)
         new_id = len(self.models)
         print(f"\nFound {new_id + 1}-th model with {size} elements: \n{new_ref}")
-        new_model = Model(self.problem, new_id, new_ref)
+        new_model = RefModel(self.problem, new_id, new_ref)
         self.models.append(new_model)
         new_model.add(self.adt_solver, self.terms_for_instantiation)
 
         return new_id
 
-    def get_instantiation(self, new_adt_model: z3.ModelRef, model: Model) -> z3.BoolRef:
+    def get_instantiation(
+        self, new_adt_model: z3.ModelRef, model: RefModel
+    ) -> z3.BoolRef:
         print(f"model {model.id}:")
         violated = [
             new_adt_model[v] is not None and to_bool(new_adt_model[v])

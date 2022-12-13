@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import List
+from typing import List, Set
 
 import z3
 
-from ..model import Model
+from ..models import RefModel, SizedModel
 from ..problem import Problem
 from ..utils import to_bool
 
@@ -12,13 +12,18 @@ from ..utils import to_bool
 @dataclass
 class InstantiationSolver:
     problem: Problem
-    initial_models: List[Model]
+    initial_models: List[RefModel]
     n_instantiations: int = field(default=5)
+    desired_size: int = field(default=2)
 
     def __post_init__(self) -> None:
         print(f"\nTrying to do MBQI:\n")
         self.solve()
         print(f"ADT-based MBQI done! (problem_solver is {self.problem_solver.check()})")
+
+    @cached_property
+    def sized_model(self) -> SizedModel:
+        return SizedModel(self.problem, -1, self.desired_size)
 
     @cached_property
     def instantiations(self) -> List[z3.Const]:
@@ -30,13 +35,16 @@ class InstantiationSolver:
     @cached_property
     def adt_solver(self) -> z3.Solver:
         solver = z3.Solver(ctx=self.problem.context)
+
+        self.sized_model.add_instantiations(solver, self.instantiations)
+
         for model in self.initial_models:
             model.add_instantiations(solver, self.instantiations)
 
         return solver
 
     @cached_property
-    def models(self) -> List[Model]:
+    def models(self) -> List[RefModel]:
         return list(self.initial_models)
 
     @cached_property
@@ -49,13 +57,15 @@ class InstantiationSolver:
         size, new_ref = self.problem.minimize_model(self.problem_solver)
         new_id = len(self.models)
         print(f"\nFound {new_id + 1}-th model with {size} elements: \n{new_ref}")
-        new_model = Model(self.problem, new_id, new_ref)
+        new_model = RefModel(self.problem, new_id, new_ref)
         self.models.append(new_model)
         new_model.add_instantiations(self.adt_solver, self.instantiations)
 
         return new_id
 
-    def get_instantiation(self, new_adt_model: z3.ModelRef, model: Model) -> z3.BoolRef:
+    def get_instantiation(
+        self, new_adt_model: z3.ModelRef, model: RefModel
+    ) -> z3.BoolRef:
         print(f"model {model.id}:")
 
         violated = {
@@ -79,11 +89,11 @@ class InstantiationSolver:
             new_id = self.add_new_model()
             result = self.adt_solver.check()
             print(f"finding new instantiations: {result}")
-            ground_instantiations: List[z3.BoolRef] = []
+            ground_instantiations: Set[z3.BoolRef] = set()
             if result == z3.sat:
                 new_adt_model = self.adt_solver.model()
                 for model in self.models:
-                    ground_instantiations.append(
+                    ground_instantiations.add(
                         self.get_instantiation(new_adt_model, model)
                     )
             elif result == z3.unsat:

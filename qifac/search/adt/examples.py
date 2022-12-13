@@ -48,6 +48,7 @@ def consensus() -> Tuple[Problem, List[z3.ExprRef]]:
         S,
         {v1, v2, q2},
         {intersection, quorum_of_decided},
+        {member, vote, decided},
         qf_assertions,
         forall_assertions,
     )

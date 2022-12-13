@@ -5,12 +5,15 @@ from typing import Iterable, List, Set, Tuple
 
 import z3
 
+from .utils import Relation
+
 
 @dataclass
 class Problem:
     sort: z3.SortRef
     constants: Set[z3.Const]
     functions: Set[z3.FuncDeclRef]
+    relations: Set[Relation]
     qf_assertions: List[z3.BoolRef]
     forall_assertions: List[z3.QuantifierRef]
     context: z3.Context = field(default_factory=z3.Context)
