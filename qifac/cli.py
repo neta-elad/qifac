@@ -2,7 +2,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, List, Optional, TextIO
+from typing import Any, Optional, TextIO
 
 import click
 from click import Context, Parameter
@@ -11,6 +11,7 @@ from tqdm import tqdm
 from qifac.aggregate import aggregate_all, aggregate_categories, aggregate_qids
 from qifac.model import get_model_size
 from qifac.parsing.instantiation_tree import Forest
+from qifac.smt.cleaner import cleanup
 from qifac.typeinfo.byz3.parser import parse_smt_file
 
 from .analyze import compare_directories as do_compare_directories
@@ -27,17 +28,7 @@ from .instances import simple_instances
 from .instances.compare import compare as do_compare
 from .instances.instantiate import instantiate as do_instantiate
 from .search.cli import search
-from .smt import dedup as do_dedup
-from .smt import filter_names as do_filter_names
-from .smt import keep_quantified, keep_quantifier_free
-from .smt import name as do_name
-from .smt import pysmt_prettify
-from .smt import skolemize as do_skolemize
-from .smt import uglify as do_uglify
-from .smt import unname as do_unname
-from .smt import z3_prettify
-from .smt.booleanize import booleanize as do_booleanize
-from .smt.cleaner import clean_errors, cleanup, unify_lines
+from .smt.cli import smt
 from .typeinfo.parser import parse_script
 from .utils import TimeoutException, time_limit
 from .z3_utils import run_z3 as do_run_z3
@@ -146,108 +137,7 @@ def batch_simple_instances(batch_dir: Path, output_dir: Path) -> None:
                 print(path)
 
 
-@run.group
-def smt() -> None:
-    pass
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def uglify(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(do_uglify(smt_file), output)
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def unify(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(unify_lines(smt_file), output)
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def keepq(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(keep_quantified(smt_file), output)
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def keepqf(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(keep_quantifier_free(smt_file), output)
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def prettify(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(pysmt_prettify(smt_file), output)
-
-
-@smt.command("z3-prettify")
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def do_z3_prettify(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(z3_prettify(smt_file), output)
-
-
-@smt.command(name="cleanup")
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def do_cleanup(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(cleanup(smt_file), output)
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def dedup(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(do_dedup(smt_file), output)
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def unname(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(do_unname(smt_file), output)
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def clean(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(clean_errors(smt_file), output)
-
-
-@smt.command(name="bool")
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def booleanize(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(do_booleanize(smt_file), output)
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def name(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(do_name(smt_file), output)
-
-
-@smt.command(name="filter")
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-@click.option("--names", "-n", multiple=True)
-def filter_names(smt_file: TextIO, output: TextIO, names: List[str]) -> None:
-    shutil.copyfileobj(do_filter_names(smt_file, names), output)
-
-
-@smt.command
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-def skolemize(smt_file: TextIO, output: TextIO) -> None:
-    shutil.copyfileobj(do_skolemize(smt_file), output)
+run.add_command(smt)
 
 
 @run.group

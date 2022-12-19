@@ -1,8 +1,12 @@
+import shutil
 import signal
+import sys
 from contextlib import contextmanager
 from pathlib import Path
 from types import FrameType
-from typing import Iterator, Optional
+from typing import Callable, Iterator, Optional, TextIO
+
+import click
 
 
 class TimeoutException(Exception):
@@ -32,3 +36,16 @@ def find_in_parent(path: Path) -> Path:
         return path
 
     return find_in_parent(resolved.parent / path.name)
+
+
+def smt_file_read_write(
+    parent: click.Group, fun: Callable[[TextIO], TextIO], name: Optional[str] = None
+) -> None:
+    if name is None:
+        name = fun.__name__
+
+    @parent.command(name=name)
+    @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+    @click.argument("output", type=click.File("w"), default=sys.stdout)
+    def wrapper(smt_file: TextIO, output: TextIO) -> None:
+        shutil.copyfileobj(fun(smt_file), output)
