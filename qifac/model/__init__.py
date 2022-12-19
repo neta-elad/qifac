@@ -119,7 +119,7 @@ def constrain_with_enum(smt_file: str, sorts: Set[z3.SortRef], size: int) -> z3.
     smt_file_with_declarations.append(smt_file)
 
     solver = z3.Solver()
-    solver.set("timeout", 30 * 1000)
+    solver.set("timeout", 5 * 1000)
     solver.from_string("\n".join(smt_file_with_declarations))
 
     return solver
