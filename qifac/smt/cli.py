@@ -6,6 +6,7 @@ import click
 
 from ..utils import smt_file_read_write
 from . import (
+    add_assertions_from,
     dedup,
     filter_names,
     keep_quantified,
@@ -55,5 +56,15 @@ def wrap_filter_names(smt_file: TextIO, output: TextIO, names: List[str]) -> Non
 @click.argument("output", type=click.File("w"), default=sys.stdout)
 @click.option("--instantiations", "-i", type=int)
 @click.option("--quantifier-free", "-f", type=int)
-def wrap_sample(smt_file: TextIO, output: TextIO, instantiations: int, quantifier_free: int) -> None:
+def wrap_sample(
+    smt_file: TextIO, output: TextIO, instantiations: int, quantifier_free: int
+) -> None:
     shutil.copyfileobj(sample(smt_file, instantiations, quantifier_free), output)
+
+
+@smt.command(name="add")
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+@click.argument("output", type=click.File("w"), default=sys.stdout)
+@click.option("--added", "-a", type=click.File("r"))
+def wrap_add(smt_file: TextIO, output: TextIO, added: TextIO) -> None:
+    shutil.copyfileobj(add_assertions_from(smt_file, added), output)

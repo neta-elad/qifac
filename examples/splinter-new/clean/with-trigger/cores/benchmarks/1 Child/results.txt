@@ -1,0 +1,75 @@
+# Core Insts Assertions
+14
+
+# Core QF Assertions
+23
+
+# Core Insts + Core QF Model Size
+> qifac model size 18-sat-core.smt2
+1
+
+# All Insts + All QF Model Size
+> qifac model size 06a-sat.smt2
+7
+
+# All Insts Model Size
+> qifac smt sample 16a-sat.smt2 -i 5000 -f 0 | qifac model size
+1
+
+# All QF Model Size
+> qifac model size 16b-qf.smt2
+6
+
+# Core Insts + All QF Model Size
+> qifac model size 18a-core-all-qf.smt2
+6
+
+# Sample Insts + Sample QF
+> for i in {1..20}; do
+> qifac smt sample 16a-sat.smt2 -i 14 -f 23 | qifac model size
+> done
+2
+1
+2
+3
+2
+1
+2
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+2
+3
+
+# Sample Insts + All QF
+> for i in {1..20}; do
+> qifac smt sample 16a-sat.smt2 -i 14 -f 0 | qifac smt add -a 16b-qf.smt2 | qifac model size
+> done
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6
+6

@@ -422,7 +422,11 @@ def do_model() -> None:
 @do_model.command(name="size")
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)
 def do_model_size(smt_file: TextIO) -> None:
-    print(get_model_size(smt_file))
+    low, high = get_model_size(smt_file)
+    if low == high:
+        print(low)
+    else:
+        print(f"{low}-{high}")
 
 
 if __name__ == "__main__":

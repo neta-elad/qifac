@@ -1,9 +1,9 @@
-from typing import Mapping, Set, TextIO
+from typing import Mapping, Set, TextIO, Tuple
 
 import z3
 
 
-def get_model_size(smt_file: TextIO) -> int:
+def get_model_size(smt_file: TextIO, debug: bool = False) -> Tuple[int, int]:
     solver = z3.Solver()
     smt_file_string = smt_file.read()
     solver.from_string(smt_file_string)
@@ -23,10 +23,11 @@ def get_model_size(smt_file: TextIO) -> int:
         if sort_size > max_size:
             max_size = sort_size
 
-    print(f"Got sat for {max_size}")
+    if debug:
+        print(f"Got sat for {max_size}")
 
     lower_bound = 1
-    upper_bound = max_size
+    strict_upper_bound = upper_bound = max_size
 
     while lower_bound < upper_bound:
         check_size = (lower_bound + upper_bound) // 2
@@ -37,20 +38,23 @@ def get_model_size(smt_file: TextIO) -> int:
 
         result = solver.check()
 
-        print(f"Got {result} for {check_size}")
+        if debug:
+            print(f"Got {result} for {check_size}")
 
         if result == z3.sat:
-            upper_bound = check_size
+            strict_upper_bound = upper_bound = check_size
         elif result == z3.unsat:
             lower_bound = check_size + 1
         else:
-            print(f"Reason: {solver.reason_unknown()}")
+            if debug:
+                print(f"Reason: {solver.reason_unknown()}")
             upper_bound = check_size
             if check_size - 1 == lower_bound:
-                print(f"Lower bound {lower_bound} ({max_size})")
+                if debug:
+                    print(f"Lower bound {lower_bound} ({max_size})")
                 break
 
-    return lower_bound
+    return lower_bound, strict_upper_bound
 
 
 def constrain(smt_file: str, sorts: Set[z3.SortRef], size: int) -> z3.Solver:
