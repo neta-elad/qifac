@@ -22,6 +22,7 @@ from .search.cli import search
 from .smt.cli import smt
 from .model.cli import model
 from .core.cli import core
+from .text.cli import text
 from .typeinfo.parser import parse_script
 from .utils import TimeoutException, time_limit
 from .z3_utils import run_z3 as do_run_z3
@@ -32,7 +33,12 @@ def run() -> None:
     pass
 
 
+run.add_command(core)
+run.add_command(instances)
+run.add_command(model)
 run.add_command(search)
+run.add_command(text)
+run.add_command(smt)
 
 
 @run.command(name="z3")
@@ -114,12 +120,6 @@ def batch_simple_instances(batch_dir: Path, output_dir: Path) -> None:
                 output_path.write_text(simple_instances(smt_file))
             except:
                 print(path)
-
-
-run.add_command(smt)
-run.add_command(core)
-
-run.add_command(instances)
 
 
 @run.group
@@ -304,9 +304,6 @@ def do_aggregate_categories(analysis_dir: Path, output: TextIO) -> None:
 )
 def do_aggregate(analysis_dir: Path, aggregate_dir: Path) -> None:
     aggregate_all(analysis_dir, aggregate_dir)
-
-
-run.add_command(model)
 
 
 if __name__ == "__main__":
