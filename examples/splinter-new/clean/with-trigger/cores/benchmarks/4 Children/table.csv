@@ -1,0 +1,5 @@
+QF/Insts,None,Core,Sample,All
+None,1,2,1 (1-2),3
+Core,1,2,1 (1-2),3
+Sample,1 (1-1),2 (2-2),1 (1-2),3 (3-3)
+All,6,6,6 (6-7),7
