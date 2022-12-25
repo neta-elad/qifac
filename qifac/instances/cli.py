@@ -4,11 +4,11 @@ from typing import TextIO
 
 import click
 
-from . import show, simple_instances, count_qids, flatten
-from .compare import compare
-from .instantiate import instantiate
 from ..cli_types import ForestType
 from ..parsing.instantiation_tree import Forest
+from . import count_qids, flatten, show, simple_instances
+from .compare import compare
+from .instantiate import instantiate
 
 
 @click.group

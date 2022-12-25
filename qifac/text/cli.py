@@ -1,12 +1,11 @@
 import shutil
 import sys
-from typing import Tuple, List, TextIO, Iterable
+from typing import Iterable, TextIO, Tuple
 
 import click
 
 from ..utils import smt_file_read_write
-
-from . import remove_comments, sample, rename_instantiations, add_assertions_from
+from . import add_assertions_from, remove_comments, rename_instantiations, sample
 
 
 @click.group

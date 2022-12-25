@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
 import click
-from click import Parameter, Context
+from click import Context, Parameter
 
 from qifac.parsing.instantiation_tree import Forest
 

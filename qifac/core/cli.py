@@ -1,12 +1,10 @@
-import shutil
 import sys
 from typing import TextIO
 
 import click
 
-from . import find, find_core_with_api, instances
-
 from ..utils import smt_file_read_write
+from . import find, find_core_with_api, instances
 
 
 @click.group

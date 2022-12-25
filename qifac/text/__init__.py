@@ -1,6 +1,6 @@
 import io
 import random
-from typing import TextIO, Dict
+from typing import Dict, TextIO
 
 
 def remove_comments(smt_file: TextIO) -> TextIO:
