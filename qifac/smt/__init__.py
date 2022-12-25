@@ -209,16 +209,3 @@ def keep_quantifier_free(smt_file: TextIO) -> TextIO:
 
     buffer.seek(0)
     return buffer
-
-
-def add_assertions_from(smt_file: TextIO, added: TextIO) -> TextIO:
-    buffer = io.StringIO()
-    for line in smt_file.readlines():
-        if line.startswith("(check-sat"):
-            for added_line in added.readlines():
-                if added_line.startswith("(assert"):
-                    buffer.write(added_line)
-        buffer.write(line)
-
-    buffer.seek(0)
-    return buffer
