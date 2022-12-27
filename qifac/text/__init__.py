@@ -1,6 +1,6 @@
 import io
 import random
-from typing import Dict, TextIO
+from typing import Dict, List, TextIO
 
 
 def remove_comments(smt_file: TextIO) -> TextIO:
@@ -18,6 +18,13 @@ def in_group(line: str, group: str) -> bool:
     return line.startswith("(assert") and f"!{group}!" in line
 
 
+def sample_group(group: List[int], size: int) -> List[int]:
+    if size < 0:
+        return group
+    else:
+        return group[:size]
+
+
 def sample(smt_file: TextIO, samples: Dict[str, int]) -> TextIO:
     lines = smt_file.readlines()
 
@@ -29,7 +36,9 @@ def sample(smt_file: TextIO, samples: Dict[str, int]) -> TextIO:
     for group in samples:
         random.shuffle(groups[group])
 
-    sampled = {i for group, size in samples.items() for i in groups[group][:size]}
+    sampled = {
+        i for group, size in samples.items() for i in sample_group(groups[group], size)
+    }
 
     buffer = io.StringIO()
 

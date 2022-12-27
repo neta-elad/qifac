@@ -4,7 +4,6 @@ from typing import TextIO
 
 import click
 
-
 from .aggregate.cli import aggregate
 from .analyze import pair_up_files
 from .analyze.cli import analyze

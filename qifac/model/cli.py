@@ -3,12 +3,15 @@ from typing import TextIO
 
 import click
 
-from . import get_model_size
+from . import get_model_size, clean
+from ..utils import smt_file_read_write
 
 
 @click.group
 def model() -> None:
     pass
+
+smt_file_read_write(model, clean)
 
 
 @model.command

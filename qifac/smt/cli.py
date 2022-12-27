@@ -19,7 +19,6 @@ from . import (
 )
 from .booleanize import booleanize
 from .cleaner import clean_errors, cleanup, unify_lines
-from .sampler import sample
 
 
 @click.group
@@ -48,14 +47,3 @@ smt_file_read_write(smt, skolemize)
 @click.option("--names", "-n", multiple=True)
 def wrap_filter_names(smt_file: TextIO, output: TextIO, names: List[str]) -> None:
     shutil.copyfileobj(filter_names(smt_file, names), output)
-
-
-@smt.command(name="sample")
-@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
-@click.argument("output", type=click.File("w"), default=sys.stdout)
-@click.option("--instantiations", "-i", type=int)
-@click.option("--quantifier-free", "-f", type=int)
-def wrap_sample(
-    smt_file: TextIO, output: TextIO, instantiations: int, quantifier_free: int
-) -> None:
-    shutil.copyfileobj(sample(smt_file, instantiations, quantifier_free), output)

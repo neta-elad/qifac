@@ -2,7 +2,7 @@
 131
 
 # Core QF Assertions
-82
+21
 
 # Core Insts + Core QF Model Size
 > qifac model size 38-sat-core.smt2
