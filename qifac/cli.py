@@ -10,6 +10,7 @@ from .analyze.cli import analyze
 from .batch.cli import batch
 from .cegar import cegar as do_cegar
 from .core.cli import core
+from .count.cli import count
 from .instances.cli import instances
 from .model.cli import model
 from .search.cli import search
@@ -34,6 +35,7 @@ run.add_command(batch)
 run.add_command(typeinfo)
 run.add_command(analyze)
 run.add_command(aggregate)
+run.add_command(count)
 
 
 @run.command(name="z3")

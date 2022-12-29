@@ -1,7 +1,8 @@
 import io
-from typing import Mapping, Set, TextIO, Tuple, List
+from typing import List, Mapping, Set, TextIO, Tuple
 
 import z3
+
 
 def join_lines(lines: List[str], deleted: Set[int]) -> str:
     buffer = io.StringIO()
@@ -13,22 +14,6 @@ def join_lines(lines: List[str], deleted: Set[int]) -> str:
     buffer.seek(0)
     return buffer.read()
 
-def clean(smt_file: TextIO) -> TextIO:
-    original = smt_file.read()
-    lines = original.splitlines(keepends=True)
-    deleted = set()
-
-    try:
-        print("!")
-        solver = z3.Solver()
-        s = join_lines(lines, deleted)
-        print(s)
-        solver.from_string(original)
-    except z3.z3types.Z3Exception as e:
-        print("!!")
-        print(e)
-
-    return io.StringIO()
 
 def get_model_size(smt_file: TextIO, debug: bool = False) -> Tuple[int, int]:
     solver = z3.Solver()
@@ -110,7 +95,7 @@ def get_model_sizes(solver: z3.Solver) -> Mapping[z3.SortRef, int]:
 
 def get_sorts(solver: z3.Solver) -> Set[z3.SortRef]:
     assert solver.check() == z3.sat
-    return set(solver.model().sorts()) | {z3.DeclareSort('T@U'), z3.DeclareSort('T@T')}
+    return set(solver.model().sorts()) | {z3.DeclareSort("T@U"), z3.DeclareSort("T@T")}
 
 
 def sort_size_constraint(sort: z3.SortRef, size: int) -> z3.BoolRef:
