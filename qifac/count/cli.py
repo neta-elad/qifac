@@ -4,7 +4,7 @@ from typing import TextIO
 import click
 
 from ..utils import smt_file_read_write
-from . import count_quantifiers, count_symbols, count_terms, count_depth_diff
+from . import count_depth_diff, count_quantifiers, count_symbols, count_terms
 
 
 @click.group
@@ -27,6 +27,7 @@ def wrap_symbols(smt_file: TextIO, show: bool) -> None:
 @click.option("--show", "-s", is_flag=True, default=False)
 def wrap_terms(smt_file: TextIO, show: bool) -> None:
     count_terms(smt_file, show)
+
 
 @count.command("depth")
 @click.argument("smt_file", type=click.File("r"), default=sys.stdin)

@@ -18,89 +18,167 @@ class RefModel:
     ref: z3.ModelRef
 
     @cached_property
-    def universe(self) -> List[z3.ExprRef]:
-        return sorted(
-            self.ref.get_universe(self.problem.sort),
-            key=lambda x: int(str(x).split("!")[-1]),
-        )
+    def sort_universe(self) -> Dict[z3.SortRef, List[z3.ExprRef]]:
+        return {
+            sort: sorted(
+                self.ref.get_universe(sort),
+                key=lambda x: int(str(x).split("!")[-1]),
+            )
+            for sort in self.problem.sorts
+        }
 
     @cached_property
-    def sort_and_elements(self) -> Tuple[z3.SortRef, List[z3.Const]]:
-        return z3.EnumSort(
-            f"E_{self.id}",
-            [f"E_{self.id}_{i}" for i in range(len(self.universe))],
-            ctx=self.problem.context,
-        )
+    def universe(self) -> List[z3.ExprRef]:
+        return self.sort_universe[self.problem.sort]
+
+    @cached_property
+    def sorts_and_elements(self) -> Dict[z3.SortRef, Tuple[z3.SortRef, List[z3.Const]]]:
+        return {
+            sort: z3.EnumSort(
+                f"{sort}_E_{self.id}",
+                [
+                    f"{sort}_E_{self.id}_{i}"
+                    for i in range(len(self.sort_universe[sort]))
+                ],
+                ctx=self.problem.context,
+            )
+            for sort in self.problem.sorts
+        }
+
+    @cached_property
+    def sorts(self) -> Dict[z3.SortRef, z3.SortRef]:
+        return {sort: self.sorts_and_elements[sort][0] for sort in self.problem.sorts}
+
+    @cached_property
+    def sort_elements(self) -> Dict[z3.SortRef, List[z3.Const]]:
+        return {sort: self.sorts_and_elements[sort][1] for sort in self.problem.sorts}
 
     @cached_property
     def sort(self) -> z3.SortRef:
-        return self.sort_and_elements[0]
+        return self.sorts[self.problem.sort]
 
     @cached_property
     def elements(self) -> List[z3.Const]:
-        return self.sort_and_elements[1]
+        return self.sort_elements[self.problem.sort]
+
+    @cached_property
+    def sort_constant_interpretations(self) -> Dict[z3.SortRef, List[int]]:
+        return {
+            sort: [
+                self.sort_universe[sort].index(self.ref.eval(c, model_completion=True))
+                for c in self.problem.sort_constants[sort]
+            ]
+            for sort in self.problem.sorts
+        }
 
     @cached_property
     def constant_interpretations(self) -> List[int]:
-        return [
-            self.universe.index(self.ref.eval(c, model_completion=True))
-            for c in self.problem.constants
-        ]
+        return self.sort_constant_interpretations[self.problem.sort]
+
+    @cached_property
+    def sort_function_interpretations(
+        self,
+    ) -> Dict[z3.SortRef, List[Mapping[Tuple[int, ...], int]]]:
+        return {
+            sort: [
+                {
+                    xs: self.sort_universe[sort].index(
+                        self.ref.eval(
+                            fun(
+                                *(
+                                    self.sort_universe[fun.domain(i)][x]
+                                    for i, x in enumerate(xs)
+                                )
+                            ),
+                            model_completion=True,
+                        )
+                    )
+                    for xs in product(
+                        *[
+                            range(len(self.sort_universe[fun.domain(i)]))
+                            for i in range(fun.arity())
+                        ]
+                    )
+                }
+                for fun in self.problem.sort_functions[sort]
+            ]
+            for sort in self.problem.sorts
+        }
 
     @cached_property
     def function_interpretations(self) -> List[Mapping[Tuple[int, ...], int]]:
-        return [
-            {
-                xs: self.universe.index(
-                    self.ref.eval(
-                        fun(*(self.universe[x] for x in xs)), model_completion=True
-                    )
-                )
-                for xs in product(range(len(self.universe)), repeat=fun.arity())
-            }
-            for fun in self.problem.functions
-        ]
+        return self.sort_function_interpretations[self.problem.sort]
 
     @cached_property
     def interpret(self) -> z3.FuncDeclRef:
-        t = z3.Const("t", self.problem.ground_term_adt)
-        interpret = z3.RecFunction(
-            f"interpret_{self.id}", self.problem.ground_term_adt, self.sort
-        )
-        entries = []
-        for c, ci in zip(self.problem.constants, self.constant_interpretations):
-            entries.append(
-                (
-                    getattr(self.problem.ground_term_adt, f"is_GT_{c}")(t),
-                    self.elements[ci],
-                )
+        return self.sort_interpret[self.problem.sort]
+
+    @cached_property
+    def sort_interpret(self) -> Dict[z3.SortRef, z3.FuncDeclRef]:
+        ts = {
+            sort: z3.Const("t", self.problem.ground_term_adts[sort])
+            for sort in self.problem.sorts
+        }
+        interprets = {
+            sort: z3.RecFunction(
+                f"{sort}_interpret_{self.id}",
+                self.problem.ground_term_adts[sort],
+                self.sorts[sort],
             )
-        for f, fi in zip(self.problem.functions, self.function_interpretations):
-            for xs in product(range(len(self.universe)), repeat=f.arity()):
+            for sort in self.problem.sorts
+        }
+
+        for sort in self.problem.sorts:
+            interpret = interprets[sort]
+            t = ts[sort]
+            entries = []
+            for c, ci in zip(
+                self.problem.sort_constants[sort], self.constant_interpretations
+            ):
                 entries.append(
                     (
-                        z3.And(
-                            getattr(self.problem.ground_term_adt, f"is_GT_{f}")(t),
-                            *(
-                                interpret(
-                                    getattr(
-                                        self.problem.ground_term_adt, f"GT_{f}_{i}"
-                                    )(t)
-                                )
-                                == self.elements[xs[i]]
-                                for i in range(f.arity())
-                            ),
-                        ),
-                        self.elements[fi[xs]],
+                        getattr(self.problem.ground_term_adt, f"is_{sort}_GT_{c}")(t),
+                        self.elements[ci],
                     )
                 )
+            for f, fi in zip(
+                self.problem.sort_functions[sort],
+                self.sort_function_interpretations[sort],
+            ):
+                for xs in product(
+                    *[
+                        range(len(self.sort_universe[f.domain(i)]))
+                        for i in range(f.arity())
+                    ]
+                ):
+                    entries.append(
+                        (
+                            z3.And(
+                                getattr(
+                                    self.problem.ground_term_adt,
+                                    f"is_{sort}_GT_{f}",
+                                )(t),
+                                *(
+                                    interpret(
+                                        getattr(
+                                            self.problem.ground_term_adt,
+                                            f"{sort}_GT_{f}_{i}",
+                                        )(t)
+                                    )
+                                    == self.elements[xs[i]]
+                                    for i in range(f.arity())
+                                ),
+                            ),
+                            self.elements[fi[xs]],
+                        )
+                    )
 
-        definition = self.elements[0]
-        for condition, if_true in reversed(entries):
-            definition = z3.If(condition, if_true, definition)
-        z3.RecAddDefinition(interpret, t, definition)
+            definition = self.elements[0]
+            for condition, if_true in reversed(entries):
+                definition = z3.If(condition, if_true, definition)
+            z3.RecAddDefinition(interpret, t, definition)
 
-        return interpret
+        return cast(Dict[z3.SortRef, z3.FuncDeclRef], interprets)
 
     @cached_property
     def interpret_instantiation(self) -> z3.FuncDeclRef:
@@ -253,7 +331,8 @@ class SizedModel:
     @cached_property
     def constants(self) -> Mapping[z3.Const, z3.Const]:
         return {
-            c: z3.Const(f"c_{self.id}_{c}", self.sort) for c in self.problem.constants
+            c: z3.Const(f"c_{self.id}_{c}", self.sort)
+            for c in self.problem.sort_constants[self.problem.sort]
         }
 
     @cached_property

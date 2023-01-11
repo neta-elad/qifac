@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import chain
-from typing import Iterable, List, Set, Tuple
+from typing import Dict, Iterable, List, Set, Tuple
 
 import z3
 
@@ -18,6 +18,30 @@ class Problem:
     forall_assertions: List[z3.QuantifierRef]
     context: z3.Context = field(default_factory=z3.Context)
 
+    @cached_property
+    def sorts(self) -> Set[z3.SortRef]:
+        return {self.sort}
+
+    @cached_property
+    def sort_constants(self) -> Dict[z3.SortRef, Set[z3.Const]]:
+        result: Dict[z3.SortRef, Set[z3.Const]] = {}
+        for const in self.constants:
+            sort = const.decl().range()
+            result.setdefault(sort, set())
+            result[sort].add(const)
+
+        return result
+
+    @cached_property
+    def sort_functions(self) -> Dict[z3.SortRef, Set[z3.FuncDeclRef]]:
+        result: Dict[z3.SortRef, Set[z3.FuncDeclRef]] = {}
+        for fun in self.functions:
+            sort = fun.range()
+            result.setdefault(sort, set())
+            result[sort].add(fun)
+
+        return result
+
     def full_query(self) -> z3.Solver:
         solver = z3.Solver()
         solver.add(*chain(self.qf_assertions, self.forall_assertions))
@@ -29,9 +53,10 @@ class Problem:
         return solver
 
     def limit(self, solver: z3.Solver, size: int) -> None:
-        cs = [z3.Const(f"Size!{i}", self.sort) for i in range(size)]
-        y = z3.Const("y", self.sort)
-        solver.add(z3.Exists(cs, z3.ForAll([y], z3.Or(*(y == x for x in cs)))))
+        for sort in self.sorts:
+            cs = [z3.Const(f"{sort}!Size!{i}", sort) for i in range(size)]
+            y = z3.Const(f"{sort}!y", sort)
+            solver.add(z3.Exists(cs, z3.ForAll([y], z3.Or(*(y == x for x in cs)))))
 
     def minimize_model(
         self, solver: z3.Solver, size: int = 1
@@ -84,17 +109,31 @@ class Problem:
         return models
 
     @cached_property
-    def ground_term_adt(self) -> z3.DatatypeRef:
-        GroundTerm = z3.Datatype("GroundTerm", ctx=self.context)
-        for constant in self.constants:
-            GroundTerm.declare(f"GT_{constant}")
+    def ground_term_adts(self) -> Dict[z3.SortRef, z3.DatatypeRef]:
+        pre_sorts = {
+            sort: z3.Datatype(f"{sort}_GroundTerm", ctx=self.context)
+            for sort in self.sorts
+        }
 
-        for fun in self.functions:
-            GroundTerm.declare(
-                f"GT_{fun.name()}",
-                *((f"GT_{fun.name()}_{i}", GroundTerm) for i in range(fun.arity())),
-            )
-        return GroundTerm.create()
+        for sort, constants in self.sort_constants.items():
+            for const in constants:
+                pre_sorts[sort].declare(f"{sort}_GT_{const}")
+
+        for sort, functions in self.sort_functions.items():
+            for fun in functions:
+                pre_sorts[sort].declare(
+                    f"{sort}_GT_{fun.name()}",
+                    *(
+                        (f"{sort}_GT_{fun.name()}_{i}", pre_sorts[fun.domain(i)])
+                        for i in range(fun.arity())
+                    ),
+                )
+
+        return dict(zip(self.sorts, z3.CreateDatatypes(*pre_sorts.values())))
+
+    @cached_property
+    def ground_term_adt(self) -> z3.DatatypeRef:
+        return self.ground_term_adts[self.sort]
 
     @cached_property
     def instantiation_adt(self) -> z3.DatatypeRef:
@@ -111,7 +150,7 @@ class Problem:
         return Instantiation.create()
 
     def match_term(self, term: z3.ExprRef, fun: z3.FuncDeclRef) -> bool:
-        matcher = getattr(self.ground_term_adt, f"is_GT_{fun.name()}")
+        matcher = getattr(self.ground_term_adt, f"is_{fun.range()}_GT_{fun.name()}")
         simplified = z3.simplify(matcher(term))
         if z3.is_true(simplified):
             return True
@@ -121,7 +160,7 @@ class Problem:
             raise RuntimeError(f"Unmatchable term {term}")
 
     def extract_term(self, term: z3.ExprRef, fun: z3.FuncDeclRef, i: int) -> z3.ExprRef:
-        extractor = getattr(self.ground_term_adt, f"GT_{fun.name()}_{i}")
+        extractor = getattr(self.ground_term_adt, f"{fun.range()}_GT_{fun.name()}_{i}")
         return self.adt_to_term(z3.simplify(extractor(term)))
 
     def apply_term(self, term: z3.ExprRef, fun: z3.FuncDeclRef) -> z3.ExprRef:

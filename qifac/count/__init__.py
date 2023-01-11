@@ -1,6 +1,6 @@
 import io
 from functools import cache
-from typing import Any, Dict, Set, TextIO, Tuple, TypeVar, Iterable, Callable
+from typing import Any, Callable, Dict, Iterable, Set, TextIO, Tuple, TypeVar
 
 import z3
 
@@ -49,8 +49,12 @@ def is_ground(formula: z3.ExprRef) -> bool:
 
 @cache
 def find_terms(formula: z3.ExprRef) -> Set[z3.ExprRef]:
-    terms= set()
-    if is_ground(formula) and z3.is_app(formula) and formula.decl().kind() == z3.Z3_OP_UNINTERPRETED:
+    terms = set()
+    if (
+        is_ground(formula)
+        and z3.is_app(formula)
+        and formula.decl().kind() == z3.Z3_OP_UNINTERPRETED
+    ):
         decl = formula.decl()
         key = decl.range()
         if key != z3.BoolSort():
@@ -61,6 +65,7 @@ def find_terms(formula: z3.ExprRef) -> Set[z3.ExprRef]:
 
     return terms
 
+
 def find_all_terms(smt_file: TextIO) -> Set[z3.ExprRef]:
     all_terms = set()
     solver = z3.Solver()
@@ -70,6 +75,7 @@ def find_all_terms(smt_file: TextIO) -> Set[z3.ExprRef]:
         all_terms |= find_terms(assertion)
 
     return all_terms
+
 
 def count_terms(smt_file: TextIO, show: bool = False) -> None:
     terms: Dict[z3.SortRef, Set[z3.ExprRef]] = {}
@@ -85,7 +91,6 @@ def count_terms(smt_file: TextIO, show: bool = False) -> None:
             print(f"{sort} => {sort_terms}")
         else:
             print(f"{sort} => {len(sort_terms)}")
-
 
 
 def count_quantifiers(smt_file: TextIO) -> TextIO:
@@ -135,15 +140,19 @@ def count_quantifiers(smt_file: TextIO) -> TextIO:
     buffer.seek(0)
     return buffer
 
-T = TypeVar('T')
-U = TypeVar('U')
-V = TypeVar('V')
+
+T = TypeVar("T")
+U = TypeVar("U")
+V = TypeVar("V")
+
 
 def extend_pair(pair: Tuple[T, U], value: V) -> Tuple[T, Tuple[U, V]]:
     return pair[0], (pair[1], value)
 
+
 def max_pair(iterable: Iterable[Tuple[int, T]]) -> Tuple[int, T]:
     return max(iterable, key=lambda pair: pair[0])
+
 
 def group_by(iterable: Iterable[T], key: Callable[[T], U]) -> Dict[U, Set[T]]:
     grouped: Dict[U, Set[T]] = {}
@@ -167,10 +176,13 @@ def count_depth_diff(smt_file: TextIO, instantiated_file: TextIO) -> None:
         if formula in original_terms:
             return 0, formula
 
-        term_depth, original_term = max_pair(depth_diff(child) for child in formula.children())
+        term_depth, original_term = max_pair(
+            depth_diff(child) for child in formula.children()
+        )
         return term_depth + 1, original_term
 
     for sort, terms in per_sort.items():
-        max_depth, (org_term, inst_term) = max_pair(extend_pair(depth_diff(term), term) for term in terms)
+        max_depth, (org_term, inst_term) = max_pair(
+            extend_pair(depth_diff(term), term) for term in terms
+        )
         print(f"{sort}: {inst_term} is {max_depth} from {org_term}")
-
