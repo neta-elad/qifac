@@ -79,7 +79,8 @@ class TermSolver:
                 eqs = [
                     to_bool(
                         z3.simplify(
-                            w == new_adt_model.eval(model.interpret_any(new_adt_model[t]))
+                            w
+                            == new_adt_model.eval(model.interpret_any(new_adt_model[t]))
                         )
                     )
                     for t in self.terms_for_instantiation
@@ -93,7 +94,8 @@ class TermSolver:
             elems = [model.ref.eval(t) for t in ts]
             print(f"    ground terms evaluate to: {elems}")
             assert [model.universe.index(e) for e in elems] == [
-                model.elements.index(new_adt_model[w]) for w in model.witnesses[i]
+                model.sort_elements[sort].index(new_adt_model[w])
+                for sort, w in model.witnesses_with_sorts[i]
             ]
             instantiation = self.problem.quantified_assertions[i].instantiate(*ts)
 

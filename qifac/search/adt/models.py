@@ -54,10 +54,6 @@ class RefModel:
         return {sort: self.sorts_and_elements[sort][1] for sort in self.problem.sorts}
 
     @cached_property
-    def sort(self) -> z3.SortRef:
-        return self.sorts[self.problem.sort]
-
-    @cached_property
     def elements(self) -> List[z3.Const]:
         return self.sort_elements[self.problem.sort]
 
@@ -70,10 +66,6 @@ class RefModel:
             ]
             for sort in self.problem.sorts
         }
-
-    @cached_property
-    def constant_interpretations(self) -> List[int]:
-        return self.sort_constant_interpretations[self.problem.sort]
 
     @cached_property
     def sort_function_interpretations(
@@ -106,15 +98,13 @@ class RefModel:
         }
 
     @cached_property
-    def function_interpretations(self) -> List[Mapping[Tuple[int, ...], int]]:
-        return self.sort_function_interpretations[self.problem.sort]
-
-    @cached_property
     def interpret(self) -> z3.FuncDeclRef:
         return self.sort_interpret[self.problem.sort]
 
     def interpret_any(self, term: z3.ExprRef) -> z3.ExprRef:
-        return self.sort_interpret[self.problem.ground_term_adts_to_sort[term.decl().range()]](term)
+        return self.sort_interpret[
+            self.problem.ground_term_adts_to_sort[term.decl().range()]
+        ](term)
 
     @cached_property
     def sort_interpret(self) -> Dict[z3.SortRef, z3.FuncDeclRef]:
@@ -136,12 +126,15 @@ class RefModel:
             t = ts[sort]
             entries = []
             for c, ci in zip(
-                self.problem.sort_constants[sort], self.constant_interpretations
+                self.problem.sort_constants[sort],
+                self.sort_constant_interpretations[sort],
             ):
                 entries.append(
                     (
-                        getattr(self.problem.ground_term_adts[sort], f"is_{sort}_GT_{c}")(t),
-                        self.elements[ci],
+                        getattr(
+                            self.problem.ground_term_adts[sort], f"is_{sort}_GT_{c}"
+                        )(t),
+                        self.sort_elements[sort][ci],
                     )
                 )
             for f, fi in zip(
@@ -168,15 +161,15 @@ class RefModel:
                                             f"{sort}_GT_{f}_{i}",
                                         )(t)
                                     )
-                                    == self.elements[xs[i]]
+                                    == self.sort_elements[sort][xs[i]]
                                     for i in range(f.arity())
                                 ),
                             ),
-                            self.elements[fi[xs]],
+                            self.sort_elements[sort][fi[xs]],
                         )
                     )
 
-            definition = self.elements[0]
+            definition = self.sort_elements[sort][0]
             for condition, if_true in reversed(entries):
                 definition = z3.If(condition, if_true, definition)
             z3.RecAddDefinition(interpret, t, definition)
@@ -230,9 +223,12 @@ class RefModel:
         return [
             z3.Function(
                 f"body_{self.id}_{i}",
-                *([self.sort] * f.num_vars + [z3.BoolSort(ctx=self.problem.context)]),
+                *(
+                    [self.sorts[sort] for sort in q.variables]
+                    + [z3.BoolSort(ctx=self.problem.context)]
+                ),
             )
-            for i, f in enumerate(self.problem.quantified_assertions)
+            for i, q in enumerate(self.problem.quantified_assertions)
         ]
 
     @cached_property
@@ -243,21 +239,27 @@ class RefModel:
         ]
 
     @cached_property
-    def witnesses(self) -> List[List[z3.Const]]:
+    def witnesses_with_sorts(self) -> List[List[Tuple[z3.SortRef, z3.Const]]]:
+
         return [
             [
-                z3.Const(f"witness_{self.id}_{i}_{j}", self.sort)
-                for j in range(quantifier.num_vars)
+                (sort, z3.Const(f"witness_{self.id}_{i}_{j}", self.sorts[sort]))
+                for j, sort in enumerate(quantifier.variables)
             ]
             for i, quantifier in enumerate(self.problem.quantified_assertions)
         ]
 
+    @cached_property
+    def witnesses(self) -> List[List[z3.Const]]:
+        return [
+            [const for _sort, const in consts] for consts in self.witnesses_with_sorts
+        ]
+
     def add_bodies(self, solver: z3.Solver) -> None:
         for quantifier, body in zip(self.problem.quantified_assertions, self.bodies):
-            num_vars = quantifier.num_vars
             for xs, es in zip(
-                product(self.universe, repeat=num_vars),
-                product(self.elements, repeat=num_vars),
+                product(*[self.sort_universe[sort] for sort in quantifier.variables]),
+                product(*[self.sort_elements[sort] for sort in quantifier.variables]),
             ):
                 res = to_bool(
                     self.ref.eval(
