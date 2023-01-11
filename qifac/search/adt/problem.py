@@ -1,11 +1,71 @@
 from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import chain
-from typing import Dict, Iterable, List, Set, Tuple
+from typing import Dict, Iterable, List, Set, Tuple, cast
 
 import z3
 
 from .utils import Relation
+
+
+def identify_variables(formula: z3.ExprRef) -> List[z3.SortRef]:
+    variables = []
+    if z3.is_quantifier(formula):
+        variables = [formula.var_sort(i) for i in range(formula.num_vars())]
+
+    for child in formula.children():
+        variables += identify_variables(child)
+
+    return variables
+
+
+def instantiate_all(formula: z3.ExprRef, terms: List[z3.ExprRef]) -> z3.ExprRef:
+    if z3.is_quantifier(formula):
+        num_vars = formula.num_vars()
+        first_terms = reversed(terms[:num_vars])
+        rest_terms = terms[num_vars:]
+        instantiation = z3.substitute_vars(formula.body(), *first_terms)
+        return instantiate_all(instantiation, rest_terms)
+    elif z3.is_not(formula):
+        sub_formula = cast(z3.BoolRef, instantiate_all(formula.children()[0], terms))
+        return z3.Not(sub_formula)
+    elif z3.is_implies(formula):
+        antecedent, consequent = formula.children()
+        instantiated_antecedent = cast(z3.BoolRef, instantiate_all(antecedent, terms))
+        instantiated_consequent = cast(z3.BoolRef, instantiate_all(consequent, terms))
+        return z3.Implies(instantiated_antecedent, instantiated_consequent)
+    elif z3.is_or(formula):
+        return z3.Or(
+            *[
+                cast(z3.BoolRef, instantiate_all(child, terms))
+                for child in formula.children()
+            ]
+        )
+    elif z3.is_and(formula):
+        return z3.And(
+            *[
+                cast(z3.BoolRef, instantiate_all(child, terms))
+                for child in formula.children()
+            ]
+        )
+    else:
+        return formula
+
+
+@dataclass
+class QuantifiedAssertion:
+    assertion: z3.BoolRef
+
+    @cached_property
+    def variables(self) -> List[z3.SortRef]:
+        return identify_variables(self.assertion)
+
+    @cached_property
+    def num_vars(self) -> int:
+        return len(self.variables)
+
+    def instantiate(self, *terms: z3.ExprRef) -> z3.BoolRef:
+        return cast(z3.BoolRef, instantiate_all(self.assertion, list(terms)))
 
 
 @dataclass
@@ -17,6 +77,10 @@ class Problem:
     qf_assertions: List[z3.BoolRef]
     forall_assertions: List[z3.QuantifierRef]
     context: z3.Context = field(default_factory=z3.Context)
+
+    @cached_property
+    def quantified_assertions(self) -> List[QuantifiedAssertion]:
+        return [QuantifiedAssertion(assertion) for assertion in self.forall_assertions]
 
     @cached_property
     def sorts(self) -> Set[z3.SortRef]:

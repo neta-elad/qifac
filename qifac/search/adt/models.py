@@ -227,16 +227,16 @@ class RefModel:
         return [
             z3.Function(
                 f"body_{self.id}_{i}",
-                *([self.sort] * f.num_vars() + [z3.BoolSort(ctx=self.problem.context)]),
+                *([self.sort] * f.num_vars + [z3.BoolSort(ctx=self.problem.context)]),
             )
-            for i, f in enumerate(self.problem.forall_assertions)
+            for i, f in enumerate(self.problem.quantified_assertions)
         ]
 
     @cached_property
     def indicators(self) -> List[z3.BoolRef]:
         return [
             z3.Bool(f"violate_{self.id}_{i}", ctx=self.problem.context)
-            for i in range(len(self.problem.forall_assertions))
+            for i in range(len(self.problem.quantified_assertions))
         ]
 
     @cached_property
@@ -244,21 +244,21 @@ class RefModel:
         return [
             [
                 z3.Const(f"witness_{self.id}_{i}_{j}", self.sort)
-                for j in range(quantifier.num_vars())
+                for j in range(quantifier.num_vars)
             ]
-            for i, quantifier in enumerate(self.problem.forall_assertions)
+            for i, quantifier in enumerate(self.problem.quantified_assertions)
         ]
 
     def add_bodies(self, solver: z3.Solver) -> None:
-        for quantifier, body in zip(self.problem.forall_assertions, self.bodies):
-            num_vars = quantifier.num_vars()
+        for quantifier, body in zip(self.problem.quantified_assertions, self.bodies):
+            num_vars = quantifier.num_vars
             for xs, es in zip(
                 product(self.universe, repeat=num_vars),
                 product(self.elements, repeat=num_vars),
             ):
                 res = to_bool(
                     self.ref.eval(
-                        z3.substitute_vars(quantifier.body(), *xs),
+                        quantifier.instantiate(*xs),
                         model_completion=True,
                     )
                 )
@@ -271,7 +271,7 @@ class RefModel:
         solver.add(z3.Or(*self.indicators))
 
     def add_witnesses(self, solver: z3.Solver, terms: Iterable[z3.ExprRef]) -> None:
-        for i in range(len(self.problem.forall_assertions)):
+        for i in range(len(self.problem.quantified_assertions)):
             solver.add(
                 z3.Implies(
                     self.indicators[i],

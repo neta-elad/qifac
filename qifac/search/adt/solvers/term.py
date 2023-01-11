@@ -68,7 +68,9 @@ class TermSolver:
         for i, v in enumerate(violated):
             if not v:
                 continue
-            print(f"    violates assertion {i}: {self.problem.forall_assertions[i]}")
+            print(
+                f"    violates assertion {i}: {self.problem.quantified_assertions[i]}"
+            )
             ws = [new_adt_model[w] for w in model.witnesses[i]]
             print(f"    witnesses are: {ws}")
             adts = []
@@ -92,9 +94,8 @@ class TermSolver:
             assert [model.universe.index(e) for e in elems] == [
                 model.elements.index(new_adt_model[w]) for w in model.witnesses[i]
             ]
-            instantiation = z3.substitute_vars(
-                self.problem.forall_assertions[i].body(), *ts
-            )
+            instantiation = self.problem.quantified_assertions[i].instantiate(*ts)
+
             print(f"    ground instance is: {instantiation}")
             print(f"    it evaluates to: {model.ref.eval(instantiation)}")
             assert z3.is_false(model.ref.eval(instantiation)), (
