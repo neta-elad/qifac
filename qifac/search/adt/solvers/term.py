@@ -93,7 +93,7 @@ class TermSolver:
             print(f"    ground terms are: {ts}")
             elems = [model.ref.eval(t) for t in ts]
             print(f"    ground terms evaluate to: {elems}")
-            assert [model.universe.index(e) for e in elems] == [
+            assert [model.sort_universe[e.decl().range()].index(e) for e in elems] == [
                 model.sort_elements[sort].index(new_adt_model[w])
                 for sort, w in model.witnesses_with_sorts[i]
             ]
