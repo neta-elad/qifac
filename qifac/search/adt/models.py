@@ -113,6 +113,9 @@ class RefModel:
     def interpret(self) -> z3.FuncDeclRef:
         return self.sort_interpret[self.problem.sort]
 
+    def interpret_any(self, term: z3.ExprRef) -> z3.ExprRef:
+        return self.sort_interpret[self.problem.ground_term_adts_to_sort[term.decl().range()]](term)
+
     @cached_property
     def sort_interpret(self) -> Dict[z3.SortRef, z3.FuncDeclRef]:
         ts = {
@@ -137,7 +140,7 @@ class RefModel:
             ):
                 entries.append(
                     (
-                        getattr(self.problem.ground_term_adt, f"is_{sort}_GT_{c}")(t),
+                        getattr(self.problem.ground_term_adts[sort], f"is_{sort}_GT_{c}")(t),
                         self.elements[ci],
                     )
                 )
@@ -155,13 +158,13 @@ class RefModel:
                         (
                             z3.And(
                                 getattr(
-                                    self.problem.ground_term_adt,
+                                    self.problem.ground_term_adts[sort],
                                     f"is_{sort}_GT_{f}",
                                 )(t),
                                 *(
                                     interpret(
                                         getattr(
-                                            self.problem.ground_term_adt,
+                                            self.problem.ground_term_adts[sort],
                                             f"{sort}_GT_{f}_{i}",
                                         )(t)
                                     )
@@ -282,7 +285,7 @@ class RefModel:
                 solver.add(
                     z3.Implies(
                         self.indicators[i],
-                        z3.Or(*(w == self.interpret(t) for t in terms)),
+                        z3.Or(*(w == self.interpret_any(t) for t in terms)),
                     )
                 )
 

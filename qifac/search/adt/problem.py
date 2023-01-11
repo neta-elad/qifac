@@ -173,7 +173,7 @@ class Problem:
         return models
 
     @cached_property
-    def ground_term_adts(self) -> Dict[z3.SortRef, z3.DatatypeRef]:
+    def ground_term_adts(self) -> Dict[z3.SortRef, z3.DatatypeSortRef]:
         pre_sorts = {
             sort: z3.Datatype(f"{sort}_GroundTerm", ctx=self.context)
             for sort in self.sorts
@@ -196,11 +196,15 @@ class Problem:
         return dict(zip(self.sorts, z3.CreateDatatypes(*pre_sorts.values())))
 
     @cached_property
-    def ground_term_adt(self) -> z3.DatatypeRef:
+    def ground_term_adts_to_sort(self) -> Dict[z3.SortRef, z3.SortRef]:
+        return {datatype: sort for sort, datatype in self.ground_term_adts.items()}
+
+    @cached_property
+    def ground_term_adt(self) -> z3.DatatypeSortRef:
         return self.ground_term_adts[self.sort]
 
     @cached_property
-    def instantiation_adt(self) -> z3.DatatypeRef:
+    def instantiation_adt(self) -> z3.DatatypeSortRef:
         Instantiation = z3.Datatype("Instantiation", ctx=self.context)
         for qid, quantifier in enumerate(self.forall_assertions):
             Instantiation.declare(
@@ -214,7 +218,8 @@ class Problem:
         return Instantiation.create()
 
     def match_term(self, term: z3.ExprRef, fun: z3.FuncDeclRef) -> bool:
-        matcher = getattr(self.ground_term_adt, f"is_{fun.range()}_GT_{fun.name()}")
+        sort = fun.range()
+        matcher = getattr(self.ground_term_adts[sort], f"is_{sort}_GT_{fun.name()}")
         simplified = z3.simplify(matcher(term))
         if z3.is_true(simplified):
             return True
@@ -224,7 +229,8 @@ class Problem:
             raise RuntimeError(f"Unmatchable term {term}")
 
     def extract_term(self, term: z3.ExprRef, fun: z3.FuncDeclRef, i: int) -> z3.ExprRef:
-        extractor = getattr(self.ground_term_adt, f"{fun.range()}_GT_{fun.name()}_{i}")
+        sort = fun.range()
+        extractor = getattr(self.ground_term_adts[sort], f"{sort}_GT_{fun.name()}_{i}")
         return self.adt_to_term(z3.simplify(extractor(term)))
 
     def apply_term(self, term: z3.ExprRef, fun: z3.FuncDeclRef) -> z3.ExprRef:

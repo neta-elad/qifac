@@ -23,8 +23,9 @@ class TermSolver:
     @cached_property
     def terms_for_instantiation(self) -> List[z3.Const]:
         return [
-            z3.Const(f"t_{i}", self.problem.ground_term_adt)
+            z3.Const(f"t_{sort}_{i}", self.problem.ground_term_adts[sort])
             for i in range(self.n_terms)
+            for sort in self.problem.sorts
         ]
 
     @cached_property
@@ -78,7 +79,7 @@ class TermSolver:
                 eqs = [
                     to_bool(
                         z3.simplify(
-                            w == new_adt_model.eval(model.interpret(new_adt_model[t]))
+                            w == new_adt_model.eval(model.interpret_any(new_adt_model[t]))
                         )
                     )
                     for t in self.terms_for_instantiation
