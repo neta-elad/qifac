@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
-from functools import cached_property
+from functools import cache, cached_property
 from itertools import chain
-from typing import Dict, Iterable, List, Set, Tuple, cast
+from typing import Dict, Iterable, List, Set, TextIO, Tuple, cast
 
 import z3
 
-from .utils import Relation
+from .utils import Relation, cast_relation
 
 
 def identify_variables(formula: z3.ExprRef) -> List[z3.SortRef]:
@@ -77,6 +77,48 @@ class Problem:
     qf_assertions: List[z3.BoolRef]
     forall_assertions: List[z3.QuantifierRef]
     context: z3.Context = field(default_factory=z3.Context)
+
+    @classmethod
+    def from_smt_file(cls, smt_file: TextIO) -> "Problem":
+        sorts = set()
+        constants = set()
+        functions = set()
+        relations = set()
+        qf = []
+        forall = []
+
+        @cache
+        def walk_tree(formula: z3.ExprRef) -> bool:
+            if z3.is_app(formula) and formula.decl().kind() == z3.Z3_OP_UNINTERPRETED:
+                decl = formula.decl()
+
+                if decl.range().kind() == z3.Z3_UNINTERPRETED_SORT:
+                    sorts.add(decl.range())
+
+                for i in range(decl.arity()):
+                    if decl.domain(i).kind() == z3.Z3_UNINTERPRETED_SORT:
+                        sorts.add(decl.domain(i))
+
+                if decl.arity() == 0:
+                    constants.add(cast(z3.Const, decl()))
+                elif decl.range() == z3.BoolSort():
+                    relations.add(cast_relation(decl))
+                else:
+                    functions.add(decl)
+
+            calls = [walk_tree(child) for child in formula.children()]
+
+            return z3.is_quantifier(formula) or any(calls)
+
+        solver = z3.Solver()
+        solver.from_string(smt_file.read())
+        for assertion in solver.assertions():
+            if walk_tree(assertion):
+                forall.append(cast(z3.QuantifierRef, assertion))
+            else:
+                qf.append(assertion)
+
+        return cls(sorts, constants, functions, relations, qf, forall)
 
     @cached_property
     def quantified_assertions(self) -> List[QuantifiedAssertion]:

@@ -11,9 +11,9 @@ def prepare_consensus() -> Tuple[List[RefModel], Problem]:
     problem, terms = many_sorted_consensus()
     print_and_check("Full query", problem.full_query())
     print_and_check("Ground query", problem.ground_query())
-    z3_models = problem.generate_models(terms)
-    initial_models = [RefModel(problem, i, model) for i, model in enumerate(z3_models)]
-    return initial_models, problem
+    # z3_models = problem.generate_models(terms)
+    # initial_models = [RefModel(problem, i, model) for i, model in enumerate(z3_models)]
+    return [], problem
 
 
 def print_and_check(title: str, solver: z3.Solver) -> None:
