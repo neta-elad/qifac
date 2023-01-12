@@ -1,6 +1,6 @@
 import io
 from functools import cache
-from typing import Any, Callable, Dict, Iterable, Set, TextIO, Tuple, TypeVar
+from typing import Any, Callable, Dict, Iterable, Set, TextIO, Tuple, TypeVar, cast
 
 import z3
 
@@ -154,7 +154,7 @@ def max_pair(iterable: Iterable[Tuple[int, T]]) -> Tuple[int, T]:
     try:
         return max(iterable, key=lambda pair: pair[0])
     except:
-        return 0, None
+        return 0, cast(T, None)
 
 
 def group_by(iterable: Iterable[T], key: Callable[[T], U]) -> Dict[U, Set[T]]:

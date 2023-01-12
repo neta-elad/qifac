@@ -2,13 +2,13 @@ from typing import List, Tuple
 
 import z3
 
-from .examples import consensus
+from .examples import many_sorted_consensus
 from .models import RefModel
 from .problem import Problem
 
 
 def prepare_consensus() -> Tuple[List[RefModel], Problem]:
-    problem, terms = consensus()
+    problem, terms = many_sorted_consensus()
     print_and_check("Full query", problem.full_query())
     print_and_check("Ground query", problem.ground_query())
     z3_models = problem.generate_models(terms)

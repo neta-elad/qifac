@@ -155,13 +155,13 @@ class RefModel:
                                     f"is_{sort}_GT_{f}",
                                 )(t),
                                 *(
-                                    interpret(
+                                    interprets[f.domain(i)](
                                         getattr(
                                             self.problem.ground_term_adts[sort],
                                             f"{sort}_GT_{f}_{i}",
                                         )(t)
                                     )
-                                    == self.sort_elements[sort][xs[i]]
+                                    == self.sort_elements[f.domain(i)][xs[i]]
                                     for i in range(f.arity())
                                 ),
                             ),
@@ -287,7 +287,14 @@ class RefModel:
                 solver.add(
                     z3.Implies(
                         self.indicators[i],
-                        z3.Or(*(w == self.interpret_any(t) for t in terms)),
+                        z3.Or(
+                            *(
+                                w == self.interpret_any(t)
+                                for t in terms
+                                if w.decl().range()
+                                == self.interpret_any(t).decl().range()
+                            )
+                        ),
                     )
                 )
 

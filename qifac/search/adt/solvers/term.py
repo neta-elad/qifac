@@ -76,15 +76,26 @@ class TermSolver:
             print(f"    witnesses are: {ws}")
             adts = []
             for w in ws:
-                eqs = [
-                    to_bool(
-                        z3.simplify(
-                            w
-                            == new_adt_model.eval(model.interpret_any(new_adt_model[t]))
+
+                def same_sort_eq_or_false(t: z3.ExprRef) -> bool:
+                    if (
+                        w.decl().range()
+                        == new_adt_model.eval(model.interpret_any(new_adt_model[t]))
+                        .decl()
+                        .range()
+                    ):
+                        return to_bool(
+                            z3.simplify(
+                                w
+                                == new_adt_model.eval(
+                                    model.interpret_any(new_adt_model[t])
+                                )
+                            )
                         )
-                    )
-                    for t in self.terms_for_instantiation
-                ]
+                    else:
+                        return False
+
+                eqs = [same_sort_eq_or_false(t) for t in self.terms_for_instantiation]
                 assert any(eqs)
                 j = eqs.index(True)
                 adts.append(new_adt_model[self.terms_for_instantiation[j]])

@@ -70,7 +70,7 @@ class QuantifiedAssertion:
 
 @dataclass
 class Problem:
-    sort: z3.SortRef
+    sorts: Set[z3.SortRef]
     constants: Set[z3.Const]
     functions: Set[z3.FuncDeclRef]
     relations: Set[Relation]
@@ -83,26 +83,26 @@ class Problem:
         return [QuantifiedAssertion(assertion) for assertion in self.forall_assertions]
 
     @cached_property
-    def sorts(self) -> Set[z3.SortRef]:
-        return {self.sort}
+    def sort(self) -> z3.SortRef:
+        assert False, "Trying to use old single-sort search"
+        assert len(self.sorts) == 1
+        return list(self.sorts)[0]
 
     @cached_property
     def sort_constants(self) -> Dict[z3.SortRef, Set[z3.Const]]:
-        result: Dict[z3.SortRef, Set[z3.Const]] = {}
+        result: Dict[z3.SortRef, Set[z3.Const]] = {sort: set() for sort in self.sorts}
         for const in self.constants:
-            sort = const.decl().range()
-            result.setdefault(sort, set())
-            result[sort].add(const)
+            result[const.decl().range()].add(const)
 
         return result
 
     @cached_property
     def sort_functions(self) -> Dict[z3.SortRef, Set[z3.FuncDeclRef]]:
-        result: Dict[z3.SortRef, Set[z3.FuncDeclRef]] = {}
+        result: Dict[z3.SortRef, Set[z3.FuncDeclRef]] = {
+            sort: set() for sort in self.sorts
+        }
         for fun in self.functions:
-            sort = fun.range()
-            result.setdefault(sort, set())
-            result[sort].add(fun)
+            result[fun.range()].add(fun)
 
         return result
 
@@ -141,7 +141,18 @@ class Problem:
     def all_live(
         self, xs: Iterable[z3.Const], live_terms: Iterable[z3.ExprRef]
     ) -> z3.BoolRef:
-        return z3.And(*[z3.Or(*[x == t for t in live_terms]) for x in xs])
+        return z3.And(
+            *[
+                z3.Or(
+                    *[
+                        x == t
+                        for t in live_terms
+                        if x.decl().range() == t.decl().range()
+                    ]
+                )
+                for x in xs
+            ]
+        )
 
     def forall_live(
         self, xs: List[z3.Const], live_terms: Iterable[z3.ExprRef], body: z3.BoolRef
@@ -220,6 +231,8 @@ class Problem:
     def match_term(self, term: z3.ExprRef, fun: z3.FuncDeclRef) -> bool:
         sort = fun.range()
         matcher = getattr(self.ground_term_adts[sort], f"is_{sort}_GT_{fun.name()}")
+        if matcher.domain(0) != term.decl().range():
+            return False
         simplified = z3.simplify(matcher(term))
         if z3.is_true(simplified):
             return True
