@@ -1,0 +1,155 @@
+Terms
+13-skolemized.smt2
+T@U => 200
+T@T => 94
+Int => 11
+ 
+Terms
+16-booleanized.smt2
+T@U => 220
+T@T => 196
+Int => 12
+ 
+Terms
+16a-qf.smt2
+T@U => 184
+T@T => 91
+Int => 9
+ 
+Terms
+16b-inst.smt2
+T@U => 205
+T@T => 112
+Int => 2
+ 
+Terms
+17a-clear.smt2
+T@U => 47
+T@T => 27
+Int => 3
+ 
+Terms
+18a-qf-core.smt2
+T@U => 14
+T@T => 12
+Int => 1
+ 
+Terms
+18b-inst-core.smt2
+T@U => 32
+Int => 1
+T@T => 21
+ 
+Symbols
+13-skolemized.smt2
+(0, T@T) => 11
+(0, T@U) => 98
+(0, Int) => 1
+(0, Bool) => 1
+(1, Int) => 2
+(1, T@U) => 18
+(1, T@T) => 6
+(1, Real) => 1
+(1, Bool) => 12
+(1, RoundingMode) => 1
+(1, String) => 1
+(1, ReSort(String)) => 1
+(2, T@T) => 3
+(2, Bool) => 3
+(2, T@U) => 4
+(2, Int) => 1
+(3, Bool) => 1
+(3, T@U) => 1
+(4, T@U) => 2
+ 
+Symbols
+16-booleanized.smt2
+(0, T@T) => 11
+(0, Bool) => 42
+(0, T@U) => 98
+(0, Int) => 1
+(1, Int) => 1
+(1, T@T) => 6
+(1, Bool) => 12
+(1, T@U) => 13
+(2, Bool) => 3
+(2, T@T) => 3
+(2, Int) => 1
+(2, T@U) => 4
+(3, Bool) => 1
+(3, T@U) => 1
+(4, T@U) => 2
+ 
+Symbols
+16a-qf.smt2
+(0, T@T) => 11
+(0, T@U) => 96
+(0, Int) => 1
+(0, Bool) => 1
+(1, Int) => 1
+(1, T@T) => 4
+(1, Bool) => 6
+(1, T@U) => 4
+(2, Bool) => 2
+(2, T@T) => 2
+(2, Int) => 1
+(3, Bool) => 1
+(3, T@U) => 1
+(4, T@U) => 1
+ 
+Symbols
+16b-inst.smt2
+(0, Bool) => 42
+(0, Int) => 1
+(0, T@U) => 89
+(0, T@T) => 4
+(1, T@T) => 4
+(1, T@U) => 13
+(1, Bool) => 10
+(1, Int) => 1
+(2, T@U) => 4
+(2, T@T) => 2
+(2, Bool) => 3
+ 
+Symbols
+17a-clear.smt2
+(0, Bool) => 18
+(0, T@U) => 16
+(0, T@T) => 5
+(0, Int) => 1
+(1, T@T) => 5
+(1, Bool) => 10
+(1, T@U) => 12
+(2, Bool) => 3
+(2, Int) => 1
+(2, T@U) => 4
+(2, T@T) => 2
+(3, T@U) => 1
+(3, Bool) => 1
+(4, T@U) => 1
+ 
+Symbols
+18a-qf-core.smt2
+(0, T@U) => 9
+(0, T@T) => 4
+(0, Int) => 1
+(0, Bool) => 1
+(1, T@T) => 4
+(1, Bool) => 4
+(1, T@U) => 3
+(2, Bool) => 2
+(3, T@U) => 1
+ 
+Symbols
+18b-inst-core.smt2
+(0, Bool) => 17
+(0, Int) => 1
+(0, T@U) => 7
+(0, T@T) => 4
+(1, T@T) => 3
+(1, T@U) => 12
+(1, Bool) => 10
+(2, T@T) => 2
+(2, Bool) => 3
+(2, T@U) => 4
+ 

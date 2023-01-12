@@ -1,0 +1,141 @@
+Terms - Original
+Int => 21
+T@U => 44
+T@T => 34
+
+Terms - All
+T@T => 755
+T@U => 2226
+Int => 91
+
+Terms - QF
+T@U => 19
+Int => 9
+T@T => 29
+
+Terms - Inst
+T@T => 747
+T@U => 2224
+Int => 83
+
+Terms - Core
+T@U => 210
+Int => 50
+T@T => 131
+
+Terms - QF Core
+T@T => 14
+Int => 1
+T@U => 10
+
+Terms - Inst Core
+T@U => 184
+T@T => 125
+Int => 40
+
+03-skolemized.smt2
+(0, T@T) => 11
+(0, T@U) => 19
+(0, Int) => 1
+(0, Bool) => 2
+(1, Int) => 5
+(1, T@U) => 14
+(1, T@T) => 7
+(1, Real) => 1
+(1, Bool) => 3
+(1, RoundingMode) => 1
+(1, String) => 1
+(1, ReSort(String)) => 1
+(2, T@T) => 2
+(2, T@U) => 14
+(2, Bool) => 9
+(2, Int) => 1
+(3, T@U) => 3
+(3, Bool) => 2
+(4, T@U) => 2
+ 
+06-booleanized.smt2
+(0, T@T) => 11
+(0, Bool) => 101
+(0, T@U) => 19
+(0, Int) => 1
+(1, Int) => 4
+(1, T@T) => 7
+(1, Bool) => 3
+(1, T@U) => 8
+(2, T@T) => 2
+(2, Int) => 1
+(2, Bool) => 9
+(2, T@U) => 14
+(3, T@U) => 2
+(3, Bool) => 2
+(4, T@U) => 2
+ 
+06a-qf.smt2
+(0, T@T) => 11
+(0, T@U) => 16
+(0, Int) => 1
+(1, Int) => 1
+(1, T@T) => 2
+(1, Bool) => 2
+(1, T@U) => 2
+(2, T@T) => 2
+(2, Int) => 1
+(2, Bool) => 1
+(4, T@U) => 1
+ 
+06b-inst.smt2
+(0, Bool) => 98
+(0, Int) => 1
+(0, T@U) => 15
+(0, T@T) => 6
+(1, T@T) => 5
+(1, T@U) => 8
+(1, Bool) => 2
+(1, Int) => 4
+(2, T@U) => 14
+(2, T@T) => 1
+(2, Bool) => 9
+(3, T@U) => 1
+(4, T@U) => 2
+ 
+07a-clear.smt2
+(0, Bool) => 61
+(0, Int) => 1
+(0, T@U) => 18
+(0, T@T) => 5
+(1, T@T) => 7
+(1, T@U) => 8
+(1, Int) => 3
+(1, Bool) => 1
+(2, T@T) => 1
+(2, Bool) => 9
+(2, Int) => 1
+(2, T@U) => 14
+(3, T@U) => 2
+(3, Bool) => 2
+(4, T@U) => 1
+ 
+08a-qf-core.smt2
+(0, T@U) => 8
+(0, T@T) => 4
+(0, Int) => 1
+(1, T@T) => 2
+(1, T@U) => 2
+(2, T@T) => 1
+(2, Bool) => 1
+ 
+08b-inst-core.smt2
+(0, Bool) => 58
+(0, Int) => 1
+(0, T@U) => 8
+(0, T@T) => 4
+(1, T@T) => 5
+(1, T@U) => 8
+(1, Int) => 3
+(1, Bool) => 1
+(2, T@U) => 14
+(2, T@T) => 1
+(2, Bool) => 8
+(3, T@U) => 1
+ 

@@ -1,0 +1,7 @@
+T@U: $Unbox(DatatypeTypeType,
+       MapType0Select(IMap#Elements(PagedBetree.ChildMap.mapp(PagedBetree.BetreeNode.children(this@@248))),
+                      $Box(k#0@@0!1333!0($LZ,
+                                        PagedBetree.BetreeNode.children(this@@248))))) is 4 from $LZ
+T@T: MapType0Type(IMapTypeInv0(type(PagedBetree.ChildMap.mapp(PagedBetree.BetreeNode.children(this@@248)))),
+             boolType) is 3 from PagedBetree.ChildMap.mapp(PagedBetree.BetreeNode.children(this@@248))
+Int: Ctor(IMapType(BoxType, BoxType)) is 1 from IMapType(BoxType, BoxType)

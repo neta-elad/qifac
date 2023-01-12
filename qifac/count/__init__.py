@@ -151,7 +151,10 @@ def extend_pair(pair: Tuple[T, U], value: V) -> Tuple[T, Tuple[U, V]]:
 
 
 def max_pair(iterable: Iterable[Tuple[int, T]]) -> Tuple[int, T]:
-    return max(iterable, key=lambda pair: pair[0])
+    try:
+        return max(iterable, key=lambda pair: pair[0])
+    except:
+        return 0, None
 
 
 def group_by(iterable: Iterable[T], key: Callable[[T], U]) -> Dict[U, Set[T]]:
