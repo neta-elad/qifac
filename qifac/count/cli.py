@@ -4,7 +4,13 @@ from typing import TextIO
 import click
 
 from ..utils import smt_file_read_write
-from . import count_depth_diff, count_quantifiers, count_symbols, count_terms
+from . import (
+    count_assertions,
+    count_depth_diff,
+    count_quantifiers,
+    count_symbols,
+    count_terms,
+)
 
 
 @click.group
@@ -34,3 +40,9 @@ def wrap_terms(smt_file: TextIO, show: bool) -> None:
 @click.argument("inst_file", type=click.File("r"))
 def wrap_depth(smt_file: TextIO, inst_file: TextIO) -> None:
     count_depth_diff(smt_file, inst_file)
+
+
+@count.command("assertions")
+@click.argument("smt_file", type=click.File("r"), default=sys.stdin)
+def wrap_assertions(smt_file: TextIO) -> None:
+    count_assertions(smt_file)

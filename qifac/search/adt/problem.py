@@ -89,15 +89,17 @@ class Problem:
 
         @cache
         def walk_tree(formula: z3.ExprRef) -> bool:
-            if z3.is_app(formula) and formula.decl().kind() == z3.Z3_OP_UNINTERPRETED:
+            if (
+                z3.is_app(formula) and formula.decl().range() != z3.BoolSort()
+            ):  # and formula.decl().kind() == z3.Z3_OP_UNINTERPRETED:
                 decl = formula.decl()
 
-                if decl.range().kind() == z3.Z3_UNINTERPRETED_SORT:
-                    sorts.add(decl.range())
+                # if decl.range().kind() == z3.Z3_UNINTERPRETED_SORT:
+                sorts.add(decl.range())
 
                 for i in range(decl.arity()):
-                    if decl.domain(i).kind() == z3.Z3_UNINTERPRETED_SORT:
-                        sorts.add(decl.domain(i))
+                    # if decl.domain(i).kind() == z3.Z3_UNINTERPRETED_SORT:
+                    sorts.add(decl.domain(i))
 
                 if decl.arity() == 0:
                     constants.add(cast(z3.Const, decl()))
@@ -160,9 +162,10 @@ class Problem:
 
     def limit(self, solver: z3.Solver, size: int) -> None:
         for sort in self.sorts:
-            cs = [z3.Const(f"{sort}!Size!{i}", sort) for i in range(size)]
-            y = z3.Const(f"{sort}!y", sort)
-            solver.add(z3.Exists(cs, z3.ForAll([y], z3.Or(*(y == x for x in cs)))))
+            if sort.kind() == z3.Z3_UNINTERPRETED_SORT:
+                cs = [z3.Const(f"{sort}!Size!{i}", sort) for i in range(size)]
+                y = z3.Const(f"{sort}!y", sort)
+                solver.add(z3.Exists(cs, z3.ForAll([y], z3.Or(*(y == x for x in cs)))))
 
     def minimize_model(
         self, solver: z3.Solver, size: int = 1
@@ -175,6 +178,11 @@ class Problem:
                 model = solver.model()
                 solver.pop()
                 return size, model
+            elif res != z3.unsat:
+                solver.pop()
+                assert solver.check() == z3.sat
+                model = solver.model()
+                return -1, model
             else:
                 assert res == z3.unsat
                 solver.pop()

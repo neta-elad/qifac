@@ -1,4 +1,5 @@
 import io
+import re
 from functools import cache
 from typing import Any, Callable, Dict, Iterable, Set, TextIO, Tuple, TypeVar, cast
 
@@ -189,3 +190,19 @@ def count_depth_diff(smt_file: TextIO, instantiated_file: TextIO) -> None:
             extend_pair(depth_diff(term), term) for term in terms
         )
         print(f"{sort}: {inst_term} is {max_depth} from {org_term}")
+
+
+def count_assertions(smt_file: TextIO) -> None:
+    results: Dict[int, int] = {}
+    for line in smt_file.readlines():
+        if (match := re.match(r"\(assert \(! \(=> \|b(\d+)", line)) is not None:
+            key = int(match[1])
+            results.setdefault(key, 0)
+            results[key] += 1
+
+    sorted_results = {
+        k: v for k, v in sorted(results.items(), key=lambda item: item[1])
+    }
+
+    for key, value in sorted_results.items():
+        print(f"{key} => {value}")
