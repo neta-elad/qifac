@@ -8,10 +8,22 @@ import z3
 from .utils import Relation, cast_relation
 
 
+def is_uninterpreted_sort(sort: z3.SortRef) -> bool:
+    return sort.kind() == z3.Z3_UNINTERPRETED_SORT
+
+
+def is_uninterpreted_quantifier(formula: z3.ExprRef) -> bool:
+    if not z3.is_quantifier(formula):
+        return False
+    return all(is_uninterpreted_sort(formula.var_sort(i)) for i in range(formula.num_vars()))
+
+
 def identify_variables(formula: z3.ExprRef) -> List[z3.SortRef]:
     variables = []
-    if z3.is_quantifier(formula):
-        variables = [formula.var_sort(i) for i in range(formula.num_vars())]
+    if is_uninterpreted_quantifier(formula):
+        variables = [formula.var_sort(i)
+                     for i in range(formula.num_vars())
+                     ]
 
     for child in formula.children():
         variables += identify_variables(child)
@@ -20,12 +32,21 @@ def identify_variables(formula: z3.ExprRef) -> List[z3.SortRef]:
 
 
 def instantiate_all(formula: z3.ExprRef, terms: List[z3.ExprRef]) -> z3.ExprRef:
-    if z3.is_quantifier(formula):
+    if is_uninterpreted_quantifier(formula):
         num_vars = formula.num_vars()
         first_terms = reversed(terms[:num_vars])
         rest_terms = terms[num_vars:]
         instantiation = z3.substitute_vars(formula.body(), *first_terms)
         return instantiate_all(instantiation, rest_terms)
+    elif z3.is_quantifier(formula):
+        quantifier = cast(z3.QuantifierRef, formula)
+        variables = [z3.Const(quantifier.var_name(i), quantifier.var_sort(i)) for i in range(quantifier.num_vars())]
+        clean_body = z3.substitute_vars(formula.body(), *reversed([z3.Const(formula.var_name(i), formula.var_sort(i)) for i in range(formula.num_vars())]))
+        sub_formula = cast(z3.BoolRef, instantiate_all(clean_body, terms))
+        if quantifier.is_forall():
+            return z3.ForAll(variables, sub_formula)
+        else:
+            return z3.Exists(variables, sub_formula)
     elif z3.is_not(formula):
         sub_formula = cast(z3.BoolRef, instantiate_all(formula.children()[0], terms))
         return z3.Not(sub_formula)
@@ -90,16 +111,16 @@ class Problem:
         @cache
         def walk_tree(formula: z3.ExprRef) -> bool:
             if (
-                z3.is_app(formula) and formula.decl().range() != z3.BoolSort()
+                    z3.is_app(formula) and formula.decl().range() != z3.BoolSort()
             ):  # and formula.decl().kind() == z3.Z3_OP_UNINTERPRETED:
                 decl = formula.decl()
 
-                # if decl.range().kind() == z3.Z3_UNINTERPRETED_SORT:
-                sorts.add(decl.range())
+                if is_uninterpreted_sort(decl.range()):
+                    sorts.add(decl.range())
 
                 for i in range(decl.arity()):
-                    # if decl.domain(i).kind() == z3.Z3_UNINTERPRETED_SORT:
-                    sorts.add(decl.domain(i))
+                    if is_uninterpreted_sort(decl.domain(i)):
+                        sorts.add(decl.domain(i))
 
                 if decl.arity() == 0:
                     constants.add(cast(z3.Const, decl()))
@@ -110,7 +131,7 @@ class Problem:
 
             calls = [walk_tree(child) for child in formula.children()]
 
-            return z3.is_quantifier(formula) or any(calls)
+            return is_uninterpreted_quantifier(formula) or any(calls)
 
         solver = z3.Solver()
         solver.from_string(smt_file.read())
@@ -129,14 +150,14 @@ class Problem:
     @cached_property
     def sort(self) -> z3.SortRef:
         assert False, "Trying to use old single-sort search"
-        assert len(self.sorts) == 1
         return list(self.sorts)[0]
 
     @cached_property
     def sort_constants(self) -> Dict[z3.SortRef, Set[z3.Const]]:
         result: Dict[z3.SortRef, Set[z3.Const]] = {sort: set() for sort in self.sorts}
         for const in self.constants:
-            result[const.decl().range()].add(const)
+            if const.decl().range() in self.sorts:
+                result[const.decl().range()].add(const)
 
         return result
 
@@ -146,7 +167,8 @@ class Problem:
             sort: set() for sort in self.sorts
         }
         for fun in self.functions:
-            result[fun.range()].add(fun)
+            if fun.range() in self.sorts:
+                result[fun.range()].add(fun)
 
         return result
 
@@ -168,7 +190,7 @@ class Problem:
                 solver.add(z3.Exists(cs, z3.ForAll([y], z3.Or(*(y == x for x in cs)))))
 
     def minimize_model(
-        self, solver: z3.Solver, size: int = 1
+            self, solver: z3.Solver, size: int = 1
     ) -> Tuple[int, z3.ModelRef]:
         assert solver.check() == z3.sat
         while True:
@@ -189,7 +211,7 @@ class Problem:
                 size += 1
 
     def all_live(
-        self, xs: Iterable[z3.Const], live_terms: Iterable[z3.ExprRef]
+            self, xs: Iterable[z3.Const], live_terms: Iterable[z3.ExprRef]
     ) -> z3.BoolRef:
         return z3.And(
             *[
@@ -205,7 +227,7 @@ class Problem:
         )
 
     def forall_live(
-        self, xs: List[z3.Const], live_terms: Iterable[z3.ExprRef], body: z3.BoolRef
+            self, xs: List[z3.Const], live_terms: Iterable[z3.ExprRef], body: z3.BoolRef
     ) -> z3.BoolRef:
         return z3.ForAll(xs, z3.Implies(self.all_live(xs, live_terms), body))
 
@@ -321,13 +343,13 @@ class Problem:
             raise RuntimeError(f"Unmatchable instantiation {instantiation}")
 
     def extract_instantiation(
-        self, instantiation: z3.ExprRef, qid: int, i: int
+            self, instantiation: z3.ExprRef, qid: int, i: int
     ) -> z3.ExprRef:
         extractor = getattr(self.instantiation_adt, f"Inst_{qid}_{i}")
         return self.adt_to_term(z3.simplify(extractor(instantiation)))
 
     def apply_instantiation(
-        self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
+            self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
     ) -> z3.BoolRef:
         return z3.substitute_vars(
             quantifier.body(),
@@ -335,7 +357,7 @@ class Problem:
         )
 
     def instantiation_args(
-        self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
+            self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
     ) -> List[z3.ExprRef]:
         return [
             self.extract_instantiation(instantiation, qid, i)

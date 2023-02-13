@@ -6,9 +6,15 @@ import z3
 def to_bool(x: Any) -> bool:
     if x is True or x is False:
         return x
-    else:
-        assert z3.is_true(x) or z3.is_false(x), f"Cannot convert to bool {x}"
+    elif z3.is_true(x) or z3.is_false(x):
         return z3.is_true(x)
+    else:
+        solver = z3.Solver()
+        solver.add(x)
+        result = solver.check()
+        assert result != z3.unknown, f"Cannot assert truth value {x}"
+        return result == z3.sat
+
 
 
 def cast_bool(expression: z3.ExprRef) -> z3.BoolRef:
