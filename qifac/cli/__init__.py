@@ -4,20 +4,20 @@ from typing import TextIO
 
 import click
 
-from .aggregate.cli import aggregate
-from .analyze import pair_up_files
-from .analyze.cli import analyze
-from .batch.cli import batch
-from .cegar import cegar as do_cegar
-from .core.cli import core
-from .count.cli import count
-from .instances.cli import instances
-from .model.cli import model
-from .search.cli import search
-from .smt.cli import smt
-from .text.cli import text
-from .typeinfo.cli import typeinfo
-from .z3_utils import run_z3 as do_run_z3
+from ..aggregate.cli import aggregate
+from ..analyze import pair_up_files
+from ..analyze.cli import analyze
+from ..batch.cli import batch
+from ..cegar import cegar as do_cegar
+from ..core.cli import core
+from ..count.cli import count
+from ..instances.cli import instances
+from ..model.cli import model
+from ..search.cli import search
+from ..smt.cli import smt
+from ..text.cli import text
+from ..typeinfo.cli import typeinfo
+from ..z3_utils import run_z3 as do_run_z3
 
 
 @click.group
@@ -66,7 +66,3 @@ def cegar(smt_file: TextIO, output: TextIO) -> None:
 )
 def do_pair_up_files(unsat_files: Path, unknown_files: Path, output_dir: Path) -> None:
     pair_up_files(unsat_files, unknown_files, output_dir)
-
-
-if __name__ == "__main__":
-    run()

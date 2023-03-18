@@ -16,7 +16,6 @@ def to_bool(x: Any) -> bool:
         return result == z3.sat
 
 
-
 def cast_bool(expression: z3.ExprRef) -> z3.BoolRef:
     return cast(z3.BoolRef, expression)
 

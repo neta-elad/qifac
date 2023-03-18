@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from functools import cache, cached_property
 from itertools import chain
-from typing import Dict, Iterable, List, Set, TextIO, Tuple, cast
+from typing import Dict, Iterable, List, Set, TextIO, Tuple, TypeGuard, cast
 
 import z3
 
@@ -12,18 +12,18 @@ def is_uninterpreted_sort(sort: z3.SortRef) -> bool:
     return sort.kind() == z3.Z3_UNINTERPRETED_SORT
 
 
-def is_uninterpreted_quantifier(formula: z3.ExprRef) -> bool:
+def is_uninterpreted_quantifier(formula: z3.ExprRef) -> TypeGuard[z3.QuantifierRef]:
     if not z3.is_quantifier(formula):
         return False
-    return all(is_uninterpreted_sort(formula.var_sort(i)) for i in range(formula.num_vars()))
+    return all(
+        is_uninterpreted_sort(formula.var_sort(i)) for i in range(formula.num_vars())
+    )
 
 
 def identify_variables(formula: z3.ExprRef) -> List[z3.SortRef]:
     variables = []
     if is_uninterpreted_quantifier(formula):
-        variables = [formula.var_sort(i)
-                     for i in range(formula.num_vars())
-                     ]
+        variables = [formula.var_sort(i) for i in range(formula.num_vars())]
 
     for child in formula.children():
         variables += identify_variables(child)
@@ -39,9 +39,20 @@ def instantiate_all(formula: z3.ExprRef, terms: List[z3.ExprRef]) -> z3.ExprRef:
         instantiation = z3.substitute_vars(formula.body(), *first_terms)
         return instantiate_all(instantiation, rest_terms)
     elif z3.is_quantifier(formula):
-        quantifier = cast(z3.QuantifierRef, formula)
-        variables = [z3.Const(quantifier.var_name(i), quantifier.var_sort(i)) for i in range(quantifier.num_vars())]
-        clean_body = z3.substitute_vars(formula.body(), *reversed([z3.Const(formula.var_name(i), formula.var_sort(i)) for i in range(formula.num_vars())]))
+        quantifier = formula
+        variables = [
+            z3.Const(quantifier.var_name(i), quantifier.var_sort(i))
+            for i in range(quantifier.num_vars())
+        ]
+        clean_body = z3.substitute_vars(
+            formula.body(),
+            *reversed(
+                [
+                    z3.Const(formula.var_name(i), formula.var_sort(i))
+                    for i in range(formula.num_vars())
+                ]
+            ),
+        )
         sub_formula = cast(z3.BoolRef, instantiate_all(clean_body, terms))
         if quantifier.is_forall():
             return z3.ForAll(variables, sub_formula)
@@ -111,7 +122,7 @@ class Problem:
         @cache
         def walk_tree(formula: z3.ExprRef) -> bool:
             if (
-                    z3.is_app(formula) and formula.decl().range() != z3.BoolSort()
+                z3.is_app(formula) and formula.decl().range() != z3.BoolSort()
             ):  # and formula.decl().kind() == z3.Z3_OP_UNINTERPRETED:
                 decl = formula.decl()
 
@@ -190,7 +201,7 @@ class Problem:
                 solver.add(z3.Exists(cs, z3.ForAll([y], z3.Or(*(y == x for x in cs)))))
 
     def minimize_model(
-            self, solver: z3.Solver, size: int = 1
+        self, solver: z3.Solver, size: int = 1
     ) -> Tuple[int, z3.ModelRef]:
         assert solver.check() == z3.sat
         while True:
@@ -211,7 +222,7 @@ class Problem:
                 size += 1
 
     def all_live(
-            self, xs: Iterable[z3.Const], live_terms: Iterable[z3.ExprRef]
+        self, xs: Iterable[z3.Const], live_terms: Iterable[z3.ExprRef]
     ) -> z3.BoolRef:
         return z3.And(
             *[
@@ -227,14 +238,14 @@ class Problem:
         )
 
     def forall_live(
-            self, xs: List[z3.Const], live_terms: Iterable[z3.ExprRef], body: z3.BoolRef
+        self, xs: List[z3.Const], live_terms: Iterable[z3.ExprRef], body: z3.BoolRef
     ) -> z3.BoolRef:
         return z3.ForAll(xs, z3.Implies(self.all_live(xs, live_terms), body))
 
     def generate_models(self, all_live_terms: List[z3.ExprRef]) -> List[z3.ModelRef]:
         models = []
         for i in range(len(all_live_terms) + 1):
-            print(f"Checking with {i} live terms:")
+            # print(f"Checking with {i} live terms:")
             live_terms = all_live_terms[:i]
 
             s = z3.Solver()
@@ -244,14 +255,14 @@ class Problem:
                     z3.Const(f.var_name(i), f.var_sort(i)) for i in range(f.num_vars())
                 ]
                 s.add(self.forall_live(vs, live_terms, f.body()))
-            print(s)
+            # print(s)
             res = s.check()
-            print(res)
+            # print(res)
             if res == z3.sat:
                 size, model = self.minimize_model(s)
-                print(size, model)
+                # print(size, model)
                 models.append(model)
-            print()
+            # print()
 
         return models
 
@@ -343,13 +354,13 @@ class Problem:
             raise RuntimeError(f"Unmatchable instantiation {instantiation}")
 
     def extract_instantiation(
-            self, instantiation: z3.ExprRef, qid: int, i: int
+        self, instantiation: z3.ExprRef, qid: int, i: int
     ) -> z3.ExprRef:
         extractor = getattr(self.instantiation_adt, f"Inst_{qid}_{i}")
         return self.adt_to_term(z3.simplify(extractor(instantiation)))
 
     def apply_instantiation(
-            self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
+        self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
     ) -> z3.BoolRef:
         return z3.substitute_vars(
             quantifier.body(),
@@ -357,7 +368,7 @@ class Problem:
         )
 
     def instantiation_args(
-            self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
+        self, instantiation: z3.ExprRef, qid: int, quantifier: z3.QuantifierRef
     ) -> List[z3.ExprRef]:
         return [
             self.extract_instantiation(instantiation, qid, i)
