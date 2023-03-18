@@ -4,3 +4,6 @@
 [submodule "submodules/smt2utils"]
 	path = submodules/smt2utils
 	url = git@github.com:neta-elad/smt2utils.git
+[submodule "submodules/verified-betrfs"]
+	path = submodules/verified-betrfs
+	url = git@github.com:neta-elad/verified-betrfs.git
