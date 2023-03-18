@@ -1,3 +1,6 @@
 [submodule "submodules/concord-bft"]
 	path = submodules/concord-bft
 	url = git@github.com:HristoStaykov/concord-bft.git
+[submodule "submodules/smt2utils"]
+	path = submodules/smt2utils
+	url = git@github.com:neta-elad/smt2utils.git
