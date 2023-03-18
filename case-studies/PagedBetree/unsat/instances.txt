@@ -1,0 +1,61 @@
+|PagedBetreeidfy.49:15!1085|
+0
+this@@3=(PagedBetree.BetreeNode.children this@@248)
+$ly@@3=$LZ
+[end]
+|PagedBetreeidfy.69:5!1156|
+0
+|a#12#1#0|=(|a#6#1#0@@0!1349!223| this@@248)
+|a#12#0#0|=(|a#6#0#0@@0!1349!224| this@@248)
+[end]
+|DafnyPreludebpl.89:29|
+0
+x@@8=(bool_2_U (TotalKMMapMod.__default.TerminalValue (Lit TotalKMMapMod.__default.DefaultV)))
+[end]
+|Buffersidfy.17:12!1673|
+0
+|k#0@@82|=|key#0@@61|
+[end]
+|unknown.0:0!1121|
+0
+d@@43=this@@248
+[end]
+|typeInv:IMapTypeInv0|
+0
+arg1@@12=BoxType
+arg0@@46=BoxType
+[end]
+|funType:PagedBetree.ChildMap.mapp|
+0
+arg0@@372=(PagedBetree.BetreeNode.children this@@248)
+[end]
+|PagedBetreeidfy.72:15!1188|
+0
+this@@9=this@@248
+$ly@@9=$LZ
+[end]
+|cast:U_2_bool|
+0
+x@@1=(Lit (bool_2_U (TotalKMMapMod.__default.TerminalValue (Lit TotalKMMapMod.__default.DefaultV))))
+[end]
+|PagedBetreeidfy.49:15|
+0
+this=(PagedBetree.BetreeNode.children this@@248)
+$ly=$LZ
+[end]
+|funType:IMap#Domain|
+0
+arg0@@57=(PagedBetree.ChildMap.mapp (PagedBetree.BetreeNode.children this@@248))
+[end]
+|Buffersidfy.15:20!1659|
+0
+|key#0@@51|=|key#0@@61|
+[end]
+|Buffersidfy.16:19!1676|
+0
+|keys#0@@1|=(|IMap#Domain| (PagedBetree.ChildMap.mapp (PagedBetree.BetreeNode.children this@@248)))
+[end]
+|funType:bool_2_U|
+0
+arg0@@4=(TotalKMMapMod.__default.TerminalValue (Lit TotalKMMapMod.__default.DefaultV))
+[end]

@@ -1,0 +1,34 @@
+|PagedBetreeidfy.49:15!1085|
+0
+this@@3=(PagedBetree.BetreeNode.children this@@248)
+$ly@@3=$LZ
+[end]
+|DafnyPreludebpl.89:29|
+0
+x@@8=(bool_2_U (TotalKMMapMod.__default.TerminalValue (Lit TotalKMMapMod.__default.DefaultV)))
+[end]
+|Buffersidfy.16:19!1676|
+0
+|keys#0@@1|=(|IMap#Domain| (PagedBetree.ChildMap.mapp (PagedBetree.BetreeNode.children this@@248)))
+[end]
+|Buffersidfy.17:12!1673|
+0
+|k#0@@82|=|key#0@@61|
+[end]
+|cast:U_2_bool|
+0
+x@@1=(Lit (bool_2_U (TotalKMMapMod.__default.TerminalValue (Lit TotalKMMapMod.__default.DefaultV))))
+[end]
+|funType:bool_2_U|
+0
+arg0@@4=(TotalKMMapMod.__default.TerminalValue (Lit TotalKMMapMod.__default.DefaultV))
+[end]
+|PagedBetreeidfy.49:15|
+0
+this=(PagedBetree.BetreeNode.children this@@248)
+$ly=$LZ
+[end]
+|Buffersidfy.15:20!1659|
+0
+|key#0@@51|=|key#0@@61|
+[end]
