@@ -1,0 +1,88 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage[ruled,linesnumbered]{algorithm2e}
+
+
+\newcommand{\Vector}[1]{\bm{#1}}
+\newcommand{\Models}{\mathcal{M}}
+\newcommand{\Insts}{\mathcal{I}}
+\newcommand{\SetTo}{:=}
+\newcommand{\Sort}{\bm{s}}
+\newcommand{\Domain}{\mathcal{D}}
+\newcommand{\Violations}{\text{Violations}}
+
+\newcommand{\cvc}{\textsc{cvc5}}
+
+\begin{document}
+
+\section{High-level Algorithm}
+
+
+\begin{algorithm}
+	\caption{High-level Quantifier Instantiation}
+	\DontPrintSemicolon
+	\KwIn{Quantified axioms: $\forall \Vector x. A_1$, $\dots$, $\forall \Vector x. A_n$}
+	\KwIn{Quantifier free: $\varphi$}
+	\KwOut{Instantiations $A_{i_1}[\Vector{t_1}]$, $\dots$, $A_{i_m} [\Vector{t_m}]$
+		s.t. $\varphi \land \bigwedge_{j} A_{i_j}[\Vector{t_j}]$ is unsat
+	}
+	\SetKwComment{Comment}{// }{}
+	\SetKwBlock{Block}{}{}
+	$\Models \SetTo \emptyset$ \Comment{Initially, empty set of models}
+	$\Insts \SetTo \emptyset$ \Comment{and empty set of instantiations}
+	\While{ $\varphi \land \Insts$ is sat}
+	{
+		Get model for $\varphi \land \Insts$ and add to $\Models$ \;
+		Find a small* set of instantiations $\Insts'$ s.t. \label{alg:line:find} $\forall M \in \Models.\, \exists I \in \Insts'. M \not\models I$ \;
+		$\Insts \SetTo \Insts \cup \Insts'$ \;
+		
+		\If{ $\Models$ is too large and line~\ref{alg:line:find} takes too long}
+		{
+			Reset $\Models \gets \emptyset$ or optimize $\Models \gets \Models'$
+			where $\Models' \subset\subset \Models$ \;
+		}
+	}
+	\Return{$\Insts$}
+\end{algorithm}
+
+\section{Finding Instantiations}
+Let there be an axiom
+$A = \forall \Vector{x}.\psi$.
+%
+An instantiation of that quantifier is a tuple
+of ground terms
+$\Vector{t}$: $\psi [ \Vector{t} ]$.
+%
+Given a model $M$,
+violated instantiations are determined by checking
+$M \models \psi [ \Vector{t} ]$.
+%
+We can think of a quantifier as a relation
+$R_A$,
+and then violations are 
+$\Vector{t}^M \notin R^M_A$.
+We can define the set of violations as 
+$\Violations(M, A) \SetTo \{ \Vector{t} \mid \Vector{t} \}$.
+
+Given a set of axioms $A_1, \dots, A_n$
+we can define the set of all violations as
+$\Violations(M) \SetTo 
+\{ (A_i, \Vector{t}) \mid \Vector{t} \in \Violations(M, A_i) \}$.
+
+Given a set of models $M_1, \dots, M_m$ we want a set of 
+
+
+\section{Points}
+
+\begin{itemize}
+	\item 
+	Lemma pollution solution: models hitting sets to choose ``good'' lemmas.
+	
+	\item 
+	Running \cvc{} with Dafny examples.
+\end{itemize}
+
+\end{document}

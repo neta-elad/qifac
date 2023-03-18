@@ -1,0 +1,74 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage[ruled,linesnumbered]{algorithm2e}
+
+\newcommand{\Vector}[1]{\bm{#1}}
+\newcommand{\Models}{\mathcal{M}}
+\newcommand{\Insts}{\mathcal{I}}
+
+\begin{document}
+
+\begin{algorithm}
+	\caption{High-level Quantifier Instantiation}
+	\DontPrintSemicolon
+	\KwIn{Quantified axioms: $\forall \Vector x. A_1$, $\dots$, $\forall \Vector x. A_n$}
+	\KwIn{Quantifier free: $\varphi$}
+	\KwOut{Instantiations $A_{i_1}[\Vector{t_1}]$, $\dots$, $A_{i_m} [\Vector{t_m}]$
+	s.t. $\varphi \land \bigwedge_{j} A_{i_j}[\Vector{t_j}]$ is unsat
+	}
+	\SetKwInput{Hypothesis}{Hypothesis}
+	\Hypothesis{$\bigwedge_{j} A_{i_j}[\Vector{t_j}]$ 
+		is sat with a model of size $\leq 3$}
+	\SetKwComment{Comment}{// }{}
+	\SetKwBlock{Block}{}{}
+	$\Models \gets \emptyset$ \Comment{Initially, empty set of models}
+	$\Insts \gets \emptyset$ \Comment{and empty set of instantiations}
+	\While{ $\varphi \land \Insts$ is sat}
+	{
+		Get model for $\varphi \land \Insts$ and add to $\Models$ \;
+		\Block( Find a small* set of instantiations $\Insts'$ s.t. \label{alg:line:find})
+		{
+		(1) $\forall M \in \Models.\, \exists I \in \Insts'. M \not\models I$, and \;
+		(2) $\Insts'$ has a small* model \;
+		}
+		$\Insts \gets \Insts \cup \Insts'$ \emph{or} $\Insts \gets \Insts'$\;
+		
+		\If{ $\varphi \land \Insts$ only has large models }
+		{
+		Reset $\Insts \gets \emptyset$ \;
+		}
+	
+		\If{ $\Models$ is too large and line~\ref{alg:line:find} takes too long}
+		{
+			Reset $\Models \gets \emptyset$ or optimize $\Models \gets \Models'$
+			where $\Models' \subset\subset \Models$ \;
+		}
+	}
+	\Return{$\Insts$}
+\end{algorithm}
+
+\noindent
+Currently, the mechanism we think of for line~\ref{alg:line:find}
+is by using a generalized SyGuS,
+but this might scale very poorly for large sets of models $\Models$.
+
+%\begin{algorithm}
+%	\caption{Using Terms ADT to find Instantiations}
+%	\DontPrintSemicolon
+%	\KwIn{Quantified axioms: $\forall \Vector x. A_1$, $\dots$, $\forall \Vector x. A_n$}
+%	\KwIn{Set of Models: $\Models$}
+%	\KwIn{Terms size: $m$}
+%	\KwOut{Instantiations $A_{i_1}[\Vector{t_1}]$, $\dots$, $A_{i_m} [\Vector{t_m}]$
+%		s.t. $\forall M \in \Models. \, \exists j.\, M \not\models A_{i_j}[ \Vector{t_j} ]$
+%	}
+%	\SetKwBlock{Version}{version}{end}
+%	\Version( A: Terms ADT )
+%	{
+%		Let $T$ be an ADT sort  \;
+%	}
+%\end{algorithm}
+
+\end{document}
