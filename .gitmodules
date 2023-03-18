@@ -1,0 +1,3 @@
+[submodule "submodules/concord-bft"]
+	path = submodules/concord-bft
+	url = git@github.com:HristoStaykov/concord-bft.git
