@@ -56,5 +56,5 @@ extend-exclude = '/(.venv|submodules)/'
 [tool.isort]
 profile = "black"
 src_paths = ["qifac", "tests"]
-skip = [".venv"]
+skip = [".venv", "submodules"]
 
