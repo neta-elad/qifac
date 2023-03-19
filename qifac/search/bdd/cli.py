@@ -295,7 +295,8 @@ class BDDSystem:
 
         return tuples
 
-    def bits_to_int(self, bits: Mapping[int, bool]) -> int:
+    @staticmethod
+    def bits_to_int(bits: Mapping[int, bool]) -> int:
         result = 0
         for bit, value in bits.items():
             if value:

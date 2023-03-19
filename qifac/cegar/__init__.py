@@ -257,7 +257,6 @@ def cegar_from_assertions(asserts: Set[z3.BoolRef]) -> Set[z3.BoolRef]:
 def eval_quantifier(
     model: z3.ModelRef, formula: z3.BoolRef, source: ConditionalAssert
 ) -> bool:
-
     if not source.uninterpreted_symbols <= set(model.decls()):
         return True
     # else:

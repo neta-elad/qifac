@@ -22,7 +22,7 @@ def cast_bool(expression: z3.ExprRef) -> z3.BoolRef:
 
 class Relation(z3.FuncDeclRef):
     def __call__(self, *args: z3.ExprRef) -> z3.BoolRef:
-        pass
+        return cast(z3.BoolRef, super().__call__(*args))
 
 
 def cast_relation(relation: z3.FuncDeclRef) -> Relation:

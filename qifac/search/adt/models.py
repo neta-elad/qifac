@@ -240,7 +240,6 @@ class RefModel:
 
     @cached_property
     def witnesses_with_sorts(self) -> List[List[Tuple[z3.SortRef, z3.Const]]]:
-
         return [
             [
                 (sort, z3.Const(f"witness_{self.id}_{i}_{j}", self.sorts[sort]))

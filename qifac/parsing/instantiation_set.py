@@ -49,9 +49,6 @@ class Instantiation:
 
         return cls(name, qid, tuple(tuples))
 
-    def variables(self) -> Set[str]:
-        pass
-
     def terms(self) -> Iterable[Term]:
         for _var, term in self.assignment:
             yield term

@@ -13,7 +13,6 @@ def cleanup(smt_file: TextIO) -> TextIO:
     buffer = io.StringIO()
 
     for line in smt_file.readlines():
-
         stripped = line.strip()
         if "(push " in stripped or "(pop" in stripped:
             continue

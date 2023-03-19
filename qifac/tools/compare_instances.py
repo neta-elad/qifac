@@ -44,7 +44,7 @@ class Comparator:
             # weird?
             return self.set_compare(left, right, False)
 
-        for (key, left_value) in left_node.substitues.items():
+        for key, left_value in left_node.substitues.items():
             right_value = right_node.substitues.get(key)
             if left_value != right_value:
                 return self.set_compare(left, right, False)

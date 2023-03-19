@@ -206,6 +206,7 @@ def add_model(I, M):
                     ES[fi[xs]],
                 )
             )
+
     # def ite_from_entries(es):
     #     if len(es) == 0:
     #         return ES[0]
@@ -266,7 +267,7 @@ print(s.check())
 ground_instantiations = []
 if res == z3.sat:
     m = s.model()
-    for (I, (M, U, (E, ES), interpret, bodies, indicators, witnesses)) in enumerate(
+    for I, (M, U, (E, ES), interpret, bodies, indicators, witnesses) in enumerate(
         MUEIBVWs
     ):
         print(f"model {I}:")
@@ -331,7 +332,7 @@ while (res := s_smt.check()) != z3.unsat:
     ground_instantiations = []
     if res == z3.sat:
         m = s.model()
-        for (I, (M, U, (E, ES), interpret, bodies, indicators, witnesses)) in enumerate(
+        for I, (M, U, (E, ES), interpret, bodies, indicators, witnesses) in enumerate(
             MUEIBVWs
         ):
             print(f"model {I}:")

@@ -133,7 +133,6 @@ def count_quantifiers(smt_file: TextIO) -> TextIO:
             return []
 
     for assertion in solver.assertions():
-
         result = walk_tree(assertion, 0)
         buffer.write(str(result))
         buffer.write("\n")
