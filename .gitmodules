@@ -7,3 +7,4 @@
 [submodule "submodules/verified-betrfs"]
 	path = submodules/verified-betrfs
 	url = git@github.com:neta-elad/verified-betrfs.git
+	branch = splinter-journal-noreceipt
