@@ -5,7 +5,7 @@ all: format lint type test
 lint:
 	isort . -q
 	autoflake . --recursive \
-				--exclude .venv \
+				--exclude .venv,submodules \
 				--remove-unused-variables \
 				--remove-all-unused-imports \
 				--expand-star-imports \
@@ -22,7 +22,7 @@ type:
 
 .PHONY: test
 test:
-	pytest -q
+	pytest
 
 
 .PHONY: env

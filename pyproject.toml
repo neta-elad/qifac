@@ -58,3 +58,7 @@ profile = "black"
 src_paths = ["qifac", "tests"]
 skip = [".venv", "submodules"]
 
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
