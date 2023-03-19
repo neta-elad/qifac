@@ -159,7 +159,7 @@ class BDDSystem:
 
     @cached_property
     def models(self) -> List[ModelWrapper]:
-        return list(map(ModelWrapper, self.problem.generate_models(self.terms)[:3]))
+        return list(map(ModelWrapper, self.problem.generate_models(self.terms)))
 
     @cached_property
     def models_representation(self) -> ModelsRepresentation:
