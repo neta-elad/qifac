@@ -50,10 +50,10 @@ exclude = [
 ]
 
 [tool.black]
-extend-exclude = ".env"
+extend-exclude = '(.venv|submodules)'
 
 [tool.isort]
 profile = "black"
 src_paths = ["qifac", "tests"]
-skip = [".env"]
+skip = [".venv"]
 
