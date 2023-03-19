@@ -5,7 +5,7 @@ all: format lint type test
 lint:
 	isort . -q
 	autoflake . --recursive \
-				--exclude .env \
+				--exclude .venv \
 				--remove-unused-variables \
 				--remove-all-unused-imports \
 				--expand-star-imports \
@@ -27,7 +27,7 @@ test:
 
 .PHONY: env
 env:
-	! [ -d .env ] && python3 -m venv .env || true
+	! [ -d .venv ] && python3 -m venv .venv || true
 
 .PHONY: install
 install:
@@ -36,4 +36,4 @@ install:
 
 .PHONY: clean
 clean:
-	rm -r .env
+	rm -r .venv

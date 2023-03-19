@@ -3,11 +3,11 @@
 ## Installation
 1. Clone the project:
     ```shell
-    git clone git@github.com:neta-elad/qifac.git && cd qifac
+    git clone --recurse-submodules git@github.com:neta-elad/qifac.git && cd qifac
     ```
 2. Create a virtual environment (optional but highly recommended):
     ```shell
-   make env && source .env/bin/activate
+   make env && source .venv/bin/activate
     ```
 3. Install qifac:
     ```shell
