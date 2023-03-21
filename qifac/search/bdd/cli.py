@@ -191,8 +191,6 @@ class BDDSystem:
     def initial_states(self) -> BDDFunction:
         initial = self.bdd.false
 
-        print("Calculating initial state")
-
         for constant in self.problem.constants:
             vector = tuple(model.indexed_eval(constant) for model in self.models)
             cube = self.bdd.add_expr(self.to_vars(vector))
@@ -231,8 +229,6 @@ class BDDSystem:
 
     @cached_property
     def reachable_states(self) -> BDDFunction:
-        print("Calculating reachable states")
-
         return fixpoint(
             self.bdd, 2, self.initial_states, self.transitions, self.all_vars
         )
@@ -299,20 +295,22 @@ class BDDSystem:
             )
         )
 
-    def show_models(self, rounds: int) -> Set[Tuple[int, ...]]:
+    def show_models(self, rounds: int, *, quiet: bool = False) -> Set[Tuple[int, ...]]:
         terms: Set[z3.ExprRef] = set(self.problem.constants)
 
         # table = []
 
         tuples = set()
 
-        print("Showing models")
+        if not quiet:
+            print("Showing models")
 
         for _round in range(rounds):
             for term in terms:
                 elements = [model.indexed_eval(term) for model in self.models]
 
-                print(f"Term {term}: {elements}")
+                if not quiet:
+                    print(f"Term {term}: {elements}")
 
                 tuples.add(tuple(elements))
 
@@ -383,7 +381,7 @@ def go() -> None:
     print(system.show_models(1))
     print(system.assignments_to_elements(system.initial_states))
 
-    print(system.show_models(4))
+    print(system.show_models(3))
     print(system.assignments_to_elements(system.reachable_states))
 
     # print("Quantifiers to instantiations")
