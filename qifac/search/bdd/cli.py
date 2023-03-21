@@ -2,7 +2,7 @@ import itertools
 import math
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import Dict, List, Mapping, Set, Tuple, cast
+from typing import Dict, List, Mapping, Set, TextIO, Tuple, cast
 
 import click
 import z3
@@ -10,7 +10,7 @@ from dd.autoref import BDD
 from dd.autoref import Function as BDDFunction
 
 from ..adt.examples import consensus
-from ..adt.problem import Problem
+from ..adt.problem import Problem, QuantifiedAssertion
 
 
 @click.group
@@ -31,7 +31,7 @@ def fixpoint(
 ) -> BDDFunction:
     primed = dict(zip(suffixate(variables, "'"), variables))
     subs = [
-        dict(zip(variables, suffixate(variables, str(i))))
+        dict(zip(variables, suffixate(variables, "_" + str(i))))
         for i in range(maximal_arity_of_transitions)
     ]
     states = initial
@@ -87,10 +87,11 @@ class ModelWrapper:
     def element_indexes(self) -> Mapping[int, z3.Const]:
         return dict(enumerate(self.elements))
 
-    def eval(self, exp: z3.ExprRef) -> int:
-        return self.indexed_elements[
-            cast(z3.Const, self.model.eval(exp, model_completion=True))
-        ]
+    def indexed_eval(self, exp: z3.ExprRef) -> int:
+        return self.indexed_elements[cast(z3.Const, self.eval(exp))]
+
+    def eval(self, exp: z3.ExprRef) -> z3.ExprRef:
+        return self.model.eval(exp, model_completion=True)
 
     def to_element(self, index: int) -> z3.Const:
         return self.element_indexes[index]
@@ -143,7 +144,7 @@ class ModelsRepresentation:
             indexed_universes.append(model.element_indexes)
             bits = math.ceil(math.log(len(model.elements), 2))
             universes_bits.append(bits)
-            variables.append([f"x^{i}_{j}" for j in range(bits)])
+            variables.append([f"x_{i}_{j}" for j in range(bits)])
 
         return cls(universes, indexed_universes, universes_bits, variables)
 
@@ -159,7 +160,7 @@ class BDDSystem:
 
     @cached_property
     def models(self) -> List[ModelWrapper]:
-        return list(map(ModelWrapper, self.problem.generate_models(self.terms)))
+        return list(map(ModelWrapper, self.problem.generate_models(self.terms)[:2]))
 
     @cached_property
     def models_representation(self) -> ModelsRepresentation:
@@ -181,7 +182,7 @@ class BDDSystem:
     def all_vars_with_suffixes(self) -> List[str]:
         all_vars_with_suffixes = []
 
-        for suffix in ["", "'", "0", "1", "2", "3"]:
+        for suffix in ["", "'", "_0", "_1", "_2", "_3"]:
             all_vars_with_suffixes.extend(suffixate(self.all_vars, suffix))
 
         return all_vars_with_suffixes
@@ -193,7 +194,7 @@ class BDDSystem:
         print("Calculating initial state")
 
         for constant in self.problem.constants:
-            vector = tuple(model.eval(constant) for model in self.models)
+            vector = tuple(model.indexed_eval(constant) for model in self.models)
             cube = self.bdd.add_expr(self.to_vars(vector))
             initial = initial | cube
 
@@ -210,11 +211,13 @@ class BDDSystem:
                     conditions = self.bdd.true
                     for j, e in enumerate(vector):
                         conditions &= self.bdd.add_expr(
-                            self.to_model_vars(i, e, str(j))
+                            self.to_model_vars(i, e, "_" + str(j))
                         )
 
                     result = self.bdd.add_expr(
-                        self.to_model_vars(i, model.eval(f(*model.to_elements(vector))))
+                        self.to_model_vars(
+                            i, model.indexed_eval(f(*model.to_elements(vector))), "'"
+                        )
                     )
 
                     transitions = self.bdd.ite(conditions, result, transitions)
@@ -228,8 +231,41 @@ class BDDSystem:
         print("Calculating reachable states")
 
         return fixpoint(
-            self.bdd, 1, self.initial_states, self.transitions, self.all_vars
+            self.bdd, 2, self.initial_states, self.transitions, self.all_vars
         )
+
+    @cached_property
+    def instantiations(self) -> Set[BDDFunction]:
+        result: Set[BDDFunction] = set()
+        for quantifier in self.problem.quantified_assertions:
+            if quantifier.num_vars > 1:
+                continue
+
+            for i, model in enumerate(self.models):
+                print(f"Model #{i}")
+                single_model_instantiations = self.build_instantiations(
+                    quantifier, model
+                )
+                print(self.assignments_to_elements(single_model_instantiations))
+
+        return result
+
+    def build_instantiations(
+        self, quantifier: QuantifiedAssertion, model: ModelWrapper
+    ) -> BDDFunction:
+        for vector in self.assignments_to_elements(self.reachable_states):
+            instantiations = [
+                (self.models[i], e, self.models[i].to_element(e))
+                for i, e in enumerate(vector)
+            ]
+
+            print(instantiations)
+
+            # system.assignments_to_elements(system.reachable_states)
+        # for instantiation in itertools.product(model.elements, repeat=quantifier.num_vars):
+        #     print(model.eval(quantifier.instantiate(*instantiation)))
+
+        return self.bdd.false
 
     def to_model_bits(self, model_index: int, element: int) -> str:
         return f"{{0:0{self.universes_bits[model_index]}b}}".format(element)
@@ -237,7 +273,7 @@ class BDDSystem:
     def to_var(
         self, model_index: int, element_index: int, bit: str, prime: str = ""
     ) -> str:
-        variable = f"x^{model_index}_{element_index}{prime}"
+        variable = f"x_{model_index}_{element_index}{prime}"
         if bit == "0":
             return "~" + variable
         else:
@@ -271,7 +307,7 @@ class BDDSystem:
 
         for _round in range(rounds):
             for term in terms:
-                elements = [model.eval(term) for model in self.models]
+                elements = [model.indexed_eval(term) for model in self.models]
 
                 print(f"Term {term}: {elements}")
 
@@ -289,7 +325,7 @@ class BDDSystem:
                 if g.arity() == 2
             }
 
-            terms = next_unary_terms  # | next_binary_terms
+            terms = next_unary_terms | next_binary_terms
 
         # print(tabulate(table))
 
@@ -307,7 +343,7 @@ class BDDSystem:
     def assignment_to_elements(self, assignment: Mapping[str, bool]) -> Tuple[int, ...]:
         variables: Dict[int, Dict[int, bool]] = {}
         for key, value in assignment.items():
-            index, bit = map(int, key.removeprefix("x^").split("_", maxsplit=2))
+            index, bit = map(int, key.removeprefix("x_").split("_", maxsplit=2))
             variables.setdefault(index, {})
             variables[index][bit] = value
 
@@ -323,9 +359,23 @@ class BDDSystem:
 
 
 @run.command
-def go() -> None:
+@click.argument("smt_file", type=click.File("r"))
+def parse(smt_file: TextIO) -> None:
     print("Running BDD search")
 
+    problem = Problem.from_smt_file(smt_file)
+
+    terms = cast(List[z3.ExprRef], list(problem.constants)[:10])
+
+    print(terms)
+
+    system = BDDSystem(problem, terms)
+
+    print(system.assignments_to_elements(system.initial_states))
+
+
+@run.command
+def go() -> None:
     system = BDDSystem(*consensus())
 
     print(f"Considering terms {system.terms}")
@@ -335,6 +385,11 @@ def go() -> None:
 
     print(system.show_models(2))
     print(system.assignments_to_elements(system.reachable_states))
+
+    # print("Quantifiers to instantiations")
+    # print(system.instantiations)
+    #
+    # print("Next up: BDD per model for quantifiers x elements (i.e. instantiations)")
 
     #
     # "x₁₂₃₄₅₆₇₈₉₀₋"

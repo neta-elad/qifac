@@ -1,10 +1,13 @@
 [submodule "submodules/concord-bft"]
 	path = submodules/concord-bft
 	url = git@github.com:HristoStaykov/concord-bft.git
+	update = rebase
 [submodule "submodules/smt2utils"]
 	path = submodules/smt2utils
 	url = git@github.com:neta-elad/smt2utils.git
+	update = rebase
 [submodule "submodules/verified-betrfs"]
 	path = submodules/verified-betrfs
 	url = git@github.com:neta-elad/verified-betrfs.git
 	branch = splinter-journal-noreceipt
+	update = rebase

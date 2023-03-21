@@ -1,28 +1,42 @@
 from dataclasses import dataclass, field
+from enum import Enum, auto
 from functools import cache, cached_property
 from itertools import chain
-from typing import Dict, Iterable, List, Set, TextIO, Tuple, TypeGuard, cast
+from typing import Dict, Iterable, List, Self, Set, TextIO, Tuple, cast
 
 import z3
 
 from .utils import Relation, cast_relation
 
 
+class AssertionType(Enum):
+    QUANTIFIER_FREE = auto()
+    INTERPRETED_QUANTIFIER = auto()
+    UNINTERPRETED_QUANTIFIER = auto()
+
+    def __add__(self, other: Self) -> Self:
+        if self.value < other.value:
+            return other
+        return self
+
+
 def is_uninterpreted_sort(sort: z3.SortRef) -> bool:
     return sort.kind() == z3.Z3_UNINTERPRETED_SORT
 
 
-def is_uninterpreted_quantifier(formula: z3.ExprRef) -> TypeGuard[z3.QuantifierRef]:
+def is_uninterpreted_quantifier(formula: z3.ExprRef) -> AssertionType:
     if not z3.is_quantifier(formula):
-        return False
-    return all(
+        return AssertionType.QUANTIFIER_FREE
+    if all(
         is_uninterpreted_sort(formula.var_sort(i)) for i in range(formula.num_vars())
-    )
+    ):
+        return AssertionType.UNINTERPRETED_QUANTIFIER
+    return AssertionType.INTERPRETED_QUANTIFIER
 
 
 def identify_variables(formula: z3.ExprRef) -> List[z3.SortRef]:
     variables = []
-    if is_uninterpreted_quantifier(formula):
+    if is_uninterpreted_quantifier(formula) and z3.is_quantifier(formula):
         variables = [formula.var_sort(i) for i in range(formula.num_vars())]
 
     for child in formula.children():
@@ -32,7 +46,7 @@ def identify_variables(formula: z3.ExprRef) -> List[z3.SortRef]:
 
 
 def instantiate_all(formula: z3.ExprRef, terms: List[z3.ExprRef]) -> z3.ExprRef:
-    if is_uninterpreted_quantifier(formula):
+    if is_uninterpreted_quantifier(formula) and z3.is_quantifier(formula):
         num_vars = formula.num_vars()
         first_terms = reversed(terms[:num_vars])
         rest_terms = terms[num_vars:]
@@ -120,7 +134,7 @@ class Problem:
         forall = []
 
         @cache
-        def walk_tree(formula: z3.ExprRef) -> bool:
+        def walk_tree(formula: z3.ExprRef) -> AssertionType:
             if (
                 z3.is_app(formula) and formula.decl().range() != z3.BoolSort()
             ):  # and formula.decl().kind() == z3.Z3_OP_UNINTERPRETED:
@@ -140,15 +154,20 @@ class Problem:
                 else:
                     functions.add(decl)
 
-            calls = [walk_tree(child) for child in formula.children()]
+            assertion_type = AssertionType.QUANTIFIER_FREE
+            for child in formula.children():
+                assertion_type += walk_tree(child)
 
-            return is_uninterpreted_quantifier(formula) or any(calls)
+            return is_uninterpreted_quantifier(formula) + assertion_type
 
         solver = z3.Solver()
         solver.from_string(smt_file.read())
         for assertion in solver.assertions():
-            if walk_tree(assertion):
+            assertion_type = walk_tree(assertion)
+            if assertion_type is AssertionType.UNINTERPRETED_QUANTIFIER:
                 forall.append(cast(z3.QuantifierRef, assertion))
+            elif assertion_type is AssertionType.INTERPRETED_QUANTIFIER:
+                pass
             else:
                 qf.append(assertion)
 
@@ -251,6 +270,8 @@ class Problem:
             s = z3.Solver()
             s.add(*self.qf_assertions)
             for f in self.forall_assertions:
+                if not z3.is_quantifier(f):
+                    continue
                 vs = [
                     z3.Const(f.var_name(i), f.var_sort(i)) for i in range(f.num_vars())
                 ]
