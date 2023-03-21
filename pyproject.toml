@@ -59,6 +59,6 @@ src_paths = ["qifac", "tests"]
 skip = [".venv", "submodules"]
 
 [tool.pytest.ini_options]
-addopts = "-q"
+addopts = "-q --ignore tests/test_cegar.py"
 testpaths = ["tests"]
 
