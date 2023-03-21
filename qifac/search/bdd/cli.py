@@ -160,7 +160,7 @@ class BDDSystem:
 
     @cached_property
     def models(self) -> List[ModelWrapper]:
-        return list(map(ModelWrapper, self.problem.generate_models(self.terms)[:2]))
+        return list(map(ModelWrapper, self.problem.generate_models(self.terms)[:5]))
 
     @cached_property
     def models_representation(self) -> ModelsRepresentation:
@@ -202,27 +202,30 @@ class BDDSystem:
 
     @cached_property
     def transitions(self) -> BDDFunction:
-        combined_transitions = self.bdd.true
+        combined_transitions = self.bdd.false
 
-        for i, model in enumerate(self.models):
-            transitions = self.bdd.false
-            for f in self.problem.functions:
+        for f in self.problem.functions:
+            transitions = self.bdd.true
+            for i, model in enumerate(self.models):
+                model_transitions = self.bdd.false
                 for vector in itertools.product(model.int_elements, repeat=f.arity()):
-                    conditions = self.bdd.true
+                    pre_state = self.bdd.true
                     for j, e in enumerate(vector):
-                        conditions &= self.bdd.add_expr(
+                        pre_state &= self.bdd.add_expr(
                             self.to_model_vars(i, e, "_" + str(j))
                         )
 
-                    result = self.bdd.add_expr(
-                        self.to_model_vars(
-                            i, model.indexed_eval(f(*model.to_elements(vector))), "'"
-                        )
+                    result_element = model.indexed_eval(f(*model.to_elements(vector)))
+                    post_state = self.bdd.add_expr(
+                        self.to_model_vars(i, result_element, "'")
                     )
 
-                    transitions = self.bdd.ite(conditions, result, transitions)
+                    transition = pre_state & post_state
+                    model_transitions |= transition
 
-            combined_transitions &= transitions
+                transitions &= model_transitions
+
+            combined_transitions |= transitions
 
         return combined_transitions
 
@@ -299,7 +302,7 @@ class BDDSystem:
     def show_models(self, rounds: int) -> Set[Tuple[int, ...]]:
         terms: Set[z3.ExprRef] = set(self.problem.constants)
 
-        table = []
+        # table = []
 
         tuples = set()
 
@@ -312,7 +315,6 @@ class BDDSystem:
                 print(f"Term {term}: {elements}")
 
                 tuples.add(tuple(elements))
-                table.append([str(term)] + list(map(str, elements)))
 
             next_unary_terms = {
                 f(t) for t in terms for f in self.problem.functions if f.arity() == 1
@@ -326,8 +328,6 @@ class BDDSystem:
             }
 
             terms = next_unary_terms | next_binary_terms
-
-        # print(tabulate(table))
 
         return tuples
 
@@ -383,7 +383,7 @@ def go() -> None:
     print(system.show_models(1))
     print(system.assignments_to_elements(system.initial_states))
 
-    print(system.show_models(2))
+    print(system.show_models(4))
     print(system.assignments_to_elements(system.reachable_states))
 
     # print("Quantifiers to instantiations")
