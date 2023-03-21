@@ -11,6 +11,7 @@ from dd.autoref import Function as BDDFunction
 
 from ..adt.examples import consensus
 from ..adt.problem import Problem, QuantifiedAssertion
+from ..adt.utils import to_bool
 
 
 @click.group
@@ -179,11 +180,17 @@ class BDDSystem:
         return list(itertools.chain(*self.variables))
 
     @cached_property
+    def quantifier_vars(self) -> List[str]:
+        return [f"q_{j}" for j in range(len(self.problem.quantified_assertions))]
+
+    @cached_property
     def all_vars_with_suffixes(self) -> List[str]:
         all_vars_with_suffixes = []
 
         for suffix in ["", "'", "_0", "_1", "_2", "_3"]:
             all_vars_with_suffixes.extend(suffixate(self.all_vars, suffix))
+
+        all_vars_with_suffixes.extend(self.quantifier_vars)
 
         return all_vars_with_suffixes
 
@@ -234,18 +241,52 @@ class BDDSystem:
         )
 
     @cached_property
-    def instantiations(self) -> Set[BDDFunction]:
-        result: Set[BDDFunction] = set()
-        for quantifier in self.problem.quantified_assertions:
-            if quantifier.num_vars > 1:
-                continue
+    def instantiations(self) -> List[BDDFunction]:
+        result: List[BDDFunction] = []
 
-            for i, model in enumerate(self.models):
-                print(f"Model #{i}")
-                single_model_instantiations = self.build_instantiations(
-                    quantifier, model
-                )
-                print(self.assignments_to_elements(single_model_instantiations))
+        for i, model in enumerate(self.models):
+            print(f"Model #{i}")
+            instantiations = self.bdd.true
+
+            for j, quantifier in enumerate(self.problem.quantified_assertions):
+                print(f"Quantifier #{j}")
+
+                for vector in itertools.product(
+                    model.int_elements, repeat=quantifier.num_vars
+                ):
+                    instantiation = self.bdd.true
+                    for j, e in enumerate(vector):
+                        instantiation &= self.bdd.add_expr(
+                            self.to_model_vars(i, e, "_" + str(j))
+                        )
+
+                    evaluation = to_bool(
+                        model.eval(quantifier.instantiate(*model.to_elements(vector)))
+                    )
+
+                    print(f"> {vector} {evaluation}")
+
+                    if evaluation:
+                        instantiations = self.bdd.ite(
+                            instantiation, self.bdd.true, instantiations
+                        )
+                    else:
+                        instantiations = self.bdd.ite(
+                            instantiation, self.bdd.false, instantiations
+                        )
+
+            result.append(instantiations)
+
+        # for quantifier in self.problem.quantified_assertions:
+        #     if quantifier.num_vars > 1:
+        #         continue
+        #
+        #     for i, model in enumerate(self.models):
+        #         print(f"Model #{i}")
+        #         single_model_instantiations = self.build_instantiations(
+        #             quantifier, model
+        #         )
+        #         print(self.assignments_to_elements(single_model_instantiations))
 
         return result
 
@@ -376,18 +417,10 @@ def parse(smt_file: TextIO) -> None:
 def go() -> None:
     system = BDDSystem(*consensus())
 
-    print(f"Considering terms {system.terms}")
+    print("Quantifiers to instantiations")
+    print(system.instantiations)
 
-    print(system.show_models(1))
-    print(system.assignments_to_elements(system.initial_states))
-
-    print(system.show_models(3))
-    print(system.assignments_to_elements(system.reachable_states))
-
-    # print("Quantifiers to instantiations")
-    # print(system.instantiations)
-    #
-    # print("Next up: BDD per model for quantifiers x elements (i.e. instantiations)")
+    print("Next up: BDD per model for quantifiers x elements (i.e. instantiations)")
 
     #
     # "x₁₂₃₄₅₆₇₈₉₀₋"
