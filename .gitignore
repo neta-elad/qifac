@@ -134,3 +134,5 @@ dmypy.json
 **/*.analysis.txt
 **/*.instances.txt
 **/analysis/**
+
+.idea
