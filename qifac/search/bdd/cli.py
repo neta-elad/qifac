@@ -8,7 +8,9 @@ from typing import (
     List,
     Mapping,
     Optional,
+    Self,
     Set,
+    Sized,
     TextIO,
     Tuple,
     cast,
@@ -136,6 +138,43 @@ class ModelWrapper:
 #     print_assignments(reachable)
 
 
+@dataclass(eq=True, frozen=True)
+class AssignedElement:
+    model: int
+    element: int
+
+
+@dataclass(eq=True, frozen=True)
+class ArgumentElement:
+    model: int
+    argument: int
+    element: int
+
+    @classmethod
+    def from_assigned(cls, assigned: AssignedElement, argument: int) -> Self:
+        return cls(assigned.model, argument, assigned.element)
+
+
+@dataclass(eq=True, frozen=True)
+class InstanceElement:
+    quantifier: int
+    model: int
+    argument: int
+    element: int
+
+    @classmethod
+    def from_argument(cls, argument: ArgumentElement, quantifier: int) -> Self:
+        return cls(quantifier, argument.model, argument.argument, argument.element)
+
+
+def bits_for(size: int) -> int:
+    return math.ceil(math.log(size, 2))
+
+
+def bits_for_sized(container: Sized) -> int:
+    return bits_for(len(container))
+
+
 @dataclass
 class ModelsRepresentation:
     universes: List[Mapping[z3.Const, int]]
@@ -153,7 +192,7 @@ class ModelsRepresentation:
         for i, model in enumerate(models):
             universes.append(model.indexed_elements)
             indexed_universes.append(model.element_indexes)
-            bits = math.ceil(math.log(len(model.elements), 2))
+            bits = bits_for_sized(model.elements)
             universes_bits.append(bits)
             variables.append([f"x_{i}_{j}" for j in range(bits)])
 
@@ -191,8 +230,12 @@ class BDDSystem:
         return list(itertools.chain(*self.variables))
 
     @cached_property
+    def quantifier_bits(self) -> int:
+        return bits_for_sized(self.problem.quantified_assertions)
+
+    @cached_property
     def quantifier_vars(self) -> List[str]:
-        return [f"q_{j}" for j in range(len(self.problem.quantified_assertions))]
+        return [f"q_{j}" for j in range(self.quantifier_bits)]
 
     @cached_property
     def all_vars_with_suffixes(self) -> List[str]:
@@ -271,7 +314,7 @@ class BDDSystem:
                 for vector in itertools.product(
                     model.int_elements, repeat=quantifier.num_vars
                 ):
-                    instantiation = self.bdd.true
+                    instantiation = self.bdd.add_expr(self.to_quantifier_var(j))
                     for k, e in enumerate(vector):
                         instantiation &= self.bdd.add_expr(
                             self.to_model_vars(i, e, "_" + str(k))
@@ -286,8 +329,10 @@ class BDDSystem:
                     if not evaluation:
                         instantiations |= instantiation
 
-            print(self.assignments_to_elements(instantiations, {0}, {0}))
+            print(f"> {self.bdd.to_expr(instantiations)}")
+            print(self.assignments_to_instance_elements(instantiations, {0}, {0, 1, 2}))
             result.append(instantiations)
+            # return result
 
         # for quantifier in self.problem.quantified_assertions:
         #     if quantifier.num_vars > 1:
@@ -305,6 +350,12 @@ class BDDSystem:
     def to_model_bits(self, model_index: int, element: int) -> str:
         return f"{{0:0{self.universes_bits[model_index]}b}}".format(element)
 
+    def to_quantifier_bits(self, quantifier: int) -> str:
+        return f"{{0:0{self.quantifier_bits}b}}".format(quantifier)
+
+    def to_quantifier_var(self, quantifier: int) -> str:
+        return self.to_cube("q", "", self.to_quantifier_bits(quantifier))
+
     def to_var(
         self, model_index: int, element_index: int, bit: str, prime: str = ""
     ) -> str:
@@ -314,22 +365,39 @@ class BDDSystem:
         else:
             return variable
 
+    def to_literal(self, prefix: str, suffix: str, index: int, bit: str) -> str:
+        variable = f"{prefix}_{index}{suffix}"
+        if bit == "0":
+            return "~" + variable
+        else:
+            return variable
+
+    def to_cube(self, prefix: str, suffix: str, bits: str) -> str:
+        return r" /\ ".join(
+            self.to_literal(prefix, suffix, j, bit)
+            for j, bit in enumerate(reversed(bits))
+        )
+
     def to_vars(self, vector: Tuple[int, ...]) -> str:
         return r" /\ ".join(
-            self.to_var(i, j, bit)
+            self.to_cube(f"x_{i}", "", self.to_model_bits(i, element))
+            # self.to_var(i, j, bit)
             for i, element in enumerate(vector)
-            for j, bit in enumerate(reversed(self.to_model_bits(i, element)))
+            # for j, bit in enumerate(reversed(self.to_model_bits(i, element)))
         )
 
     def to_model_vars(
         self, model_index: int, element_index: int, prime: str = ""
     ) -> str:
-        return r" /\ ".join(
-            self.to_var(model_index, j, bit, prime)
-            for j, bit in enumerate(
-                reversed(self.to_model_bits(model_index, element_index))
-            )
+        return self.to_cube(
+            f"x_{model_index}", prime, self.to_model_bits(model_index, element_index)
         )
+        # return r" /\ ".join(
+        #     self.to_var(model_index, j, bit, prime)
+        #     for j, bit in enumerate(
+        #         reversed(self.to_model_bits(model_index, element_index))
+        #     )
+        # )
 
     def show_models(self, rounds: int, *, quiet: bool = False) -> Set[Tuple[int, ...]]:
         terms: Set[z3.ExprRef] = set(self.problem.constants)
@@ -376,8 +444,16 @@ class BDDSystem:
 
     def assignment_to_element(
         self, assignment: Mapping[str, bool], model: int, suffix: str
-    ) -> int:
+    ) -> AssignedElement:
         prefix = f"x_{model}_"
+
+        return AssignedElement(
+            model, self.assignment_to_int(assignment, prefix, suffix)
+        )
+
+    def assignment_to_int(
+        self, assignment: Mapping[str, bool], prefix: str, suffix: str
+    ) -> int:
         bits = {}
         for key, value in assignment.items():
             if key.startswith(prefix) and key.endswith(suffix):
@@ -386,35 +462,82 @@ class BDDSystem:
 
         return self.bits_to_int(bits)
 
+    def assignment_to_quantifier(self, assignment: Mapping[str, bool]) -> int:
+        return self.assignment_to_int(assignment, f"q_", "")
+
     def assignment_to_elements(
         self,
         assignment: Mapping[str, bool],
         care_models: Set[int],
         care_arguments: Set[int],
-    ) -> Set[Tuple[int, int, int]]:
+    ) -> Set[ArgumentElement]:
         return {
-            (i, j, self.assignment_to_element(assignment, i, f"_{j}"))
+            ArgumentElement.from_assigned(
+                self.assignment_to_element(assignment, i, f"_{j}"), j
+            )
             for i in care_models
             for j in care_arguments
+        }
+
+    def assignment_to_instance_elements(
+        self,
+        assignment: Mapping[str, bool],
+        care_models: Set[int],
+        care_arguments: Set[int],
+    ) -> Set[InstanceElement]:
+        return {
+            InstanceElement.from_argument(
+                ArgumentElement.from_assigned(
+                    self.assignment_to_element(assignment, i, f"_{j}"), j
+                ),
+                self.assignment_to_quantifier(assignment),
+            )
+            for i in care_models
+            for j in care_arguments
+        }
+
+    def assignments_to_instance_elements(
+        self,
+        e: BDDFunction,
+        /,
+        care_models: Optional[Set[int]] = None,
+        care_arguments: Optional[Set[int]] = None,
+    ) -> Set[FrozenSet[InstanceElement]]:
+        if care_models is None:
+            care_models = set(range(len(self.models)))
+
+        if care_arguments is None:
+            care_arguments = set(range(self.arguments + 1))
+
+        return {
+            frozenset(
+                self.assignment_to_instance_elements(
+                    assignment, care_models, care_arguments
+                )
+            )
+            for assignment in self.bdd.pick_iter(e)
         }
 
     def assignments_to_elements(
         self,
         e: BDDFunction,
+        /,
         care_models: Optional[Set[int]] = None,
-        care_assignments: Optional[Set[int]] = None,
-    ) -> Set[FrozenSet[Tuple[int, int, int]]]:
+        care_arguments: Optional[Set[int]] = None,
+    ) -> Set[FrozenSet[ArgumentElement]]:
         if care_models is None:
             care_models = set(range(len(self.models)))
 
-        if care_assignments is None:
-            care_assignments = set(range(self.arguments + 1))
+        if care_arguments is None:
+            care_arguments = set(range(self.arguments + 1))
 
         return {
             frozenset(
-                self.assignment_to_elements(assignment, care_models, care_assignments)
+                self.assignment_to_elements(assignment, care_models, care_arguments)
             )
-            for assignment in self.bdd.pick_iter(e, care_vars=self.all_vars)
+            for assignment in self.bdd.pick_iter(
+                e, care_vars=self.all_vars_with_suffixes
+            )
         }
 
     def single_argument_assignments_to_elements(
@@ -422,7 +545,7 @@ class BDDSystem:
     ) -> Set[Tuple[int, ...]]:
         return {
             tuple(
-                self.assignment_to_element(assignment, i, "")
+                self.assignment_to_element(assignment, i, "").element
                 for i in range(len(self.models))
             )
             for assignment in self.bdd.pick_iter(e, care_vars=self.all_vars)
@@ -450,7 +573,14 @@ def go() -> None:
     system = BDDSystem(*consensus())
 
     print("Quantifiers to instantiations")
-    print(system.instantiations)
+
+    for i, model_instantiations in enumerate(system.instantiations):
+        print(f"Model #{i}")
+        print(
+            system.assignments_to_instance_elements(
+                model_instantiations, {i}, {0, 1, 2}
+            )
+        )
 
     print("Next up: BDD per model for quantifiers x elements (i.e. instantiations)")
 
