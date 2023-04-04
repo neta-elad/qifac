@@ -67,19 +67,6 @@ def fixpoint(
     return states
 
 
-# def show_model(model: z3.ModelRef, problem: Problem) -> None:
-#     elements = {e: i for i, e in enumerate(model.get_universe(model.get_sort(0)))}
-#
-#     def eval(exp):
-#         return elements[model.eval(exp, model_completion=True)]
-#
-#     print(tabulate([[eval(c) for c in problem.constants]], headers=[str(c) for c in problem.constants]))
-#
-#     for f in problem.functions:
-#         if f.arity() == 1:
-#             print(tabulate([[i, eval(f(e))] for e, i in elements.items()], headers=["", str(f)]))
-
-
 @dataclass
 class ModelWrapper:
     model: z3.ModelRef
@@ -111,31 +98,6 @@ class ModelWrapper:
 
     def to_elements(self, vector: Tuple[int, ...]) -> Tuple[z3.Const, ...]:
         return tuple(self.to_element(index) for index in vector)
-
-
-# @run.command
-# def test() -> None:
-#     print("Running BDD test")
-#
-#     bdd = BDD()
-#     bdd.declare("x", "y", "x'", "y'", "x0", "y0", "x1", "y1")
-#
-#     def print_assignments(e):
-#         print(f"Printing assignments for {bdd.to_expr(e)}")
-#         for ass in bdd.pick_iter(e, care_vars=["x", "y"]):
-#             print("> " + str(ass))
-#
-#     initial = bdd.add_expr(r"~x /\ ~y")
-#
-#     print_assignments(initial)
-#
-#     all_transitions = bdd.false
-#     all_transitions = bdd.ite(bdd.add_expr(r"~x0 /\ ~y0"), bdd.add_expr(r"~x' /\ y'"), all_transitions)
-#     all_transitions = bdd.ite(bdd.add_expr(r"(~x0 /\ ~y0) /\ (~x1 /\ y1)"), bdd.add_expr(r"x' /\ ~y'"), all_transitions)
-#
-#     reachable = fixpoint(bdd, 2, initial, all_transitions, ["x", "y"])
-#
-#     print_assignments(reachable)
 
 
 @dataclass(eq=True, frozen=True)
@@ -332,18 +294,6 @@ class BDDSystem:
             print(f"> {self.bdd.to_expr(instantiations)}")
             print(self.assignments_to_instance_elements(instantiations, {0}, {0, 1, 2}))
             result.append(instantiations)
-            # return result
-
-        # for quantifier in self.problem.quantified_assertions:
-        #     if quantifier.num_vars > 1:
-        #         continue
-        #
-        #     for i, model in enumerate(self.models):
-        #         print(f"Model #{i}")
-        #         single_model_instantiations = self.build_instantiations(
-        #             quantifier, model
-        #         )
-        #         print(self.assignments_to_elements(single_model_instantiations))
 
         return result
 
@@ -392,17 +342,9 @@ class BDDSystem:
         return self.to_cube(
             f"x_{model_index}", prime, self.to_model_bits(model_index, element_index)
         )
-        # return r" /\ ".join(
-        #     self.to_var(model_index, j, bit, prime)
-        #     for j, bit in enumerate(
-        #         reversed(self.to_model_bits(model_index, element_index))
-        #     )
-        # )
 
     def show_models(self, rounds: int, *, quiet: bool = False) -> Set[Tuple[int, ...]]:
         terms: Set[z3.ExprRef] = set(self.problem.constants)
-
-        # table = []
 
         tuples = set()
 
