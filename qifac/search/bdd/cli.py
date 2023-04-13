@@ -167,13 +167,14 @@ class BDDSystem:
     terms: List[z3.ExprRef]
     bdd: BDD = field(default_factory=BDD)
     arguments: ClassVar[int] = 2
+    models_amount: ClassVar[int] = 3
 
     def __post_init__(self) -> None:
         self.bdd.declare(*self.all_vars_with_suffixes)
 
     @cached_property
     def models(self) -> List[ModelWrapper]:
-        return list(map(ModelWrapper, self.problem.generate_models(self.terms)[:5]))
+        return list(map(ModelWrapper, self.problem.generate_models(self.terms)[:self.models_amount]))
 
     @cached_property
     def models_representation(self) -> ModelsRepresentation:
@@ -267,11 +268,14 @@ class BDDSystem:
         result: List[BDDFunction] = []
 
         for i, model in enumerate(self.models):
-            print(f"Model #{i}")
+            # print(f"Model #{i}")
             instantiations = self.bdd.false
 
             for j, quantifier in enumerate(self.problem.quantified_assertions):
-                print(f"Quantifier #{j}")
+                # print(f"Quantifier #{j}")
+
+                if quantifier.num_vars > 1:
+                    continue
 
                 for vector in itertools.product(
                     model.int_elements, repeat=quantifier.num_vars
@@ -286,13 +290,13 @@ class BDDSystem:
                         model.eval(quantifier.instantiate(*model.to_elements(vector)))
                     )
 
-                    print(f"> {vector} {evaluation}")
+                    # print(f"> {vector} {evaluation}")
 
                     if not evaluation:
                         instantiations |= instantiation
 
-            print(f"> {self.bdd.to_expr(instantiations)}")
-            print(self.assignments_to_instance_elements(instantiations, {0}, {0, 1, 2}))
+            # print(f"> {self.bdd.to_expr(instantiations)}")
+            # print(self.assignments_to_instance_elements(instantiations, {0}, {0}))
             result.append(instantiations)
 
         return result
@@ -514,13 +518,32 @@ def parse(smt_file: TextIO) -> None:
 def go() -> None:
     system = BDDSystem(*consensus())
 
+    print(system.problem.quantified_assertions)
+
     print("Quantifiers to instantiations")
 
     for i, model_instantiations in enumerate(system.instantiations):
         print(f"Model #{i}")
+
+        remove_argument_0 = {f"x_{i}_{bit}_{0}": f"x_{i}_{bit}" for bit in range(system.universes_bits[i])}
+        add_argument_0 = {f"x_{i}_{bit}": f"x_{i}_{bit}_{0}" for bit in range(system.universes_bits[i])}
+
+        model_instantiations_remove_arg_0 = system.bdd.let(remove_argument_0, model_instantiations)
+        reachable_add_arg_0 = system.bdd.let(add_argument_0, system.reachable_states)
+
+        print(f"> {system.bdd.to_expr(model_instantiations)}")
+        print(f"> {system.bdd.to_expr(reachable_add_arg_0)}")
+
+        # finding violating element that is also reachable
+
+        conj = model_instantiations & reachable_add_arg_0
+
+
+        print(f"> {system.bdd.to_expr(conj)}")
+
         print(
             system.assignments_to_instance_elements(
-                model_instantiations, {i}, {0, 1, 2}
+                conj, {i}, {0}
             )
         )
 
@@ -530,6 +553,9 @@ def go() -> None:
     # "x₁₂₃₄₅₆₇₈₉₀₋"
     # "x¹²³⁴⁵⁶⁷⁸⁹⁰⁻"
 
+
+# given model i, to represent argument j for some fun/quantifier:
+# x_{i}_{bits}_{j}
 
 # given m models
 # E: D1 x D2 x ... x Dm -> Bool
