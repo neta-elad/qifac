@@ -174,7 +174,12 @@ class BDDSystem:
 
     @cached_property
     def models(self) -> List[ModelWrapper]:
-        return list(map(ModelWrapper, self.problem.generate_models(self.terms)[:self.models_amount]))
+        return list(
+            map(
+                ModelWrapper,
+                self.problem.generate_models(self.terms)[: self.models_amount],
+            )
+        )
 
     @cached_property
     def models_representation(self) -> ModelsRepresentation:
@@ -525,10 +530,18 @@ def go() -> None:
     for i, model_instantiations in enumerate(system.instantiations):
         print(f"Model #{i}")
 
-        remove_argument_0 = {f"x_{i}_{bit}_{0}": f"x_{i}_{bit}" for bit in range(system.universes_bits[i])}
-        add_argument_0 = {f"x_{i}_{bit}": f"x_{i}_{bit}_{0}" for bit in range(system.universes_bits[i])}
+        remove_argument_0 = {
+            f"x_{i}_{bit}_{0}": f"x_{i}_{bit}"
+            for bit in range(system.universes_bits[i])
+        }
+        add_argument_0 = {
+            f"x_{i}_{bit}": f"x_{i}_{bit}_{0}"
+            for bit in range(system.universes_bits[i])
+        }
 
-        model_instantiations_remove_arg_0 = system.bdd.let(remove_argument_0, model_instantiations)
+        model_instantiations_remove_arg_0 = system.bdd.let(
+            remove_argument_0, model_instantiations
+        )
         reachable_add_arg_0 = system.bdd.let(add_argument_0, system.reachable_states)
 
         print(f"> {system.bdd.to_expr(model_instantiations)}")
@@ -538,20 +551,17 @@ def go() -> None:
 
         conj = model_instantiations & reachable_add_arg_0
 
-
         print(f"> {system.bdd.to_expr(conj)}")
 
-        print(
-            system.assignments_to_instance_elements(
-                conj, {i}, {0}
-            )
-        )
+        print(system.assignments_to_instance_elements(conj, {i}, {0}))
 
     print("Next up: BDD per model for quantifiers x elements (i.e. instantiations)")
 
     #
     # "x₁₂₃₄₅₆₇₈₉₀₋"
     # "x¹²³⁴⁵⁶⁷⁸⁹⁰⁻"
+
+    # x¹₁ /\ x¹₂
 
 
 # given model i, to represent argument j for some fun/quantifier:
