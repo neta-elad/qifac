@@ -24,12 +24,19 @@ def test_basic() -> None:
 
 def test_element() -> None:
     a, b, c = z3.Ints("a b c")
-    universe = Universe.from_iterable([a, b, c], 1)
+    universe = Universe.from_iterable([a, b, c], name=1)
 
     assert universe[2].binary.binary == "10"
     assert universe[1].binary.cube == r"~x¹₀ /\ x¹₁"
     assert universe[0].with_prefix(3).binary.cube == r"~₃x¹₀ /\ ~₃x¹₁"
     assert universe.with_prefix(3)[0].binary.cube == r"~₃x¹₀ /\ ~₃x¹₁"
+
+
+def test_variables() -> None:
+    a, b, c = z3.Ints("a b c")
+    universe = Universe.from_iterable([a, b, c], name=1)
+
+    # assert universe.with_prefix(2).variables == ("2x10", "2x11")
 
 
 def test_model() -> None:

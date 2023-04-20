@@ -21,7 +21,7 @@ class Element:
         return Binary(
             self.index,
             self.universe.size,
-            f"{self.prefix}x{to_superscript(self.universe.index)}",
+            f"{self.prefix}x{to_superscript(self.universe.name)}",
         )
 
     def with_prefix(self, prefix: Union[str, int]) -> Self:
@@ -37,7 +37,7 @@ AnyElement = Union[z3.Const, int, Element]
 @dataclass(eq=True, frozen=True)
 class Universe:
     raw_elements: Tuple[z3.Const, ...]
-    index: int = field(default=0)
+    name: int = field(default=0)
     prefix: str = field(default="")
 
     def __post_init__(self) -> None:
@@ -45,12 +45,12 @@ class Universe:
             raise ValueError("Empty universe")
 
     @classmethod
-    def from_iterable(cls, iterable: Iterable[z3.Const], index: int = 0) -> Self:
-        return cls(tuple(iterable), index)
+    def from_iterable(cls, iterable: Iterable[z3.Const], *, name: int = 0) -> Self:
+        return cls(tuple(iterable), name)
 
     @classmethod
-    def from_model(cls, model: z3.ModelRef, index: int = 0) -> Self:
-        return cls.from_iterable(model.get_universe(model.get_sort(0)), index)
+    def from_model(cls, model: z3.ModelRef, *, name: int = 0) -> Self:
+        return cls.from_iterable(model.get_universe(model.get_sort(0)), name=name)
 
     def __len__(self) -> int:
         return len(self.raw_elements)
@@ -88,4 +88,4 @@ class Universe:
 
 
 def from_models(models: Iterable[z3.ModelRef]) -> Tuple[Universe, ...]:
-    return tuple(Universe.from_model(model, i) for i, model in enumerate(models))
+    return tuple(Universe.from_model(model, name=i) for i, model in enumerate(models))

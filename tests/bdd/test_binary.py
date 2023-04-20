@@ -13,3 +13,7 @@ def test_binary() -> None:
     assert number.boolean == [False, True, False]
     assert number.cube == r"~y₀ /\ y₁ /\ ~y₂"
     assert number.as_cube("x") == r"~x₀ /\ x₁ /\ ~x₂"
+
+
+def test_variables() -> None:
+    assert Binary(2, 3, "y").variables == {"y₀", "y₁", "y₂"}
