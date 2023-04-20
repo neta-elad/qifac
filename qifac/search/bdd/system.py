@@ -5,8 +5,8 @@ from typing import ClassVar, List, Set, Tuple
 import z3
 from dd.autoref import BDD
 
-from ..adt.problem import Problem
-from .universe import Universe, from_models
+from ..adt.problem import Problem, QuantifiedAssertion
+from .universe import Universe, from_iterable, from_models
 
 
 @dataclass
@@ -46,3 +46,9 @@ class System:
     @cached_property
     def element_variables(self) -> Set[str]:
         return self.output_variables | self.argument_variables
+
+    @cached_property
+    def axioms(self) -> Universe[QuantifiedAssertion]:
+        return from_iterable(self.problem.quantified_assertions).with_prefix(
+            "q", add=False
+        )

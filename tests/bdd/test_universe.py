@@ -49,7 +49,7 @@ def test_model() -> None:
     assert solver.check(formula) == z3.sat
 
     model = solver.model()
-    universe = from_model(model)
+    universe = from_model(model, name=0)
     assert universe.size == 1
 
     assert from_models([model]) == (universe,)

@@ -13,6 +13,10 @@ def test_universes(system: System) -> None:
     assert len(system.model_universes) == System.models_amount
 
 
+def test_axioms(system: System) -> None:
+    assert len(system.axioms) == len(system.problem.quantified_assertions)
+
+
 def test_variables(system: System) -> None:
     assert system.output_variables == {"x⁰₀", "x¹₀", "x²₀", "x²₁"}
     assert system.argument_variables == {
@@ -28,3 +32,5 @@ def test_variables(system: System) -> None:
     assert (
         system.element_variables == system.output_variables | system.argument_variables
     )
+
+    assert system.axioms.variables == {"q₀", "q₂", "q₁"}

@@ -1,7 +1,7 @@
 import math
 from dataclasses import dataclass, field, replace
 from functools import cached_property
-from typing import Generic, Iterable, Self, Set, Tuple, TypeVar, Union
+from typing import Generic, Iterable, Optional, Self, Set, Tuple, TypeVar, Union
 
 import z3
 
@@ -17,19 +17,22 @@ class Element(Generic[Value]):
     value: Value
     index: int
     universe: "Universe[Value]"
-    prefix: str = field(default="")
+    prefix: str = field(default="x")
 
     @cached_property
     def binary(self) -> Binary:
         return Binary(
             self.index,
             self.universe.size,
-            f"{self.prefix}x{to_superscript(self.universe.name)}",
+            f"{self.prefix}{self.universe.suffix}",
         )
 
-    def with_prefix(self, prefix: Union[str, int]) -> Self:
+    def with_prefix(self, prefix: Union[str, int], *, add: bool = True) -> Self:
         if isinstance(prefix, int):
             prefix = to_subscript(prefix)
+
+        if add:
+            prefix += self.prefix
 
         return replace(self, prefix=prefix)
 
@@ -40,8 +43,8 @@ AnyElement = Union[z3.Const, int, Element[Value]]
 @dataclass(eq=True, frozen=True)
 class Universe(Generic[Value]):
     raw_elements: Tuple[Value, ...]
-    name: int = field(default=0)
-    prefix: str = field(default="")
+    name: Optional[int] = field(default=None)
+    prefix: str = field(default="x")
 
     def __post_init__(self) -> None:
         if not self.raw_elements:
@@ -72,6 +75,13 @@ class Universe(Generic[Value]):
             for variable in element.binary.variables
         }
 
+    @cached_property
+    def suffix(self) -> str:
+        if self.name is None:
+            return ""
+
+        return to_superscript(self.name)
+
     def normalize(self, element: AnyElement[Value]) -> Element[Value]:
         match element:
             case int() as index:
@@ -83,18 +93,23 @@ class Universe(Generic[Value]):
             case _:
                 return self.elements[self.raw_elements.index(element)]
 
-    def with_prefix(self, prefix: Union[str, int]) -> Self:
+    def with_prefix(self, prefix: Union[str, int], *, add: bool = True) -> Self:
         if isinstance(prefix, int):
             prefix = to_subscript(prefix)
+
+        if add:
+            prefix += self.prefix
 
         return replace(self, prefix=prefix)
 
 
-def from_iterable(iterable: Iterable[Value], *, name: int = 0) -> Universe[Value]:
+def from_iterable(
+    iterable: Iterable[Value], *, name: Optional[int] = None
+) -> Universe[Value]:
     return Universe(tuple(iterable), name)
 
 
-def from_model(model: z3.ModelRef, *, name: int = 0) -> Universe[z3.Const]:
+def from_model(model: z3.ModelRef, *, name: Optional[int] = None) -> Universe[z3.Const]:
     return from_iterable(model.get_universe(model.get_sort(0)), name=name)
 
 
