@@ -2,7 +2,7 @@ from qifac.search.adt.examples import consensus
 from qifac.search.bdd.cli import BDDSystem
 
 
-def test_reachable():
+def test_reachable() -> None:
     system = BDDSystem(*consensus())
 
     assert system.show_models(

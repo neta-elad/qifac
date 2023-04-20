@@ -3,7 +3,7 @@ import pytest
 from qifac.search.bdd.binary import Binary
 
 
-def test_binary():
+def test_binary() -> None:
     with pytest.raises(ValueError):
         Binary(2, 1)
 

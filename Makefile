@@ -17,7 +17,7 @@ format:
 
 .PHONY: type
 type:
-	mypy --strict qifac
+	mypy --strict qifac tests
 
 
 .PHONY: test

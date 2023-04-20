@@ -46,12 +46,13 @@ disallow_untyped_calls = true
 disallow_untyped_defs = true
 disallow_subclassing_any = false
 exclude = [
-    'tools/',
-    '__main__'
+    "tools/",
+    "__main__",
+    "test_cegar",
 ]
 
 [tool.black]
-extend-exclude = '/(.venv|submodules)/'
+extend-exclude = "/(.venv|submodules)/"
 
 [tool.isort]
 profile = "black"

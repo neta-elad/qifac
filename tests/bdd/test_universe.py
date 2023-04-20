@@ -4,7 +4,7 @@ import z3
 from qifac.search.bdd.universe import Universe, from_models
 
 
-def test_universe():
+def test_basic() -> None:
     a, b, c = z3.Ints("a b c")
 
     with pytest.raises(ValueError):
@@ -22,7 +22,7 @@ def test_universe():
     assert universe3[1].index == 1
 
 
-def test_element():
+def test_element() -> None:
     a, b, c = z3.Ints("a b c")
     universe = Universe.from_iterable([a, b, c], 1)
 
@@ -32,7 +32,7 @@ def test_element():
     assert universe.with_prefix(3)[0].binary.cube == r"~₃x¹₀ /\ ~₃x¹₁"
 
 
-def test_model():
+def test_model() -> None:
     Node = z3.DeclareSort("Node")
     a, b = z3.Consts("a b", Node)
 
