@@ -22,3 +22,14 @@ def test_universe():
     assert universe3[1].index == 1
     assert universe3[2].binary.binary == "10"
     assert universe3[1].binary.cube == r"~x⁰₀ /\ x⁰₁"
+
+
+def test_model():
+    Node = z3.DeclareSort("Node")
+    a, b = z3.Consts("a b", Node)
+
+    formula = a != b
+    solver = z3.Solver()
+
+    assert solver.check(formula) == z3.sat
+    assert Universe.from_model(solver.model()).size == 1

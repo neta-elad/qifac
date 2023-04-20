@@ -38,6 +38,10 @@ class Universe:
     def from_iterable(cls, iterable: Iterable[z3.Const], index: int = 0) -> Self:
         return cls(tuple(iterable), index)
 
+    @classmethod
+    def from_model(cls, model: z3.ModelRef, index: int = 0) -> Self:
+        return cls.from_iterable(model.get_universe(model.get_sort(0)), index)
+
     def __len__(self) -> int:
         return len(self.raw_elements)
 
