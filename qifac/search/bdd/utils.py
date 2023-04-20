@@ -21,3 +21,23 @@ def to_subscript(number: int) -> str:
 
 def to_superscript(number: int) -> str:
     return "".join(SUPERSCRIPTS[digit] for digit in digits(number, big_endian=False))
+
+
+def encode(string: str) -> str:
+    for i, char in enumerate(SUBSCRIPTS):
+        string = string.replace(char, f"_{i}")
+
+    for i, char in enumerate(SUPERSCRIPTS):
+        string = string.replace(char, f"^{i}")
+
+    return string
+
+
+def decode(string: str) -> str:
+    for i, char in enumerate(SUBSCRIPTS):
+        string = string.replace(f"_{i}", char)
+
+    for i, char in enumerate(SUPERSCRIPTS):
+        string = string.replace(f"^{i}", char)
+
+    return string
