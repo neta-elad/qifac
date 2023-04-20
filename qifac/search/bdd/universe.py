@@ -6,7 +6,7 @@ from typing import Iterable, Self, Tuple, Union
 import z3
 
 from .binary import Binary
-from .utils import to_superscript
+from .utils import to_subscript, to_superscript
 
 
 @dataclass(eq=True, frozen=True)
@@ -14,12 +14,21 @@ class Element:
     element: z3.Const
     index: int
     universe: "Universe"
+    prefix: str = field(default="")
 
     @cached_property
     def binary(self) -> Binary:
         return Binary(
-            self.index, self.universe.size, f"x{to_superscript(self.universe.index)}"
+            self.index,
+            self.universe.size,
+            f"{self.prefix}x{to_superscript(self.universe.index)}",
         )
+
+    def with_prefix(self, prefix: Union[str, int]) -> Self:
+        if isinstance(prefix, int):
+            prefix = to_subscript(prefix)
+
+        return self.__class__(self.element, self.index, self.universe, prefix)
 
 
 AnyElement = Union[z3.Const, int, Element]
@@ -29,6 +38,7 @@ AnyElement = Union[z3.Const, int, Element]
 class Universe:
     raw_elements: Tuple[z3.Const, ...]
     index: int = field(default=0)
+    prefix: str = field(default="")
 
     def __post_init__(self) -> None:
         if not self.raw_elements:
@@ -55,7 +65,8 @@ class Universe:
     @cached_property
     def elements(self) -> Tuple[Element, ...]:
         return tuple(
-            Element(element, i, self) for i, element in enumerate(self.raw_elements)
+            Element(element, i, self, self.prefix)
+            for i, element in enumerate(self.raw_elements)
         )
 
     def normalize(self, element: AnyElement) -> Element:
@@ -68,6 +79,12 @@ class Universe:
 
             case _:
                 return self.elements[self.raw_elements.index(element)]
+
+    def with_prefix(self, prefix: Union[str, int]) -> Self:
+        if isinstance(prefix, int):
+            prefix = to_subscript(prefix)
+
+        return self.__class__(self.raw_elements, self.index, prefix)
 
 
 def from_models(models: Iterable[z3.ModelRef]) -> Tuple[Universe, ...]:

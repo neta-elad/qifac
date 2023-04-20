@@ -20,8 +20,16 @@ def test_universe():
 
     assert universe3[0].element == a
     assert universe3[1].index == 1
-    assert universe3[2].binary.binary == "10"
-    assert universe3[1].binary.cube == r"~x⁰₀ /\ x⁰₁"
+
+
+def test_element():
+    a, b, c = z3.Ints("a b c")
+    universe = Universe.from_iterable([a, b, c], 1)
+
+    assert universe[2].binary.binary == "10"
+    assert universe[1].binary.cube == r"~x¹₀ /\ x¹₁"
+    assert universe[0].with_prefix(3).binary.cube == r"~₃x¹₀ /\ ~₃x¹₁"
+    assert universe.with_prefix(3)[0].binary.cube == r"~₃x¹₀ /\ ~₃x¹₁"
 
 
 def test_model():
