@@ -17,8 +17,8 @@ class System:
     max_arguments: ClassVar[int] = 2
     models_amount: ClassVar[int] = 3
 
-    # def __post_init__(self) -> None:
-    #     self.bdd.declare(*self.all_vars_with_suffixes)
+    def __post_init__(self) -> None:
+        self.bdd.declare(*self.variables)
 
     @cached_property
     def model_universes(self) -> Tuple[Universe[z3.Const], ...]:
@@ -52,3 +52,7 @@ class System:
         return from_iterable(self.problem.quantified_assertions).with_prefix(
             "q", add=False
         )
+
+    @cached_property
+    def variables(self) -> Set[str]:
+        return self.element_variables | self.axioms.variables

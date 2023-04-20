@@ -34,3 +34,5 @@ def test_variables(system: System) -> None:
     )
 
     assert system.axioms.variables == {"q₀", "q₂", "q₁"}
+
+    assert system.variables == system.element_variables | system.axioms.variables
