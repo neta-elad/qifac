@@ -25,4 +25,6 @@ def test_variables(system: System) -> None:
         "₁x²₀",
         "₁x²₁",
     }
-    assert system.variables == system.output_variables | system.argument_variables
+    assert (
+        system.element_variables == system.output_variables | system.argument_variables
+    )

@@ -42,5 +42,5 @@ class System:
         }
 
     @cached_property
-    def variables(self) -> Set[str]:
+    def element_variables(self) -> Set[str]:
         return self.output_variables | self.argument_variables
