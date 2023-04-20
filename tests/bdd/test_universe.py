@@ -21,4 +21,4 @@ def test_universe():
     assert universe3[0].element == a
     assert universe3[1].index == 1
     assert universe3[2].binary.binary == "10"
-    assert universe3[1].binary.cube == r"~x₀ /\ x₁"
+    assert universe3[1].binary.cube == r"~x⁰₀ /\ x⁰₁"

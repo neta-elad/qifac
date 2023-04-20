@@ -7,8 +7,9 @@ def test_binary():
     with pytest.raises(ValueError):
         Binary(2, 1)
 
-    number = Binary(2, 3)
+    number = Binary(2, 3, "y")
 
     assert number.binary == "010"
     assert number.boolean == [False, True, False]
-    assert number.cube == r"~x₀ /\ x₁ /\ ~x₂"
+    assert number.cube == r"~y₀ /\ y₁ /\ ~y₂"
+    assert number.as_cube("x") == r"~x₀ /\ x₁ /\ ~x₂"

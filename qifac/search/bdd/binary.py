@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cached_property
-from typing import List, Self
+from typing import List, Optional, Self
 
 from .utils import to_subscript
 
@@ -9,6 +9,7 @@ from .utils import to_subscript
 class Binary:
     value: int
     size: int
+    default_variable: str = field(default="x")
 
     def __post_init__(self) -> None:
         if self.value >= 2**self.size:
@@ -30,7 +31,9 @@ class Binary:
     def cube(self) -> str:
         return self.as_cube()
 
-    def as_cube(self, variable: str = "x") -> str:
+    def as_cube(self, variable: Optional[str] = None) -> str:
+        if variable is None:
+            variable = self.default_variable
         return r" /\ ".join(
             self.as_literal(variable, digit, value)
             for digit, value in enumerate(self.boolean)
