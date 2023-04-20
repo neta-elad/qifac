@@ -21,7 +21,7 @@ class System:
     #     self.bdd.declare(*self.all_vars_with_suffixes)
 
     @cached_property
-    def universes(self) -> Tuple[Universe, ...]:
+    def model_universes(self) -> Tuple[Universe[z3.Const], ...]:
         return from_models(
             self.problem.generate_models(self.terms)[: self.models_amount]
         )
@@ -29,14 +29,16 @@ class System:
     @cached_property
     def output_variables(self) -> Set[str]:
         return {
-            variable for universe in self.universes for variable in universe.variables
+            variable
+            for universe in self.model_universes
+            for variable in universe.variables
         }
 
     @cached_property
     def argument_variables(self) -> Set[str]:
         return {
             variable
-            for universe in self.universes
+            for universe in self.model_universes
             for argument in range(self.max_arguments)
             for variable in universe.with_prefix(argument).variables
         }
