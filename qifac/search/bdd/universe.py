@@ -1,5 +1,5 @@
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import cached_property
 from typing import Iterable, Self, Tuple, Union
 
@@ -28,7 +28,7 @@ class Element:
         if isinstance(prefix, int):
             prefix = to_subscript(prefix)
 
-        return self.__class__(self.element, self.index, self.universe, prefix)
+        return replace(self, prefix=prefix)
 
 
 AnyElement = Union[z3.Const, int, Element]
@@ -84,7 +84,7 @@ class Universe:
         if isinstance(prefix, int):
             prefix = to_subscript(prefix)
 
-        return self.__class__(self.raw_elements, self.index, prefix)
+        return replace(self, prefix=prefix)
 
 
 def from_models(models: Iterable[z3.ModelRef]) -> Tuple[Universe, ...]:
