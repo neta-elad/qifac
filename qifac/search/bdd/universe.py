@@ -68,3 +68,7 @@ class Universe:
 
             case _:
                 return self.elements[self.raw_elements.index(element)]
+
+
+def from_models(models: Iterable[z3.ModelRef]) -> Tuple[Universe, ...]:
+    return tuple(Universe.from_model(model, i) for i, model in enumerate(models))

@@ -1,7 +1,7 @@
 import pytest
 import z3
 
-from qifac.search.bdd.universe import Universe
+from qifac.search.bdd.universe import Universe, from_models
 
 
 def test_universe():
@@ -32,4 +32,9 @@ def test_model():
     solver = z3.Solver()
 
     assert solver.check(formula) == z3.sat
-    assert Universe.from_model(solver.model()).size == 1
+
+    model = solver.model()
+    universe = Universe.from_model(model)
+    assert universe.size == 1
+
+    assert from_models([model]) == (universe,)
