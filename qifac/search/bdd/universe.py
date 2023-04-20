@@ -107,11 +107,3 @@ def from_iterable(
     iterable: Iterable[Value], *, name: Optional[int] = None
 ) -> Universe[Value]:
     return Universe(tuple(iterable), name)
-
-
-def from_model(model: z3.ModelRef, *, name: Optional[int] = None) -> Universe[z3.Const]:
-    return from_iterable(model.get_universe(model.get_sort(0)), name=name)
-
-
-def from_models(models: Iterable[z3.ModelRef]) -> Tuple[Universe[z3.Const], ...]:
-    return tuple(from_model(model, name=i) for i, model in enumerate(models))

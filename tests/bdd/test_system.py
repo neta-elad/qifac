@@ -10,7 +10,7 @@ def system() -> System:
 
 
 def test_universes(system: System) -> None:
-    assert len(system.model_universes) == System.models_amount
+    assert len(system.models) == System.models_amount
 
 
 def test_axioms(system: System) -> None:

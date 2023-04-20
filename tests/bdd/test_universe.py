@@ -1,7 +1,7 @@
 import pytest
 import z3
 
-from qifac.search.bdd.universe import from_iterable, from_model, from_models
+from qifac.search.bdd.universe import from_iterable
 
 
 def test_basic() -> None:
@@ -40,19 +40,3 @@ def test_variables() -> None:
     universe = from_iterable([a, b, c], name=1)
 
     assert universe.with_prefix(2).variables == {"₂x¹₀", "₂x¹₁"}
-
-
-def test_model() -> None:
-    Node = z3.DeclareSort("Node")
-    a, b = z3.Consts("a b", Node)
-
-    formula = a != b
-    solver = z3.Solver()
-
-    assert solver.check(formula) == z3.sat
-
-    model = solver.model()
-    universe = from_model(model, name=0)
-    assert universe.size == 1
-
-    assert from_models([model]) == (universe,)

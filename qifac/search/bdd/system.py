@@ -6,7 +6,8 @@ import z3
 from dd.autoref import BDD
 
 from ..adt.problem import Problem, QuantifiedAssertion
-from .universe import Universe, from_iterable, from_models
+from .model import Model, from_refs
+from .universe import Universe, from_iterable
 
 
 @dataclass
@@ -21,26 +22,22 @@ class System:
         self.bdd.declare(*self.variables)
 
     @cached_property
-    def model_universes(self) -> Tuple[Universe[z3.Const], ...]:
-        return from_models(
-            self.problem.generate_models(self.terms)[: self.models_amount]
-        )
+    def models(self) -> Tuple[Model, ...]:
+        return from_refs(self.problem.generate_models(self.terms)[: self.models_amount])
 
     @cached_property
     def output_variables(self) -> Set[str]:
         return {
-            variable
-            for universe in self.model_universes
-            for variable in universe.variables
+            variable for model in self.models for variable in model.universe.variables
         }
 
     @cached_property
     def argument_variables(self) -> Set[str]:
         return {
             variable
-            for universe in self.model_universes
+            for universe in self.models
             for argument in range(self.max_arguments)
-            for variable in universe.with_prefix(argument).variables
+            for variable in universe.universe.with_prefix(argument).variables
         }
 
     @cached_property
