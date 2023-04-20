@@ -18,6 +18,9 @@ def test_basic() -> None:
     assert universe2.size == 1
     assert universe3.size == 2
 
+    for universe in (universe1, universe2, universe3):
+        assert len(universe) <= 2**universe.size
+
     assert universe3[0].value == a
     assert universe3[1].index == 1
 
