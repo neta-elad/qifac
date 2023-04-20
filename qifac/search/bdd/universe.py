@@ -1,7 +1,7 @@
 import math
 from dataclasses import dataclass, field, replace
 from functools import cached_property
-from typing import Iterable, Self, Tuple, Union
+from typing import Iterable, Self, Set, Tuple, Union
 
 import z3
 
@@ -68,6 +68,14 @@ class Universe:
             Element(element, i, self, self.prefix)
             for i, element in enumerate(self.raw_elements)
         )
+
+    @cached_property
+    def variables(self) -> Set[str]:
+        return {
+            variable
+            for element in self.elements
+            for variable in element.binary.variables
+        }
 
     def normalize(self, element: AnyElement) -> Element:
         match element:
