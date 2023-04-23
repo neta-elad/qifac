@@ -54,8 +54,8 @@ AnyElement = Union[z3.Const, int, Element[Value]]
 @dataclass(eq=True, frozen=True)
 class Universe(Generic[Value]):
     raw_elements: Tuple[Value, ...]
-    name: Optional[int] = field(default=None)
-    prefix: str = field(default="x")
+    name: Optional[int] = field(default=None, kw_only=True)
+    prefix: str = field(default="x", kw_only=True)
 
     def __post_init__(self) -> None:
         if not self.raw_elements:
@@ -138,4 +138,4 @@ class Universe(Generic[Value]):
 def from_iterable(
     iterable: Iterable[Value], *, name: Optional[int] = None
 ) -> Universe[Value]:
-    return Universe(tuple(iterable), name)
+    return Universe(tuple(iterable), name=name)
