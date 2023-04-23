@@ -1,15 +1,26 @@
 import math
+import re
 from dataclasses import dataclass, field, replace
 from functools import cached_property
-from typing import Generic, Iterable, Optional, Self, Set, Tuple, TypeVar, Union
+from typing import (
+    Generic,
+    Iterable,
+    Optional,
+    Pattern,
+    Self,
+    Set,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 import z3
 
+from . import RawAssignment
 from .binary import Binary
-from .utils import to_subscript, to_superscript
+from .utils import SUBSCRIPTS, parse_subscript, to_subscript, to_superscript
 
 Value = TypeVar("Value", covariant=True)
-Value2 = TypeVar("Value2", covariant=True)
 
 
 @dataclass(eq=True, frozen=True)
@@ -82,6 +93,17 @@ class Universe(Generic[Value]):
 
         return to_superscript(self.name)
 
+    @cached_property
+    def variable_regex(self) -> Pattern[str]:
+        return re.compile(
+            rf"^{self.prefix}{self.suffix}(?P<subscript>[{SUBSCRIPTS}]+)$"
+        )
+
+    def parse_variable(self, variable: str) -> Optional[int]:
+        if (match := self.variable_regex.match(variable)) is not None:
+            return parse_subscript(match["subscript"])
+        return None
+
     def normalize(self, element: AnyElement[Value]) -> Element[Value]:
         match element:
             case int() as index:
@@ -101,6 +123,16 @@ class Universe(Generic[Value]):
             prefix += self.prefix
 
         return replace(self, prefix=prefix)
+
+    def parse(self, assignment: RawAssignment) -> Element[Value]:
+        index = sum(
+            2 ** (self.size - 1 - index)
+            for variable, value in assignment.items()
+            if value
+            if (index := self.parse_variable(variable)) is not None
+        )
+
+        return self[index]
 
 
 def from_iterable(

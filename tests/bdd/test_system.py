@@ -36,3 +36,15 @@ def test_variables(system: System) -> None:
     assert system.axioms.variables == {"q₀", "q₂", "q₁"}
 
     assert system.variables == system.element_variables | system.axioms.variables
+
+
+def test_states(system: System) -> None:
+    constants = system.problem.constants
+    evaluations = {
+        tuple(model.eval(constant) for model in system.models) for constant in constants
+    }
+    initial_elements = {
+        assignment.vector for assignment in system.assignments(system.initial_states)
+    }
+
+    assert evaluations <= initial_elements

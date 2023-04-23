@@ -40,3 +40,15 @@ def test_variables() -> None:
     universe = from_iterable([a, b, c], name=1)
 
     assert universe.with_prefix(2).variables == {"₂x¹₀", "₂x¹₁"}
+
+
+def test_parse() -> None:
+    a, b, c = z3.Ints("a b c")
+    universe = from_iterable([a, b, c], name=1)
+
+    assert universe.parse_variable("x¹₁") == 1
+    assert universe.parse_variable("y¹₁") is None
+
+    assert universe.parse({"x¹₀": False, "x¹₁": False}).value == a
+    assert universe.parse({"x¹₀": False, "x¹₁": True}).value == b
+    assert universe.parse({"x¹₀": True, "x¹₁": False}).value == c
