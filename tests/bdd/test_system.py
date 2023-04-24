@@ -40,3 +40,11 @@ def test_states(system: System) -> None:
     }
 
     assert evaluations <= initial_elements
+
+
+def test_vector(system: System) -> None:
+    c = next(iter(system.problem.constants))
+
+    vector1 = tuple(model.eval(c) for model in system.models)
+
+    assert system.eval(c).elements == vector1

@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import Iterable
+from typing import Iterable, Mapping, Self, Set
 
 import dd.autoref as dd
 
@@ -8,9 +8,13 @@ from . import RawAssignment
 from .utils import decode, encode
 
 
-@dataclass
+@dataclass(eq=True, frozen=True)
 class BDD:
     bdd: dd.BDD = field(default_factory=dd.BDD)
+
+    @classmethod
+    def default(cls) -> Self:
+        return cls()
 
     @cached_property
     def false(self) -> dd.Function:
@@ -22,6 +26,17 @@ class BDD:
 
     def declare(self, variables: Iterable[str]) -> None:
         self.bdd.declare(*(encode(variable) for variable in variables))
+
+    def let(
+        self, substitution: Mapping[str, str], expression: dd.Function
+    ) -> dd.Function:
+        return self.bdd.let(
+            {encode(key): encode(value) for key, value in substitution.items()},
+            expression,
+        )
+
+    def exists(self, variables: Set[str], expression: dd.Function) -> dd.Function:
+        return self.bdd.exist({encode(variable) for variable in variables}, expression)
 
     def to_expression(self, expression: str) -> dd.Function:
         return self.bdd.add_expr(encode(expression))
