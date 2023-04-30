@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import cached_property
 from typing import Iterable, Mapping, Self, Set
 
@@ -10,11 +10,11 @@ from .utils import decode, encode
 
 @dataclass(eq=True, frozen=True)
 class BDD:
-    bdd: dd.BDD = field(default_factory=dd.BDD)
+    bdd: dd.BDD
 
     @classmethod
-    def default(cls) -> Self:
-        return cls()
+    def default(cls, bdd: dd.BDD = dd.BDD()) -> Self:
+        return cls(bdd)
 
     @cached_property
     def false(self) -> dd.Function:
@@ -49,3 +49,6 @@ class BDD:
             {decode(key): value for key, value in assignment.items()}
             for assignment in self.bdd.pick_iter(expression)
         )
+
+    def assignment(self, expression: dd.Function) -> RawAssignment:
+        return {decode(key): value for key, value in self.bdd.pick(expression).items()}

@@ -1,8 +1,7 @@
-from dataclasses import dataclass, field, replace
-from functools import cached_property, reduce
+from dataclasses import dataclass, field
+from functools import cached_property
 from itertools import product
-from operator import and_
-from typing import ClassVar, Generic, Iterable, List, Self, Set, Tuple, Union
+from typing import ClassVar, Iterable, List, Set, Tuple
 
 import z3
 from dd.autoref import Function as BDDFunction
@@ -11,28 +10,8 @@ from ..adt.problem import Problem, QuantifiedAssertion
 from .assignment import Assignment, from_raw
 from .bdd import BDD
 from .model import Model, from_refs
-from .universe import Element, Universe, Value, from_iterable
-
-
-@dataclass(eq=True, frozen=True)
-class Vector(Generic[Value]):
-    bdd: BDD
-    elements: Tuple[Element[Value], ...]
-
-    @cached_property
-    def cube(self) -> BDDFunction:
-        return reduce(
-            and_,
-            (self.bdd.to_expression(element.binary.cube) for element in self.elements),
-        )
-
-    def with_prefix(self, prefix: Union[str, int], *, add: bool = True) -> Self:
-        return replace(
-            self,
-            elements=tuple(
-                element.with_prefix(prefix, add=add) for element in self.elements
-            ),
-        )
+from .universe import Universe, from_iterable
+from .vector import Vector
 
 
 @dataclass
@@ -40,7 +19,7 @@ class System:
     problem: Problem
     terms: List[z3.ExprRef]
     bdd: BDD = field(default=BDD.default(), kw_only=True)
-    max_arguments: ClassVar[int] = 2
+    max_arguments: ClassVar[int] = 3
     models_amount: ClassVar[int] = 3
 
     def __post_init__(self) -> None:
@@ -86,7 +65,7 @@ class System:
     @cached_property
     def elements(self) -> Iterable[Vector[z3.Const]]:
         return map(
-            lambda vector: Vector(self.bdd, vector),
+            lambda vector: Vector(vector),
             product(*[model.universe.elements for model in self.models]),
         )
 
@@ -109,5 +88,8 @@ class System:
             for assignment in self.bdd.assignments(expression)
         )
 
+    def assignment(self, expression: BDDFunction) -> Assignment[z3.Const]:
+        return from_raw(self.bdd.assignment(expression), self.element_universes)
+
     def eval(self, expression: z3.ExprRef) -> Vector[z3.Const]:
-        return Vector(self.bdd, tuple(model.eval(expression) for model in self.models))
+        return Vector(tuple(model.eval(expression) for model in self.models))

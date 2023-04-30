@@ -13,6 +13,6 @@ def test_assignment() -> None:
 
     raw_assignment = {"x⁰₀": True, "x⁰₁": False, "y¹₀": True}
 
-    e1, e2 = from_raw(raw_assignment, (universe1, universe2)).vector
+    e1, e2 = from_raw(raw_assignment, (universe1, universe2)).tuple
     assert e1.value == c
     assert e2.value == v

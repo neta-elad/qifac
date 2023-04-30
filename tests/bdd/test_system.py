@@ -20,6 +20,10 @@ def test_variables(system: System) -> None:
         "₁x¹₀",
         "₁x²₀",
         "₁x²₁",
+        "₂x²₀",
+        "₂x¹₀",
+        "₂x⁰₀",
+        "₂x²₁",
     }
     assert (
         system.element_variables == system.output_variables | system.argument_variables
@@ -36,7 +40,7 @@ def test_states(system: System) -> None:
         tuple(model.eval(constant) for model in system.models) for constant in constants
     }
     initial_elements = {
-        assignment.vector for assignment in system.assignments(system.initial_states)
+        assignment.tuple for assignment in system.assignments(system.initial_states)
     }
 
     assert evaluations <= initial_elements
