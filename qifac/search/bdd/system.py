@@ -93,3 +93,22 @@ class System:
 
     def eval(self, expression: z3.ExprRef) -> Vector[z3.Const]:
         return Vector(tuple(model.eval(expression) for model in self.models))
+
+    def reachable_vectors(self, depth: int) -> Set[Vector[z3.Const]]:
+        vectors = set()
+        terms: Set[z3.ExprRef] = set(self.problem.constants)
+
+        for i in range(depth + 1):
+            for term in terms:
+                vectors.add(self.eval(term))
+
+            new_terms = set()
+
+            for f in self.problem.functions:
+                inputs = product(terms, repeat=f.arity())
+                for arguments in inputs:
+                    new_terms.add(f(*arguments))
+
+            terms = new_terms
+
+        return vectors

@@ -8,7 +8,7 @@ from . import RawAssignment
 from .utils import decode, encode
 
 
-@dataclass(eq=True, frozen=True)
+@dataclass
 class BDD:
     bdd: dd.BDD
 
@@ -52,3 +52,6 @@ class BDD:
 
     def assignment(self, expression: dd.Function) -> RawAssignment:
         return {decode(key): value for key, value in self.bdd.pick(expression).items()}
+
+    def __hash__(self) -> int:
+        return id(self)

@@ -143,6 +143,8 @@ class Fixpoint:
             previous_reachable = iterations[-1].post
             iterations.append(iterations[-1].next)
 
+        iterations.pop()
+
         return iterations
 
     @cached_property
