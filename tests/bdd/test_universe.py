@@ -39,7 +39,7 @@ def test_variables() -> None:
     a, b, c = z3.Ints("a b c")
     universe = from_iterable([a, b, c], name=1)
 
-    assert universe.with_prefix(2).variables == {"₂x¹₀", "₂x¹₁"}
+    assert set(universe.with_prefix(2).variables) == {"₂x¹₀", "₂x¹₁"}
 
 
 def test_parse() -> None:

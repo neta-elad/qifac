@@ -21,8 +21,8 @@ class Transition:
     arity: int
     expression: BDDFunction
 
-    def apply(self, states: BDDFunction) -> Tuple[Set[str], BDDFunction]:
-        copies = []
+    def apply(self, *states: BDDFunction) -> Tuple[Set[str], BDDFunction]:
+        copies = []  # x⁰₀  => 0x^0_0 , 1x^0_0
         all_variables: Set[str] = set()
         for i in range(self.arity):
             substitution = reduce(
@@ -38,14 +38,16 @@ class Transition:
                 ),
             )
             all_variables.update(substitution.values())
-            copies.append(self.system.bdd.let(substitution, states))
+            this_states = states[i]
+            copies.append(self.system.bdd.let(substitution, this_states))
 
+        # 0x^0_0 1x^0_0
         next_states = self.expression & reduce(and_, copies, self.system.bdd.true)
 
         return all_variables, next_states
 
     def next(self, states: BDDFunction) -> BDDFunction:
-        all_variables, next_states = self.apply(states)
+        all_variables, next_states = self.apply(*(states,) * self.arity)
 
         return states | self.system.bdd.exists(all_variables, next_states)
 
@@ -59,7 +61,7 @@ class Iteration(Generic[Key]):
     @cached_property
     def unquantified_post(self) -> Mapping[Key, BDDFunction]:
         return {
-            key: transition.apply(self.pre)[1]
+            key: transition.apply(*(self.pre,) * transition.arity)[1]
             for key, transition in self.mapping.items()
         }
 
@@ -104,12 +106,16 @@ class Fixpoint:
         combined_transitions = {}
 
         for c in self.system.problem.constants:
+            # if str(c) not in {"q2", "v1"}:
+            #     continue  # todo: remove
             decl = c.decl()
             combined_transitions[decl] = Transition(
                 self.system, 0, self.system.eval(c).cube
             )
 
         for f in self.system.problem.functions:
+            # if str(f) != "intersection":
+            #     continue  # todo: remove
             transitions = self.system.bdd.true
             for i, model in enumerate(self.system.models):
                 model_transitions = self.system.bdd.false
@@ -120,12 +126,14 @@ class Fixpoint:
                     pre_state = vector.argument_cube
 
                     result = model.eval(
-                        f(*(element.value for element in vector.elements))
+                        f(
+                            *(element.value for element in vector.elements)
+                        )  # todo: maybe not working because of Sort!0 elements
                     )
 
                     post_state = self.system.bdd.to_expression(result.binary.cube)
 
-                    model_transitions |= pre_state & post_state
+                    model_transitions |= pre_state & post_state  # todo: differently?
 
                 transitions &= model_transitions
 
@@ -151,6 +159,13 @@ class Fixpoint:
     def reachable(self) -> BDDFunction:
         return self.iterations[-1].post
 
+    @cached_property
+    def reachable_vectors(self) -> Mapping[z3.ExprRef, Vector[z3.Const]]:
+        return {
+            self.reconstruct(assignment.vector): assignment.vector
+            for assignment in self.system.assignments(self.reachable)
+        }
+
     def find_iteration(self, vector: Vector[z3.Const]) -> Optional[int]:
         for i, iteration in enumerate(self.iterations):
             if vector in iteration:
@@ -158,10 +173,18 @@ class Fixpoint:
 
         return None
 
+    def reconstruct_all(self, expression: BDDFunction) -> list[z3.ExprRef]:
+        return [
+            self.reconstruct(assignment.vector)
+            for assignment in self.system.assignments(expression)
+        ]
+
     def reconstruct(self, vector: Vector[z3.Const]) -> z3.ExprRef:
         iteration_index = self.find_iteration(vector)
         if iteration_index is None:
             raise ValueError("Unreachable vector")
+
+        # todo: reconstruction fails, but fixpoint works
 
         iteration = self.iterations[iteration_index]
         f = iteration[vector]

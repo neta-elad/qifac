@@ -266,8 +266,10 @@ class Problem:
         for i in range(len(all_live_terms) + 1):
             # print(f"Checking with {i} live terms:")
             live_terms = all_live_terms[:i]
+            z3.set_param("smt.random_seed", 0)
 
             s = z3.Solver()
+            # s.set("smt.random_seed", 0)
             s.add(*self.qf_assertions)
             for f in self.forall_assertions:
                 if not z3.is_quantifier(f):

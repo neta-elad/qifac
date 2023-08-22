@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import product
-from typing import ClassVar, Iterable, List, Set, Tuple
+from typing import ClassVar, Iterable, List, Mapping, Set, Tuple
 
 import z3
 from dd.autoref import Function as BDDFunction
@@ -20,14 +20,19 @@ class System:
     terms: List[z3.ExprRef]
     bdd: BDD = field(default=BDD.default(), kw_only=True)
     max_arguments: ClassVar[int] = 3
-    models_amount: ClassVar[int] = 3
+    models_amount: ClassVar[int] = 2  # todo: change to 4
+    models_offset: ClassVar[int] = 2  # todo: change to 0
 
     def __post_init__(self) -> None:
         self.bdd.declare(self.variables)
 
     @cached_property
     def models(self) -> Tuple[Model, ...]:
-        return from_refs(self.problem.generate_models(self.terms)[: self.models_amount])
+        return from_refs(
+            self.problem.generate_models(self.terms)[
+                self.models_offset : (self.models_offset + self.models_amount)
+            ]
+        )
 
     @cached_property
     def element_universes(self) -> Tuple[Universe[z3.Const], ...]:
@@ -60,7 +65,7 @@ class System:
 
     @cached_property
     def variables(self) -> Set[str]:
-        return self.element_variables | self.axioms.variables
+        return self.element_variables | set(self.axioms.variables)
 
     @cached_property
     def elements(self) -> Iterable[Vector[z3.Const]]:
@@ -94,13 +99,13 @@ class System:
     def eval(self, expression: z3.ExprRef) -> Vector[z3.Const]:
         return Vector(tuple(model.eval(expression) for model in self.models))
 
-    def reachable_vectors(self, depth: int) -> Set[Vector[z3.Const]]:
-        vectors = set()
+    def reachable_vectors(self, depth: int) -> Mapping[z3.ExprRef, Vector[z3.Const]]:
+        vectors = {}
         terms: Set[z3.ExprRef] = set(self.problem.constants)
 
         for i in range(depth + 1):
             for term in terms:
-                vectors.add(self.eval(term))
+                vectors[term] = self.eval(term)
 
             new_terms = set()
 

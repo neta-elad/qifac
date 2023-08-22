@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from functools import cached_property
-from typing import List, Optional, Self, Set
+from typing import List, Optional, Self
 
 from .utils import to_subscript
 
@@ -32,7 +32,7 @@ class Binary:
         return self.as_cube()
 
     @cached_property
-    def variables(self) -> Set[str]:
+    def variables(self) -> list[str]:
         return self.get_variables()
 
     def as_cube(self, variable: Optional[str] = None) -> str:
@@ -49,10 +49,10 @@ class Binary:
 
         return variable
 
-    def get_variables(self, variable: Optional[str] = None) -> Set[str]:
+    def get_variables(self, variable: Optional[str] = None) -> list[str]:
         variable = self.get_variable(variable)
 
-        return {f"{variable}{to_subscript(digit)}" for digit in range(self.size)}
+        return [f"{variable}{to_subscript(digit)}" for digit in range(self.size)]
 
     @staticmethod
     def as_literal(variable: str, digit: int, value: bool) -> str:

@@ -2,17 +2,7 @@ import math
 import re
 from dataclasses import dataclass, field, replace
 from functools import cached_property
-from typing import (
-    Generic,
-    Iterable,
-    Optional,
-    Pattern,
-    Self,
-    Set,
-    Tuple,
-    TypeVar,
-    Union,
-)
+from typing import Generic, Iterable, Optional, Pattern, Self, Tuple, TypeVar, Union
 
 import z3
 
@@ -69,7 +59,8 @@ class Universe(Generic[Value]):
 
     @cached_property
     def size(self) -> int:
-        return max(1, math.ceil(math.log(len(self), 2)))
+        return max(1, math.ceil(math.log(len(self), 2)))  # Sort!0 Sort!1 Sort!2
+        # todo: does evaluating Sort!0 work as expected?
 
     @cached_property
     def elements(self) -> Tuple[Element[Value], ...]:
@@ -79,12 +70,12 @@ class Universe(Generic[Value]):
         )
 
     @cached_property
-    def variables(self) -> Set[str]:
-        return {
+    def variables(self) -> list[str]:
+        return [
             variable
             for element in self.elements
             for variable in element.binary.variables
-        }
+        ]
 
     @cached_property
     def suffix(self) -> str:

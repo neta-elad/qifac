@@ -16,4 +16,4 @@ def test_binary() -> None:
 
 
 def test_variables() -> None:
-    assert Binary(2, 3, "y").variables == {"y₀", "y₁", "y₂"}
+    assert set(Binary(2, 3, "y").variables) == {"y₀", "y₁", "y₂"}
