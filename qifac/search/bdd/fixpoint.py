@@ -197,7 +197,7 @@ class Fixpoint:
 
         return f(
             *[
-                self.reconstruct(assignment.for_argument(i).vector)
+                self.reconstruct(assignment.for_argument(i).vector.with_prefix('x', add=False))
                 for i in range(f.arity())
             ]
         )
