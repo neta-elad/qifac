@@ -1,3 +1,4 @@
+import itertools
 from typing import Mapping, Tuple
 
 import pytest
@@ -14,6 +15,36 @@ def indices(
 ) -> Mapping[z3.ExprRef, Tuple[int, ...]]:
     return {key: vector.indices for key, vector in vectors.items()}
 
+def test_reconstruction(system: System) -> None:
+    """
+    Tries to evaluate and reconstruct all constants and
+    functions on constants in the system, and checks that
+    the evaluation on the reconstructed value is consistent.
+    """
+    fixpoint = Fixpoint(system)
+    for c in system.problem.constants:
+        assert c == fixpoint.reconstruct(system.eval(c))
+    for f in system.problem.functions:
+        for consts in itertools.product(system.problem.constants, repeat=f.arity()):
+            original = f(*consts)
+            if system.eval(original) in fixpoint.reachable_vectors.values():
+                reconstructed = fixpoint.reconstruct(system.eval(original))
+                print(f"{original=}, {reconstructed=}")
+                assert system.eval(original) == system.eval(reconstructed)
+
+def test_fixpoint_stability(system: System) -> None:
+    """
+    Applies all functions on reconstructions of all the
+    values in the fixpoint, and asserts that the result
+    is still in the fixpoint.
+    """
+    fixpoint = Fixpoint(system)
+    values = set(fixpoint.reachable_vectors.values())
+    for f in system.problem.functions:
+        for inputs in itertools.product(values, repeat=f.arity()):
+            application = f(*(fixpoint.reconstruct(v) for v in inputs))
+            print(f"{application=}")
+            assert system.eval(application) in values
 
 @pytest.mark.skip("TODO")
 def test_fixpoint(system: System) -> None:
