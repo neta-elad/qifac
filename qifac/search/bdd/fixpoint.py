@@ -184,8 +184,6 @@ class Fixpoint:
         if iteration_index is None:
             raise ValueError("Unreachable vector")
 
-        # todo: reconstruction fails, but fixpoint works
-
         iteration = self.iterations[iteration_index]
         f = iteration[vector]
 
