@@ -1,5 +1,5 @@
 import itertools
-from typing import Mapping, Tuple
+from typing import Mapping, Tuple, Iterable
 
 import pytest
 import z3
@@ -11,9 +11,10 @@ from qifac.search.bdd.vector import Vector
 
 
 def indices(
-    vectors: Mapping[z3.ExprRef, Vector[z3.Const]]
+        vectors: Mapping[z3.ExprRef, Vector[z3.Const]]
 ) -> Mapping[z3.ExprRef, Tuple[int, ...]]:
     return {key: vector.indices for key, vector in vectors.items()}
+
 
 def test_reconstruction(system: System) -> None:
     """
@@ -32,19 +33,32 @@ def test_reconstruction(system: System) -> None:
                 print(f"{original=}, {reconstructed=}")
                 assert system.eval(original) == system.eval(reconstructed)
 
+
+def get_applications(f: z3.FuncDeclRef, inputs: Iterable):
+    for input in itertools.product(inputs, repeat=f.arity()):
+        yield f(*input)
+
+
 def test_fixpoint_stability(system: System) -> None:
     """
     Applies all functions on reconstructions of all the
     values in the fixpoint, and asserts that the result
-    is still in the fixpoint.
+    is still in the fixpoint. Checks up to depth 2.
     """
     fixpoint = Fixpoint(system)
     values = set(fixpoint.reachable_vectors.values())
     for f in system.problem.functions:
-        for inputs in itertools.product(values, repeat=f.arity()):
-            application = f(*(fixpoint.reconstruct(v) for v in inputs))
-            print(f"{application=}")
+        inputs = [fixpoint.reconstruct(v) for v in values]
+        for application in get_applications(f, inputs):
             assert system.eval(application) in values
+    for f in system.problem.functions:
+        for application in get_applications(
+                f,
+                itertools.chain(*(get_applications(
+                    g, [fixpoint.reconstruct(v) for v in values]
+                ) for g in system.problem.functions))):
+            assert system.eval(application) in values
+
 
 @pytest.mark.skip("TODO")
 def test_fixpoint(system: System) -> None:
