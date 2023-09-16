@@ -1,4 +1,5 @@
-from typing import Mapping, Tuple
+import itertools
+from typing import Mapping, Tuple, Iterable
 
 import pytest
 import z3
@@ -10,9 +11,53 @@ from qifac.search.bdd.vector import Vector
 
 
 def indices(
-    vectors: Mapping[z3.ExprRef, Vector[z3.Const]]
+        vectors: Mapping[z3.ExprRef, Vector[z3.Const]]
 ) -> Mapping[z3.ExprRef, Tuple[int, ...]]:
     return {key: vector.indices for key, vector in vectors.items()}
+
+
+def test_reconstruction(system: System) -> None:
+    """
+    Tries to evaluate and reconstruct all constants and
+    functions on constants in the system, and checks that
+    the evaluation on the reconstructed value is consistent.
+    """
+    fixpoint = Fixpoint(system)
+    for c in system.problem.constants:
+        assert c == fixpoint.reconstruct(system.eval(c))
+    for f in system.problem.functions:
+        for consts in itertools.product(system.problem.constants, repeat=f.arity()):
+            original = f(*consts)
+            if system.eval(original) in fixpoint.reachable_vectors.values():
+                reconstructed = fixpoint.reconstruct(system.eval(original))
+                print(f"{original=}, {reconstructed=}")
+                assert system.eval(original) == system.eval(reconstructed)
+
+
+def get_applications(f: z3.FuncDeclRef, inputs: Iterable):
+    for input in itertools.product(inputs, repeat=f.arity()):
+        yield f(*input)
+
+
+def test_fixpoint_stability(system: System) -> None:
+    """
+    Applies all functions on reconstructions of all the
+    values in the fixpoint, and asserts that the result
+    is still in the fixpoint. Checks up to depth 2.
+    """
+    fixpoint = Fixpoint(system)
+    values = set(fixpoint.reachable_vectors.values())
+    for f in system.problem.functions:
+        inputs = [fixpoint.reconstruct(v) for v in values]
+        for application in get_applications(f, inputs):
+            assert system.eval(application) in values
+    for f in system.problem.functions:
+        for application in get_applications(
+                f,
+                itertools.chain(*(get_applications(
+                    g, [fixpoint.reconstruct(v) for v in values]
+                ) for g in system.problem.functions))):
+            assert system.eval(application) in values
 
 
 @pytest.mark.skip("TODO")
