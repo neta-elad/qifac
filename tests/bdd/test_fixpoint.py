@@ -11,7 +11,7 @@ from qifac.search.bdd.vector import Vector
 
 
 def indices(
-        vectors: Mapping[z3.ExprRef, Vector[z3.Const]]
+    vectors: Mapping[z3.ExprRef, Vector[z3.Const]]
 ) -> Mapping[z3.ExprRef, Tuple[int, ...]]:
     return {key: vector.indices for key, vector in vectors.items()}
 
@@ -53,10 +53,14 @@ def test_fixpoint_stability(system: System) -> None:
             assert system.eval(application) in values
     for f in system.problem.functions:
         for application in get_applications(
-                f,
-                itertools.chain(*(get_applications(
-                    g, [fixpoint.reconstruct(v) for v in values]
-                ) for g in system.problem.functions))):
+            f,
+            itertools.chain(
+                *(
+                    get_applications(g, [fixpoint.reconstruct(v) for v in values])
+                    for g in system.problem.functions
+                )
+            ),
+        ):
             assert system.eval(application) in values
 
 

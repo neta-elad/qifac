@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Iterable, Optional, Tuple, cast
+from typing import Iterable, Optional, Tuple, cast, Union
 
 import z3
 
@@ -13,8 +13,10 @@ class Model:
 
     def eval(
         self, expression: z3.ExprRef, *, model_completion: bool = True
-    ) -> Element[z3.Const]:
+    ) -> Union[Element[z3.Const], bool]:
         evaluation = self.ref.eval(expression, model_completion=model_completion)
+        if expression.sort() == z3.BoolSort():
+            return cast(z3.Bool, evaluation)
         return self.universe[cast(z3.Const, evaluation)]
 
 
